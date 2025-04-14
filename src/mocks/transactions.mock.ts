@@ -1,0 +1,93 @@
+import { 
+  Transaction, 
+  TransactionStatus, 
+  PaymentMethod, 
+  CryptoType 
+} from '../data/types';
+
+export const mockTransactions: Transaction[] = [
+  {
+    id: '1',
+    transactionId: 'TRX123456789',
+    valorBRL: 5000.00,
+    valorBTC: 0.045,
+    network: 'Bitcoin',
+    paymentMethod: PaymentMethod.PIX,
+    coldWallet: '3FZbgi29cpjq2GjdwV8eyHuJJnkLtktZc5',
+    telefone: '+5511999999999',
+    cpfCnpj: '123.456.789-00',
+    status: TransactionStatus.complete,
+    cryptoType: CryptoType.BTC,
+    userId: '1',
+    username: 'john_doe',
+    createdAt: '2023-11-15T10:30:00Z',
+    updatedAt: '2023-11-15T10:35:00Z'
+  },
+  {
+    id: '2',
+    transactionId: 'TRX987654321',
+    valorBRL: 1200.00,
+    valorBTC: 0.012,
+    network: 'Bitcoin',
+    paymentMethod: PaymentMethod.CREDIT_CARD,
+    coldWallet: '3FZbgi29cpjq2GjdwV8eyHuJJnkLtktZc5',
+    telefone: '+5511988888888',
+    cupom: 'DESCONTO10',
+    status: TransactionStatus.paid,
+    cryptoType: CryptoType.BTC,
+    userId: '2',
+    username: 'maria_silva',
+    createdAt: '2023-11-14T15:20:00Z',
+    updatedAt: '2023-11-14T15:25:00Z'
+  },
+  {
+    id: '3',
+    transactionId: 'TRX456123789',
+    valorBRL: 3000.00,
+    valorBTC: 0.030,
+    network: 'Bitcoin',
+    paymentMethod: PaymentMethod.PIX,
+    coldWallet: '3FZbgi29cpjq2GjdwV8eyHuJJnkLtktZc5',
+    telefone: '+5511977777777',
+    cpfCnpj: '987.654.321-00',
+    status: TransactionStatus.pending,
+    cryptoType: CryptoType.BTC,
+    userId: '3',
+    username: 'carlos_santos',
+    createdAt: '2023-11-16T08:45:00Z',
+    updatedAt: '2023-11-16T08:45:00Z'
+  },
+  {
+    id: '4',
+    transactionId: 'TRX789456123',
+    valorBRL: 10000.00,
+    valorBTC: 0.095,
+    network: 'Bitcoin',
+    paymentMethod: PaymentMethod.BANK_TRANSFER,
+    coldWallet: '3FZbgi29cpjq2GjdwV8eyHuJJnkLtktZc5',
+    telefone: '+5511966666666',
+    cpfCnpj: '456.789.123-00',
+    status: TransactionStatus.canceled,
+    cryptoType: CryptoType.BTC,
+    userId: '4',
+    username: 'admin',
+    createdAt: '2023-11-13T12:10:00Z',
+    updatedAt: '2023-11-13T12:15:00Z'
+  },
+  {
+    id: '5',
+    transactionId: 'TRX321654987',
+    valorBRL: 500.00,
+    valorBTC: 0.0048,
+    network: 'Ethereum',
+    paymentMethod: PaymentMethod.CRYPTO,
+    coldWallet: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
+    telefone: '+5511955555555',
+    status: TransactionStatus.review,
+    cryptoType: CryptoType.ETH,
+    userId: '5',
+    username: 'ana_pereira',
+    createdAt: '2023-11-17T09:20:00Z',
+    updatedAt: '2023-11-17T09:25:00Z'
+  }
+];
