@@ -1,104 +1,120 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 interface PaginationProps {
   currentPage: number;
-  totalItems: number;
-  perPage: number;
+  totalPages: number;
   onPageChange: (page: number) => void;
-  className?: string;
+  siblingCount?: number;
 }
 
 export function Pagination({
   currentPage,
-  totalItems,
-  perPage,
+  totalPages,
   onPageChange,
-  className = '',
+  siblingCount = 1,
 }: PaginationProps) {
-  const totalPages = Math.max(1, Math.ceil(totalItems / perPage));
-  
-  // Determinar quais páginas mostrar
-  const getVisiblePages = () => {
-    const delta = 2; // Número de páginas visíveis antes e depois da página atual
-    const range = [];
-    const rangeWithDots = [];
-
-    // Sempre inclui a primeira página
-    range.push(1);
-
-    // Adiciona páginas próximas à atual
-    for (let i = currentPage - delta; i <= currentPage + delta; i++) {
-      if (i > 1 && i < totalPages) {
-        range.push(i);
-      }
-    }
-
-    // Sempre inclui a última página
-    if (totalPages > 1) {
-      range.push(totalPages);
-    }
-
-    // Adiciona reticências onde necessário
-    let l;
-    for (let i of range) {
-      if (l) {
-        if (i - l === 2) {
-          rangeWithDots.push(l + 1);
-        } else if (i - l !== 1) {
-          rangeWithDots.push(-1); // -1 representa reticências
-        }
-      }
-      rangeWithDots.push(i);
-      l = i;
-    }
-
-    return rangeWithDots;
+  const range = (start: number, end: number) => {
+    const length = end - start + 1;
+    return Array.from({ length }, (_, idx) => idx + start);
   };
 
-  if (totalPages <= 1) return null;
+  const createPaginationItems = () => {
+    // Caso simples: menos de 7 + 2 * siblingCount páginas
+    if (totalPages <= 7 + 2 * siblingCount) {
+      return range(1, totalPages);
+    }
+
+    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+
+    const shouldShowLeftDots = leftSiblingIndex > 2;
+    const shouldShowRightDots = rightSiblingIndex < totalPages - 1;
+
+    // Caso 1: mostrar os pontos da esquerda
+    if (shouldShowLeftDots && !shouldShowRightDots) {
+      const rightItemCount = 3 + 2 * siblingCount;
+      const rightRange = range(totalPages - rightItemCount + 1, totalPages);
+      return [1, '...', ...rightRange];
+    }
+
+    // Caso 2: mostrar os pontos da direita
+    if (!shouldShowLeftDots && shouldShowRightDots) {
+      const leftItemCount = 3 + 2 * siblingCount;
+      const leftRange = range(1, leftItemCount);
+      return [...leftRange, '...', totalPages];
+    }
+
+    // Caso 3: mostrar os pontos da esquerda e da direita
+    if (shouldShowLeftDots && shouldShowRightDots) {
+      const middleRange = range(leftSiblingIndex, rightSiblingIndex);
+      return [1, '...', ...middleRange, '...', totalPages];
+    }
+  };
+
+  const paginationItems = createPaginationItems();
 
   return (
-    <div className={`flex items-center justify-center ${className}`}>
-      <div className="flex items-center space-x-1">
-        <button
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="p-2.5 rounded-md hover:bg-primary/10 disabled:opacity-40 disabled:hover:bg-transparent"
-          aria-label="Página anterior"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
+    <div className="flex justify-center items-center space-x-2">
+      <button
+        onClick={() => onPageChange(1)}
+        disabled={currentPage === 1}
+        className="p-2 rounded-lg bg-background hover:bg-primary/10 disabled:opacity-50 disabled:hover:bg-background transition-colors"
+        aria-label="Primeira página"
+      >
+        <ChevronsLeft className="h-5 w-5" />
+      </button>
 
-        {getVisiblePages().map((page, index) => (
-          page === -1 ? (
-            <span key={`dots-${index}`} className="px-3.5 py-2">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="p-2 rounded-lg bg-background hover:bg-primary/10 disabled:opacity-50 disabled:hover:bg-background transition-colors"
+        aria-label="Página anterior"
+      >
+        <ChevronLeft className="h-5 w-5" />
+      </button>
+
+      {paginationItems?.map((item, index) => {
+        if (item === '...') {
+          return (
+            <span key={`dots-${index}`} className="px-3 py-1 text-text-secondary">
               ...
             </span>
-          ) : (
-            <button
-              key={page}
-              onClick={() => onPageChange(page)}
-              className={`px-3.5 py-2 rounded-md transition-colors ${
-                currentPage === page
-                  ? 'bg-primary text-white'
-                  : 'hover:bg-primary/10'
-              }`}
-            >
-              {page}
-            </button>
-          )
-        ))}
+          );
+        }
 
-        <button
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="p-2.5 rounded-md hover:bg-primary/10 disabled:opacity-40 disabled:hover:bg-transparent"
-          aria-label="Próxima página"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
-      </div>
+        return (
+          <button
+            key={item}
+            onClick={() => onPageChange(+item)}
+            className={`px-3 py-1 rounded-lg transition-colors ${
+              currentPage === item
+                ? 'bg-primary text-white'
+                : 'bg-background hover:bg-primary/10'
+            }`}
+          >
+            {item}
+          </button>
+        );
+      })}
+
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="p-2 rounded-lg bg-background hover:bg-primary/10 disabled:opacity-50 disabled:hover:bg-background transition-colors"
+        aria-label="Próxima página"
+      >
+        <ChevronRight className="h-5 w-5" />
+      </button>
+
+      <button
+        onClick={() => onPageChange(totalPages)}
+        disabled={currentPage === totalPages}
+        className="p-2 rounded-lg bg-background hover:bg-primary/10 disabled:opacity-50 disabled:hover:bg-background transition-colors"
+        aria-label="Última página"
+      >
+        <ChevronsRight className="h-5 w-5" />
+      </button>
     </div>
   );
 }

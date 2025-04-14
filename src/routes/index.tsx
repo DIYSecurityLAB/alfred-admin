@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AdminLayout } from '../components/layouts/AdminLayout';
 import { Dashboard } from '../pages/Dashboard';
 import { Coupons } from '../pages/Coupons';
-import { Sales } from '../pages/Sales';
+import { Reports } from '../pages/Reports';
 import { Users } from '../pages/Users';
 import { Settings } from '../pages/Settings';
 //import { Login } from '../pages/Login';
@@ -20,7 +20,7 @@ export function AppRoutes() {
         <Route path="/" element={<Navigate to="/coupons" replace />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/coupons/*" element={<Coupons />} />
-        <Route path="/sales/*" element={<Sales />} />
+        <Route path="/sales/*" element={<Reports />} />
         <Route path="/users/*" element={<Users />} />
         <Route path="/settings" element={<Settings />} />
       </Route>

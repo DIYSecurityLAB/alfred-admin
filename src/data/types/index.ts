@@ -99,56 +99,67 @@ export interface Settings {
   emailNotifications: boolean;
 }
 
-export enum TransactionStatus {
-  pending = 'pending',
-  paid = 'paid',
-  canceled = 'canceled',
-  review = 'review',
-  expired = 'expired',
-  refunded = 'refunded',
-  complete = 'complete'
-}
+export type PaymentMethod = 
+  | 'PIX' 
+  | 'CREDIT_CARD' 
+  | 'CRYPTO' 
+  | 'CARD'
+  | 'BANK_TRANSFER'
+  | 'WISE'
+  | 'TICKET'
+  | 'USDT'
+  | 'SWIFT'
+  | 'PAYPAL';
 
-export enum PaymentMethod {
-  PIX = 'PIX',
-  CREDIT_CARD = 'CREDIT_CARD',
-  CRYPTO = 'CRYPTO',
-  BANK_TRANSFER = 'BANK_TRANSFER'
-}
+export type PaymentStatus = 
+  | 'PENDING' 
+  | 'COMPLETED' 
+  | 'CANCELLED' 
+  | 'FAILED'
+  | 'pending'
+  | 'paid'
+  | 'canceled'
+  | 'review'
+  | 'expired'
+  | 'refunded'
+  | 'complete';
 
-export enum CryptoType {
-  BTC = 'BTC',
-  ETH = 'ETH',
-  USDT = 'USDT'
-}
-
-export interface Transaction {
+export interface Deposit {
   id: string;
   transactionId: string;
-  valorBRL: number;
-  valorBTC: number;
+  phone: string;
+  coldWallet: string;
   network: string;
   paymentMethod: PaymentMethod;
-  coldWallet: string;
-  telefone: string;
-  cpfCnpj?: string;
-  cupom?: string;
-  qrCodeUrl?: string;
-  qrCodePaste?: string;
-  status: TransactionStatus;
-  cryptoType?: CryptoType;
-  userId?: string;
-  username?: string;
-  createdAt: string;
-  updatedAt: string;
+  documentId: string | null;
+  transactionDate: string;
+  cupom: string | null;
+  valueBRL: number;
+  valueBTC: number;
+  status: PaymentStatus;
+  username: string | null;
 }
 
-export interface TransactionFilter {
-  transactionId?: string;
-  status?: TransactionStatus | 'all';
-  paymentMethod?: PaymentMethod | 'all';
-  dateRange?: {
-    start: string;
-    end: string;
-  };
+export interface DepositReport extends Deposit {
+  discountType?: 'percentage' | 'fixed';
+  discountValue?: number;
+  valueCollected?: number;
 }
+
+export interface DepositFilter {
+  status?: PaymentStatus;
+  paymentMethod?: PaymentMethod;
+  startAt?: string;
+  endAt?: string;
+  username?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+
