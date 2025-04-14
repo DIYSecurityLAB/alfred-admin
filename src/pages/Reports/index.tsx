@@ -9,6 +9,7 @@ import { Pagination } from '../../components/Pagination';
 
 export function Reports() {
   const [isExporting, setIsExporting] = useState(false);
+  const [exportProgress, setExportProgress] = useState<string>('');
   const {
     reports,
     totalReports,
@@ -34,10 +35,25 @@ export function Reports() {
 
   const handleExportToExcel = async () => {
     setIsExporting(true);
+    setExportProgress('Iniciando exportação...');
     try {
-      return await exportToExcel(); // Agora retorna o resultado booleano
+      // Adicionar mensagem de espera
+      setTimeout(() => {
+        if (isExporting) setExportProgress('Buscando dados do servidor...');
+      }, 1000);
+      
+      setTimeout(() => {
+        if (isExporting) setExportProgress('Processando dados para exportação...');
+      }, 5000);
+      
+      setTimeout(() => {
+        if (isExporting) setExportProgress('Gerando arquivo Excel...');
+      }, 10000);
+      
+      return await exportToExcel();
     } finally {
       setIsExporting(false);
+      setExportProgress('');
     }
   };
 
@@ -54,6 +70,7 @@ export function Reports() {
         onClearFilters={clearFilters}
         onExportToExcel={handleExportToExcel}
         isExporting={isExporting}
+        exportProgress={exportProgress}
       />
 
       {error && (

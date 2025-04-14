@@ -61,6 +61,8 @@ export function useReports() {
     try {
       setError(null);
       
+      console.log("Iniciando exportação para Excel...");
+      
       // Buscar todos os dados (sem paginação)
       const result = await reportRepository.getAll();
       
@@ -69,10 +71,11 @@ export function useReports() {
       }
       
       const data = result.value;
+      console.log(`Processando ${data?.length ?? 0} registros para exportação...`);
       
       // Preparar dados para Excel
       const worksheet = XLSX.utils.json_to_sheet(
-        data.map(item => ({
+        (data ?? []).map(item => ({
           'ID': item.id,
           'ID Transação': item.transactionId,
           'Usuário': item.username || 'N/A',
@@ -90,6 +93,7 @@ export function useReports() {
         }))
       );
       
+      console.log("Criando arquivo Excel...");
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Relatórios');
       
@@ -97,8 +101,10 @@ export function useReports() {
       const fileName = `relatorio_depositos_${format(new Date(), 'dd-MM-yyyy')}.xlsx`;
       XLSX.writeFile(workbook, fileName);
       
+      console.log("Exportação concluída com sucesso!");
       return true;
     } catch (error) {
+      console.error("Erro durante exportação:", error);
       setError(`Erro ao exportar para Excel: ${(error as Error).message}`);
       return false;
     }

@@ -133,11 +133,11 @@ export interface Deposit {
   paymentMethod: PaymentMethod;
   documentId: string | null;
   transactionDate: string;
-  cupom: string | null;
+  cupom: string | null | undefined; // Atualizado para aceitar undefined
   valueBRL: number;
   valueBTC: number;
   status: PaymentStatus;
-  username: string | null;
+  username: string | null | undefined; // Atualizado para aceitar undefined
 }
 
 export interface DepositReport extends Deposit {

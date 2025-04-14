@@ -72,7 +72,7 @@ export class RemoteDataSource {
     try {
       const { data } = await this.api.get<any>(url, {
         params,
-        timeout: 500000,
+        timeout: 1800000, // Aumentado para 30 minutos (1.800.000 ms)
       });
 
       const serialized = model.safeParse(data);
@@ -96,7 +96,7 @@ export class RemoteDataSource {
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
     try {
       const { data } = await this.api.post<any>(url, body, {
-        timeout: 100000,
+        timeout: 300000, // Aumentado para 5 minutos (300.000 ms)
       });
 
       const serialized = model.safeParse(data);
@@ -120,7 +120,7 @@ export class RemoteDataSource {
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
     try {
       const { data } = await this.api.patch<any>(url, body, {
-        timeout: 100000,
+        timeout: 300000, // Aumentado para 5 minutos (300.000 ms)
       });
 
       const serialized = model.safeParse(data);
@@ -143,7 +143,7 @@ export class RemoteDataSource {
   }: RemoteDeleteReq<Response>): RemoteRequestRes<Response> {
     try {
       const { data } = await this.api.delete<any>(url, {
-        timeout: 100000,
+        timeout: 300000, // Aumentado para 5 minutos (300.000 ms)
       });
 
       // Se a resposta for vazia, considere um objeto vazio para validação

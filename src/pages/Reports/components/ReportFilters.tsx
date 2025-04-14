@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, FilterX, Calendar, Download } from 'lucide-react';
+import { Search, FilterX, Calendar, Download, Loader } from 'lucide-react';
 import type { DepositFilter } from '../../../data/types';
 
 interface ReportFiltersProps {
@@ -8,6 +8,7 @@ interface ReportFiltersProps {
   onClearFilters: () => void;
   onExportToExcel: () => Promise<boolean>;
   isExporting?: boolean;
+  exportProgress?: string;
 }
 
 export function ReportFilters({ 
@@ -15,7 +16,8 @@ export function ReportFilters({
   onFilterChange, 
   onClearFilters,
   onExportToExcel,
-  isExporting = false
+  isExporting = false,
+  exportProgress = ''
 }: ReportFiltersProps) {
   const [startDate, setStartDate] = React.useState<string>(filters.startAt || '');
   const [endDate, setEndDate] = React.useState<string>(filters.endAt || '');
@@ -114,11 +116,22 @@ export function ReportFilters({
           <button
             onClick={handleExportClick}
             disabled={isExporting}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-white hover:bg-primary-dark transition-colors disabled:opacity-70"
             title="Exportar para Excel"
           >
-            <Download className="h-5 w-5" />
-            <span className="hidden md:inline">{isExporting ? 'Exportando...' : 'Exportar Excel'}</span>
+            {isExporting ? (
+              <>
+                <Loader className="h-5 w-5 animate-spin" />
+                <span className="hidden md:inline">
+                  {exportProgress || 'Exportando...'}
+                </span>
+              </>
+            ) : (
+              <>
+                <Download className="h-5 w-5" />
+                <span className="hidden md:inline">Exportar Excel</span>
+              </>
+            )}
           </button>
         </div>
 
@@ -151,6 +164,12 @@ export function ReportFilters({
           </div>
         </div>
       </div>
+      
+      {isExporting && (
+        <div className="mt-4 text-sm text-text-secondary">
+          <p>Isso pode levar algum tempo se houver muitos registros. Por favor, aguarde...</p>
+        </div>
+      )}
     </div>
   );
 }

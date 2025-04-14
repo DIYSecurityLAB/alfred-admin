@@ -51,7 +51,27 @@ export class ReportRepositoryImpl implements ReportRepository {
         return Result.Error({ code: 'SERIALIZATION' });
       }
 
-      return Result.Success(result);
+      // Garantir que os tipos correspondam à interface DepositReport
+      const normalizedData: DepositReport[] = result.map(item => ({
+        id: item.id,
+        transactionId: item.transactionId,
+        phone: item.phone,
+        coldWallet: item.coldWallet,
+        network: item.network,
+        paymentMethod: item.paymentMethod,
+        documentId: item.documentId,
+        transactionDate: item.transactionDate,
+        cupom: item.cupom || null, // Normalizar para evitar undefined
+        valueBRL: item.valueBRL,
+        valueBTC: item.valueBTC,
+        status: item.status,
+        username: item.username || null, // Normalizar para evitar undefined
+        discountType: item.discountType,
+        discountValue: item.discountValue,
+        valueCollected: item.valueCollected
+      }));
+
+      return Result.Success(normalizedData);
     } catch (error) {
       console.error('Error getting all reports:', error);
       // Corrigindo o tratamento de erro
@@ -82,9 +102,29 @@ export class ReportRepositoryImpl implements ReportRepository {
         return Result.Error({ code: 'SERIALIZATION' });
       }
 
+      // Normalizar os dados para garantir compatibilidade de tipos
+      const normalizedData: DepositReport[] = (result.data || []).map(item => ({
+        id: item.id,
+        transactionId: item.transactionId,
+        phone: item.phone,
+        coldWallet: item.coldWallet,
+        network: item.network,
+        paymentMethod: item.paymentMethod,
+        documentId: item.documentId,
+        transactionDate: item.transactionDate,
+        cupom: item.cupom || null, // Normalizar para evitar undefined
+        valueBRL: item.valueBRL,
+        valueBTC: item.valueBTC,
+        status: item.status,
+        username: item.username || null, // Normalizar para evitar undefined
+        discountType: item.discountType,
+        discountValue: item.discountValue,
+        valueCollected: item.valueCollected
+      }));
+
       // Garantindo que o resultado corresponda ao tipo esperado
       const paginatedResponse: PaginatedResponse<DepositReport> = {
-        data: result.data || [],
+        data: normalizedData,
         total: result.total || 0,
         page: result.page || 1,
         pageSize: result.pageSize || 10,
@@ -110,7 +150,27 @@ export class ReportRepositoryImpl implements ReportRepository {
         return Result.Error({ code: 'SERIALIZATION' });
       }
 
-      return Result.Success(result);
+      // Normalizar o resultado para garantir compatibilidade com a interface
+      const normalizedData: DepositReport = {
+        id: result.id,
+        transactionId: result.transactionId,
+        phone: result.phone,
+        coldWallet: result.coldWallet,
+        network: result.network,
+        paymentMethod: result.paymentMethod,
+        documentId: result.documentId,
+        transactionDate: result.transactionDate,
+        cupom: result.cupom || null, // Normalizar para evitar undefined
+        valueBRL: result.valueBRL,
+        valueBTC: result.valueBTC,
+        status: result.status,
+        username: result.username || null, // Normalizar para evitar undefined
+        discountType: result.discountType,
+        discountValue: result.discountValue,
+        valueCollected: result.valueCollected
+      };
+
+      return Result.Success(normalizedData);
     } catch (error) {
       console.error('Error getting report by id:', error);
       // Corrigindo o tratamento de erro
