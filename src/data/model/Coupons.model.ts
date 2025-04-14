@@ -64,6 +64,7 @@ export type ToggledCouponStatusModel = z.infer<typeof ToggledCouponStatusModel>;
 export const FilterCouponsModel = z.object({
   code: z.string().optional(),
   status: z.enum(['all', 'active', 'inactive']).optional(),
+  sort: z.enum(['none', 'most-used', 'least-used', 'newest', 'oldest']).optional(),
 });
 export type FilterCouponsModel = z.infer<typeof FilterCouponsModel>;
 

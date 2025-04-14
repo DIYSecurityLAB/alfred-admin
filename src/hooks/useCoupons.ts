@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { couponRepository } from '../data/repositories/Coupon.repository';
 import { FilterCouponsModel } from '../data/model/Coupons.model';
 import type { Coupon, CouponFilter, CreateCouponDTO, UpdateCouponDTO } from '../data/types';
+import { debounce } from 'lodash';
 
 // Mapeia os filtros da UI para o modelo do repositório
 const mapUiFilterToModel = (filter: CouponFilter): FilterCouponsModel => ({
@@ -16,6 +17,7 @@ export function useCoupons() {
   const [filters, setFilters] = useState<CouponFilter>({
     code: '',
     status: 'all',
+    sort: 'none',
   });
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -25,36 +27,86 @@ export function useCoupons() {
   
   const queryClient = useQueryClient();
 
-  // Buscar cupons
-  const { data, isLoading } = useQuery({
-    queryKey: ['coupons', page, perPage, filters],
+  // Hook para buscar todos os cupons
+  const { data: allCouponsData, isLoading } = useQuery({
+    queryKey: ['allCoupons'],
     queryFn: async () => {
       try {
         const result = await couponRepository.listAll({
-          page,
-          limit: perPage,
-          filters: {
-            code: filters.code || undefined,
-            status: filters.status
-          }
+          page: 1,
+          limit: 1000, // Buscar todos os cupons de uma vez
+          filters: {} // Sem filtros do lado do servidor
         });
         
         if (!result.isSuccess) {
           throw new Error(result.error?.code || 'Erro desconhecido');
         }
         
-        // Calcular o total com base no comprimento do array de dados
-        // ou usar um valor padrão se a API não enviar um valor total
-        return {
-          coupons: result.value?.data || [],
-          total: result.value?.data?.length || 0
-        };
+        return result.value?.data || [];
       } catch (err) {
         setError('Erro ao carregar cupons');
-        return { coupons: [], total: 0 };
+        return [];
       }
     },
   });
+
+  // Filtrar e ordenar cupons localmente
+  const filteredCoupons = useCallback(() => {
+    if (!allCouponsData) return [];
+
+    let result = [...allCouponsData];
+
+    // Filtrar por código (case insensitive)
+    if (filters.code) {
+      result = result.filter(coupon => 
+        coupon.code.toLowerCase().includes(filters.code.toLowerCase())
+      );
+    }
+
+    // Filtrar por status
+    if (filters.status !== 'all') {
+      result = result.filter(coupon => 
+        filters.status === 'active' ? coupon.isActive : !coupon.isActive
+      );
+    }
+
+    // Ordenar 
+    if (filters.sort !== 'none') {
+      result.sort((a, b) => {
+        switch (filters.sort) {
+          case 'most-used':
+            return b.usedCount - a.usedCount;
+          case 'least-used':
+            return a.usedCount - b.usedCount;
+          case 'newest':
+            return new Date(b.validFrom).getTime() - new Date(a.validFrom).getTime();
+          case 'oldest':
+            return new Date(a.validFrom).getTime() - new Date(b.validFrom).getTime();
+          default:
+            return 0;
+        }
+      });
+    }
+
+    return result;
+  }, [allCouponsData, filters]);
+
+  // Obter cupons para a página atual
+  const paginatedCoupons = useCallback(() => {
+    const filtered = filteredCoupons();
+    const startIndex = (page - 1) * perPage;
+    return filtered.slice(startIndex, startIndex + perPage);
+  }, [filteredCoupons, page, perPage]);
+
+  // Debounce para alterações de filtro
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedFilterChange = useCallback(
+    debounce((newFilters: Partial<CouponFilter>) => {
+      setFilters(prev => ({ ...prev, ...newFilters }));
+      setPage(1);
+    }, 300),
+    []
+  );
 
   // Criar cupom
   const createMutation = useMutation({
@@ -69,7 +121,7 @@ export function useCoupons() {
       return result.value;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['coupons'] });
+      queryClient.invalidateQueries({ queryKey: ['allCoupons'] });
       setIsCreateModalOpen(false);
     },
     onError: (error: Error) => {
@@ -90,7 +142,7 @@ export function useCoupons() {
       return result.value;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['coupons'] });
+      queryClient.invalidateQueries({ queryKey: ['allCoupons'] });
       setIsEditModalOpen(false);
     },
     onError: (error: Error) => {
@@ -113,14 +165,12 @@ export function useCoupons() {
       return result.value;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['coupons'] });
+      queryClient.invalidateQueries({ queryKey: ['allCoupons'] });
     },
     onError: (error: Error) => {
       setError(`Erro ao alterar status do cupom: ${error.message}`);
     }
   });
-
- 
 
   // Validate coupon (nova função)
   const validateCoupon = async (code: string) => {
@@ -144,8 +194,7 @@ export function useCoupons() {
   const handlePageChange = (newPage: number) => setPage(newPage);
   
   const handleFilterChange = (newFilters: Partial<CouponFilter>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
-    setPage(1);
+    debouncedFilterChange(newFilters);
   };
 
   const openCreateModal = () => setIsCreateModalOpen(true);
@@ -160,13 +209,11 @@ export function useCoupons() {
     setIsDetailsModalOpen(true);
   };
   
-  
-
   const clearError = () => setError(null);
 
   return {
-    coupons: data?.coupons || [],
-    totalCoupons: data?.total || 0,
+    coupons: paginatedCoupons(),
+    totalCoupons: filteredCoupons().length,
     page,
     perPage,
     filters,

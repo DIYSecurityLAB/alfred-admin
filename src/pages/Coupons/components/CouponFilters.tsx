@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, FilterX } from 'lucide-react';
+import { Search, FilterX, SortAsc } from 'lucide-react';
 import type { CouponFilter } from '../../../data/types';
 
 interface CouponFiltersProps {
@@ -12,6 +12,7 @@ export function CouponFilters({ filters, onFilterChange }: CouponFiltersProps) {
     onFilterChange({
       code: '',
       status: 'all',
+      sort: 'none',
     });
   };
 
@@ -39,6 +40,23 @@ export function CouponFilters({ filters, onFilterChange }: CouponFiltersProps) {
             <option value="active">Ativos</option>
             <option value="inactive">Inativos</option>
           </select>
+        </div>
+
+        <div className="w-full md:w-56">
+          <div className="relative">
+            <SortAsc className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-text-secondary" />
+            <select
+              value={filters.sort}
+              onChange={(e) => onFilterChange({ sort: e.target.value as CouponFilter['sort'] })}
+              className="w-full pl-10 px-4 py-2.5 bg-background rounded-lg border border-surface focus:outline-none focus:border-primary"
+            >
+              <option value="none">Ordenar por</option>
+              <option value="most-used">Mais utilizados</option>
+              <option value="least-used">Menos utilizados</option>
+              <option value="newest">Mais recentes</option>
+              <option value="oldest">Mais antigos</option>
+            </select>
+          </div>
         </div>
 
         <button
