@@ -1,62 +1,78 @@
 import React from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { settingsRepository } from '../../data/repositories/settings.repository';
-import type { Settings } from '../../data/types';
+import { AlertCircle, X } from 'lucide-react';
+import { useConfig } from '../../hooks/useConfig';
 
-const settingsSchema = z.object({
-  maintenanceMode: z.boolean(),
-  enabledPaymentMethods: z.array(
-    z.object({
-      method: z.string(),
-      enabled: z.boolean(),
-    })
-  ),
-  emailNotifications: z.boolean(),
+const configSchema = z.object({
+  isMaintenanceMode: z.boolean(),
+  isSwapPegActive: z.boolean()
 });
 
-type SettingsFormData = z.infer<typeof settingsSchema>;
+type ConfigFormData = z.infer<typeof configSchema>;
 
 export function Settings() {
-  const { data: settings, isLoading } = useQuery({
-    queryKey: ['settings'],
-    queryFn: () => settingsRepository.getSettings(),
+  const { config, isLoading, error, updateConfig, isUpdating, clearError } = useConfig();
+
+  const { register, handleSubmit, formState: { errors, isDirty } } = useForm<ConfigFormData>({
+    resolver: zodResolver(configSchema),
+    defaultValues: {
+      isMaintenanceMode: config?.isMaintenanceMode || false,
+      isSwapPegActive: config?.isSwapPegActive || false
+    },
+    values: {
+      isMaintenanceMode: config?.isMaintenanceMode || false,
+      isSwapPegActive: config?.isSwapPegActive || false
+    }
   });
 
-  const { register, handleSubmit, formState: { errors, isDirty } } = useForm<SettingsFormData>({
-    resolver: zodResolver(settingsSchema),
-    defaultValues: settings,
-  });
-
-  const mutation = useMutation({
-    mutationFn: (data: Partial<Settings>) => settingsRepository.updateSettings(data),
-  });
+  const onSubmit = async (data: ConfigFormData) => {
+    await updateConfig(data);
+  };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
+      <div className="flex items-center justify-center h-[500px]">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary mb-4"></div>
+          <p className="text-text-secondary">Carregando configurações...</p>
+        </div>
       </div>
     );
   }
 
-  const onSubmit = async (data: SettingsFormData) => {
-    await mutation.mutateAsync(data);
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-3xl font-bold">Configurações</h1>
+        <div>
+          <h1 className="text-3xl font-bold">Configurações</h1>
+          <p className="text-text-secondary mt-1">Gerencie as configurações do sistema</p>
+        </div>
       </div>
+
+      {/* Mensagem de erro */}
+      {error && (
+        <div className="bg-red-900/20 border border-red-800/30 text-red-400 px-4 py-3 rounded-lg flex items-start">
+          <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="font-medium">Erro</p>
+            <p>{error}</p>
+          </div>
+          <button 
+            onClick={clearError}
+            className="ml-auto text-red-500 hover:text-red-400"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-surface rounded-lg p-6"
+        className="bg-surface rounded-lg p-6 shadow-sm"
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
@@ -72,7 +88,7 @@ export function Settings() {
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  {...register('maintenanceMode')}
+                  {...register('isMaintenanceMode')}
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-background peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
@@ -81,15 +97,15 @@ export function Settings() {
 
             <div className="flex items-center justify-between p-4 bg-background rounded-lg">
               <div>
-                <h3 className="font-medium">Notificações por Email</h3>
+                <h3 className="font-medium">Ativar Swap Peg</h3>
                 <p className="text-text-secondary text-sm">
-                  Ative para receber notificações por email
+                  Ativa ou desativa a função de swap peg no sistema
                 </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  {...register('emailNotifications')}
+                  {...register('isSwapPegActive')}
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-background peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
@@ -97,35 +113,13 @@ export function Settings() {
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Métodos de Pagamento</h2>
-            {settings?.enabledPaymentMethods.map((method, index) => (
-              <div
-                key={method.method}
-                className="flex items-center justify-between p-4 bg-background rounded-lg"
-              >
-                <div>
-                  <h3 className="font-medium">{method.method}</h3>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    {...register(`enabledPaymentMethods.${index}.enabled`)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-background peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                </label>
-              </div>
-            ))}
-          </div>
-
           <div className="flex justify-end">
             <button
               type="submit"
-              disabled={!isDirty || mutation.isPending}
+              disabled={!isDirty || isUpdating}
               className="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {mutation.isPending ? 'Salvando...' : 'Salvar Alterações'}
+              {isUpdating ? 'Salvando...' : 'Salvar Alterações'}
             </button>
           </div>
         </form>
