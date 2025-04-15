@@ -1,13 +1,12 @@
-import React from 'react';
-import { AnimatePresence } from 'framer-motion';
-import { Plus, AlertCircle, X } from 'lucide-react';
-import { useCoupons } from '../../hooks/useCoupons';
-import { CouponTable } from './components/CouponTable';
-import { CouponCards } from './components/CouponCards';
-import { CouponFilters } from './components/CouponFilters';
-import { CouponModal } from './components/CouponModal';
-import { CouponDetailsModal } from './components/CouponDetailsModal';
-import { Pagination } from '../../components/Pagination';
+import { AnimatePresence } from "framer-motion";
+import { Plus, AlertCircle, X } from "lucide-react";
+import { useCoupons } from "../../hooks/useCoupons";
+import { CouponTable } from "./components/CouponTable";
+import { CouponCards } from "./components/CouponCards";
+import { CouponFilters } from "./components/CouponFilters";
+import { CouponModal } from "./components/CouponModal";
+import { CouponDetailsModal } from "./components/CouponDetailsModal";
+import { Pagination } from "../../components/Pagination";
 
 export function Coupons() {
   const {
@@ -50,11 +49,12 @@ export function Coupons() {
 
   return (
     <div className="space-y-6">
-      {/* Cabeçalho */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold">Cupons</h1>
-          <p className="text-text-secondary mt-1">Gerencie todos os cupons de desconto</p>
+          <p className="text-text-secondary mt-1">
+            Gerencie todos os cupons de desconto
+          </p>
         </div>
         <button
           onClick={openCreateModal}
@@ -65,7 +65,6 @@ export function Coupons() {
         </button>
       </div>
 
-      {/* Mensagem de erro */}
       {error && (
         <div className="bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start">
           <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
@@ -73,7 +72,7 @@ export function Coupons() {
             <p className="font-medium">Erro</p>
             <p>{error}</p>
           </div>
-          <button 
+          <button
             onClick={clearError}
             className="ml-auto text-red-500 hover:text-red-700"
           >
@@ -82,25 +81,20 @@ export function Coupons() {
         </div>
       )}
 
-      {/* Conteúdo Principal */}
-      <div className="bg-surface rounded-xl p-6 shadow-sm">
-        {/* Filtros */}
-        <CouponFilters
-          filters={filters}
-          onFilterChange={handleFilterChange}
-        />
-
-        {/* Mensagem quando não há cupons */}
+      <div className="bg-gray-50 rounded-xl p-6 shadow-sm">
+        <CouponFilters filters={filters} onFilterChange={handleFilterChange} />
         {coupons.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16">
-            <div className="bg-primary/10 p-3 rounded-full mb-4">
+            <div className="bg-gray/10 p-3 rounded-full mb-4">
               <AlertCircle className="h-8 w-8 text-primary" />
             </div>
-            <h3 className="text-xl font-medium mb-2">Nenhum cupom encontrado</h3>
-            <p className="text-text-secondary text-center max-w-md mb-6">
-              {filters.code || filters.status !== 'all' 
-                ? 'Nenhum cupom corresponde aos filtros selecionados. Tente ajustar seus filtros.'
-                : 'Você ainda não criou nenhum cupom. Comece criando seu primeiro cupom de desconto!'}
+            <h3 className="text-xl font-medium mb-2">
+              Nenhum cupom encontrado
+            </h3>
+            <p className="text-white text-center max-w-md mb-6">
+              {filters.code || filters.status !== "all"
+                ? "Nenhum cupom corresponde aos filtros selecionados. Tente ajustar seus filtros."
+                : "Você ainda não criou nenhum cupom. Comece criando seu primeiro cupom de desconto!"}
             </p>
             <button
               onClick={openCreateModal}
@@ -112,7 +106,6 @@ export function Coupons() {
           </div>
         ) : (
           <>
-            {/* Tabela Desktop */}
             <div className="hidden lg:block mb-6">
               <CouponTable
                 coupons={coupons}
@@ -121,8 +114,6 @@ export function Coupons() {
                 onToggleStatus={toggleCouponStatus}
               />
             </div>
-
-            {/* Cards Mobile */}
             <div className="lg:hidden mb-6">
               <CouponCards
                 coupons={coupons}
@@ -131,22 +122,22 @@ export function Coupons() {
                 onToggleStatus={toggleCouponStatus}
               />
             </div>
-
-            {/* Paginação */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-text-secondary">Mostrar</span>
                 <select
                   value={perPage}
                   onChange={(e) => setPerPage(Number(e.target.value))}
-                  className="bg-background border border-surface rounded-md px-2 py-1 text-sm"
+                  className="border rounded-md px-2 py-1 text-sm"
                 >
                   <option value={5}>5</option>
                   <option value={10}>10</option>
                   <option value={20}>20</option>
                   <option value={50}>50</option>
                 </select>
-                <span className="text-sm text-text-secondary">itens por página</span>
+                <span className="text-sm text-text-secondary">
+                  itens por página
+                </span>
               </div>
 
               <Pagination
@@ -159,8 +150,6 @@ export function Coupons() {
           </>
         )}
       </div>
-
-      {/* Modais */}
       <AnimatePresence mode="wait">
         {isCreateModalOpen && (
           <CouponModal
@@ -171,7 +160,6 @@ export function Coupons() {
             }}
           />
         )}
-
         {isEditModalOpen && selectedCoupon && (
           <CouponModal
             key="edit-modal"
@@ -182,7 +170,6 @@ export function Coupons() {
             }}
           />
         )}
-
         {isDetailsModalOpen && selectedCoupon && (
           <CouponDetailsModal
             key="details-modal"

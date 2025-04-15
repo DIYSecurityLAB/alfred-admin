@@ -1,6 +1,6 @@
 export function DefaultLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-background text-text-primary">
+    <div className="min-h-screen bg-gray-100">
       {children}
     </div>
   );

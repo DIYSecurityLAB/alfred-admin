@@ -1,4 +1,3 @@
-import React from 'react';
 import { Search, FilterX, SortAsc } from 'lucide-react';
 import type { CouponFilter } from '../../../data/types';
 
@@ -17,7 +16,7 @@ export function CouponFilters({ filters, onFilterChange }: CouponFiltersProps) {
   };
 
   return (
-    <div className="bg-surface rounded-lg p-4 mb-6 shadow-sm">
+    <div className="bg-gray-100 rounded-lg p-4 mb-6 shadow-sm">
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-text-secondary" />
@@ -26,7 +25,7 @@ export function CouponFilters({ filters, onFilterChange }: CouponFiltersProps) {
             placeholder="Buscar por código..."
             value={filters.code}
             onChange={(e) => onFilterChange({ code: e.target.value })}
-            className="w-full pl-10 pr-4 py-2.5 bg-background rounded-lg border border-surface focus:outline-none focus:border-primary"
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 rounded-lg border focus:outline-none focus:border-primary"
           />
         </div>
 
@@ -34,7 +33,7 @@ export function CouponFilters({ filters, onFilterChange }: CouponFiltersProps) {
           <select
             value={filters.status}
             onChange={(e) => onFilterChange({ status: e.target.value as CouponFilter['status'] })}
-            className="w-full px-4 py-2.5 bg-background rounded-lg border border-surface focus:outline-none focus:border-primary"
+            className="w-full px-4 py-2.5 bg-gray-50 rounded-lg border focus:outline-none focus:border-primary"
           >
             <option value="all">Todos os status</option>
             <option value="active">Ativos</option>
@@ -48,7 +47,7 @@ export function CouponFilters({ filters, onFilterChange }: CouponFiltersProps) {
             <select
               value={filters.sort}
               onChange={(e) => onFilterChange({ sort: e.target.value as CouponFilter['sort'] })}
-              className="w-full pl-10 px-4 py-2.5 bg-background rounded-lg border border-surface focus:outline-none focus:border-primary"
+              className="w-full pl-10 px-4 py-2.5 bg-gray-50 rounded-lg border focus:outline-none focus:border-primary"
             >
               <option value="none">Ordenar por</option>
               <option value="most-used">Mais utilizados</option>
@@ -61,7 +60,7 @@ export function CouponFilters({ filters, onFilterChange }: CouponFiltersProps) {
 
         <button
           onClick={handleClearFilters}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-background hover:bg-primary/10 transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-50 hover:bg-primary/10 transition-colors"
           title="Limpar filtros"
         >
           <FilterX className="h-5 w-5" />
