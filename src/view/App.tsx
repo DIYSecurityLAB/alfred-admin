@@ -1,6 +1,5 @@
-import React from 'react';
-import { AppRoutes } from './routes';
-import './index.css'; // Importação do CSS global
+import { AppRoutes } from '../routes';
+import './styles/index.css';
 
 function App() {
   return (
