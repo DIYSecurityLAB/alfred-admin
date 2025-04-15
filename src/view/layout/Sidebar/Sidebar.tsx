@@ -1,10 +1,10 @@
 import classNames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
-// import Logo from "../../assets/logo/Logo.svg";
 import { ArrowLeft, ChevronDown, LucideIcon } from "lucide-react";
 import { ROUTES } from "@/view/routes/Routes";
 import { SidebarLinkGroup } from "./SidebarLinkGroup";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Item = {
   type: "link";
@@ -81,16 +81,22 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
     <aside
       ref={sidebar}
       className={classNames(
-        "absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-white duration-300 ease-linear",
+        "absolute left-0 top-0 z-9999 flex h-screen flex-col overflow-y-hidden",
+        "w-72 bg-gradient-to-b from-blue-900 to-blue-800 text-white shadow-lg",
+        "transition-all duration-300 ease-in-out",
         "lg:static lg:translate-x-0",
-        sidebarOpen && "translate-x-0",
-        !sidebarOpen && "-translate-x-full"
+        sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >
-      <div className="flex items-center justify-between gap-2 px-6 pt-6 lg:pt-8">
-        <NavLink to={ROUTES.home} className="text-black text-xl font-bold">
-          {/* <img src={Logo} alt="Logo" /> */}
-          ALFRED P2P
+      <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-blue-700 lg:pt-8">
+        <NavLink
+          to={ROUTES.home}
+          className="text-white text-xl font-bold flex items-center gap-3"
+        >
+          <div className="h-10 w-10 rounded-lg bg-white flex items-center justify-center">
+            <span className="text-blue-900 text-lg font-bold">A</span>
+          </div>
+          <span className="tracking-wide">ALFRED P2P</span>
         </NavLink>
 
         <button
@@ -98,18 +104,20 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
           onClick={() => setSidebarOpen(!sidebarOpen)}
           aria-controls="sidebar"
           aria-expanded={sidebarOpen}
-          className="block lg:hidden text-black"
+          className="block lg:hidden text-white hover:text-blue-200 transition-colors"
         >
-          <ArrowLeft size={24} />
+          <ArrowLeft size={20} />
         </button>
       </div>
 
-      <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear pt-2">
-        <nav className="py-4 px-4 lg:px-6">
+      <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear py-4">
+        <nav className="px-4 lg:px-6">
           <div>
-            <h3 className="text-sm font-semibold text-black">MENU</h3>
+            <h3 className="text-xs font-semibold text-blue-300 uppercase tracking-wider ml-2 mb-4">
+              MENU
+            </h3>
 
-            <ul className="flex flex-col gap-1.5">
+            <ul className="flex flex-col gap-2">
               {items.map((item) => {
                 if (item.type === "link") {
                   const Icon = item.icon;
@@ -119,15 +127,41 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
                         to={item.path}
                         className={({ isActive }) =>
                           classNames(
-                            "group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium duration-300 ease-in-out",
+                            "group relative flex items-center gap-3 rounded-lg py-2.5 px-4 font-medium",
+                            "transition-all duration-200 ease-in-out",
                             isActive
-                              ? "bg-blue-500 text-white"
-                              : "text-black hover:bg-gray-100 hover:text-blue-500"
+                              ? "bg-white/10 text-white backdrop-blur-sm shadow-md"
+                              : "text-blue-100 hover:bg-white/5 hover:text-white"
                           )
                         }
                       >
-                        <Icon size={20} />
-                        {item.label}
+                        {({ isActive }) => (
+                          <>
+                            <span
+                              className={classNames(
+                                "flex items-center justify-center p-1.5 rounded-md",
+                                isActive
+                                  ? "bg-blue-500 text-white"
+                                  : "text-blue-200 group-hover:text-white"
+                              )}
+                            >
+                              <Icon size={18} />
+                            </span>
+                            <span className="font-medium text-sm">
+                              {item.label}
+                            </span>
+                            {isActive && (
+                              <motion.div
+                                layoutId="activeIndicator"
+                                className="absolute left-0 w-1 h-8 bg-white rounded-r-full"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                              />
+                            )}
+                          </>
+                        )}
                       </NavLink>
                     </li>
                   );
@@ -149,48 +183,69 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
                               else setSidebarExpanded(true);
                             }}
                             className={classNames(
-                              "w-full text-left flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out",
+                              "w-full text-left flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium",
+                              "transition-all duration-200 ease-in-out",
                               item.activeCondition
-                                ? "bg-blue-500 text-white"
-                                : "text-black hover:bg-gray-100 hover:text-blue-500"
+                                ? "bg-white/10 text-white backdrop-blur-sm shadow-md"
+                                : "text-blue-100 hover:bg-white/5 hover:text-white"
                             )}
                           >
-                            <Icon size={20} />
-                            {item.label}
-                            <ChevronDown
-                              size={18}
+                            <span
                               className={classNames(
-                                "ml-auto transition-transform",
-                                open && "rotate-180"
+                                "flex items-center justify-center p-1.5 rounded-md",
+                                item.activeCondition
+                                  ? "bg-blue-500 text-white"
+                                  : "text-blue-200 group-hover:text-white"
+                              )}
+                            >
+                              <Icon size={18} />
+                            </span>
+                            <span className="font-medium text-sm">
+                              {item.label}
+                            </span>
+                            <ChevronDown
+                              size={16}
+                              className={classNames(
+                                "ml-auto transition-transform duration-300",
+                                open ? "rotate-180" : "rotate-0"
                               )}
                             />
                           </button>
-                          <div
-                            className={classNames(
-                              "overflow-hidden transition-[max-height] duration-300",
-                              open ? "max-h-40" : "max-h-0"
+                          <AnimatePresence initial={false}>
+                            {open && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{
+                                  duration: 0.3,
+                                  ease: "easeInOut",
+                                }}
+                                className="overflow-hidden"
+                              >
+                                <ul className="mt-2 flex flex-col gap-1 ml-10 mr-2">
+                                  {item.dropItems.map((dropitem) => (
+                                    <li key={dropitem.label}>
+                                      <NavLink
+                                        to={dropitem.path}
+                                        className={({ isActive }) =>
+                                          classNames(
+                                            "block rounded-md px-4 py-2 text-xs font-medium",
+                                            "transition-all duration-200 ease-in-out",
+                                            isActive
+                                              ? "bg-blue-600/50 text-white shadow-sm"
+                                              : "text-blue-200 hover:bg-white/5 hover:text-white"
+                                          )
+                                        }
+                                      >
+                                        {dropitem.label}
+                                      </NavLink>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </motion.div>
                             )}
-                          >
-                            <ul className="mt-2 flex flex-col gap-2 pl-8">
-                              {item.dropItems.map((dropitem) => (
-                                <li key={dropitem.label}>
-                                  <NavLink
-                                    to={dropitem.path}
-                                    className={({ isActive }) =>
-                                      classNames(
-                                        "block rounded-md px-4 py-1 font-medium duration-300 ease-in-out",
-                                        isActive
-                                          ? "bg-blue-400 text-white"
-                                          : "text-black hover:bg-gray-100 hover:text-blue-500"
-                                      )
-                                    }
-                                  >
-                                    {dropitem.label}
-                                  </NavLink>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
+                          </AnimatePresence>
                         </>
                       )}
                     </SidebarLinkGroup>
@@ -202,6 +257,18 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
             </ul>
           </div>
         </nav>
+      </div>
+
+      <div className="mt-auto border-t border-blue-700 px-6 py-4">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 rounded-full bg-blue-700 flex items-center justify-center text-xs font-bold">
+            DS
+          </div>
+          <div className="flex flex-col">
+            <span className="text-sm font-medium text-white">DIY SEC LAB</span>
+            <span className="text-xs text-blue-300">ADMIN</span>
+          </div>
+        </div>
       </div>
     </aside>
   );

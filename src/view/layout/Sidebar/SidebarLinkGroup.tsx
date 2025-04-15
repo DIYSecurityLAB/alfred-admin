@@ -1,3 +1,4 @@
+// src/view/layout/Sidebar/SidebarLinkGroup.tsx
 import { ReactNode, useState } from "react";
 
 type SidebarLinkGroupProps = {
@@ -15,5 +16,9 @@ export function SidebarLinkGroup({
     setOpen(!open);
   };
 
-  return <li>{children(handleClick, open)}</li>;
+  return (
+    <li className="transition-all duration-300">
+      {children(handleClick, open)}
+    </li>
+  );
 }
