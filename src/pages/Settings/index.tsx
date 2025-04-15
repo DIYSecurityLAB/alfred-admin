@@ -1,31 +1,35 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { AlertCircle, X } from 'lucide-react';
-import { useConfig } from '../../hooks/useConfig';
+import { motion } from "framer-motion";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { AlertCircle, X } from "lucide-react";
+import { useConfig } from "../../hooks/useConfig";
 
 const configSchema = z.object({
   isMaintenanceMode: z.boolean(),
-  isSwapPegActive: z.boolean()
+  isSwapPegActive: z.boolean(),
 });
 
 type ConfigFormData = z.infer<typeof configSchema>;
 
 export function Settings() {
-  const { config, isLoading, error, updateConfig, isUpdating, clearError } = useConfig();
+  const { config, isLoading, error, updateConfig, isUpdating, clearError } =
+    useConfig();
 
-  const { register, handleSubmit, formState: { errors, isDirty } } = useForm<ConfigFormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { isDirty },
+  } = useForm<ConfigFormData>({
     resolver: zodResolver(configSchema),
     defaultValues: {
       isMaintenanceMode: config?.isMaintenanceMode || false,
-      isSwapPegActive: config?.isSwapPegActive || false
+      isSwapPegActive: config?.isSwapPegActive || false,
     },
     values: {
       isMaintenanceMode: config?.isMaintenanceMode || false,
-      isSwapPegActive: config?.isSwapPegActive || false
-    }
+      isSwapPegActive: config?.isSwapPegActive || false,
+    },
   });
 
   const onSubmit = async (data: ConfigFormData) => {
@@ -48,7 +52,9 @@ export function Settings() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold">Configurações</h1>
-          <p className="text-text-secondary mt-1">Gerencie as configurações do sistema</p>
+          <p className="text-text-secondary mt-1">
+            Gerencie as configurações do sistema
+          </p>
         </div>
       </div>
 
@@ -60,7 +66,7 @@ export function Settings() {
             <p className="font-medium">Erro</p>
             <p>{error}</p>
           </div>
-          <button 
+          <button
             onClick={clearError}
             className="ml-auto text-red-500 hover:text-red-400"
           >
@@ -88,7 +94,7 @@ export function Settings() {
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  {...register('isMaintenanceMode')}
+                  {...register("isMaintenanceMode")}
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-background peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
@@ -105,7 +111,7 @@ export function Settings() {
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  {...register('isSwapPegActive')}
+                  {...register("isSwapPegActive")}
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-background peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
@@ -119,7 +125,7 @@ export function Settings() {
               disabled={!isDirty || isUpdating}
               className="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isUpdating ? 'Salvando...' : 'Salvar Alterações'}
+              {isUpdating ? "Salvando..." : "Salvar Alterações"}
             </button>
           </div>
         </form>

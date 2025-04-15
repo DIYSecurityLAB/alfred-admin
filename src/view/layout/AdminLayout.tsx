@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -10,7 +10,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
-import { Sidebar } from '../Sidebar';
+import { Sidebar } from '../../components/Sidebar';
 
 export function AdminLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -25,7 +25,6 @@ export function AdminLayout() {
 
   return (
     <div className="flex h-screen">
-      {/* Mobile menu button */}
       <button
         className="fixed top-4 left-4 z-50 lg:hidden text-white"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -37,7 +36,6 @@ export function AdminLayout() {
         )}
       </button>
 
-      {/* Sidebar */}
       <motion.div
         initial={{ x: -300 }}
         animate={{ x: isSidebarOpen ? 0 : -300 }}
@@ -47,7 +45,6 @@ export function AdminLayout() {
         <Sidebar items={menuItems} />
       </motion.div>
 
-      {/* Main content */}
       <main className="flex-1 overflow-x-hidden overflow-y-auto bg-background p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
           <Outlet />

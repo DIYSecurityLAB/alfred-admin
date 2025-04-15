@@ -2,8 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import App from './view/App';
-// Não precisamos importar CSS aqui, pois já importamos no App.tsx
+import { App } from './view/App';
 
 const queryClient = new QueryClient({
   defaultOptions: {
