@@ -1,55 +1,60 @@
-import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { 
-  LayoutDashboard, 
-  Tags, 
-  Users, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Tags,
   CreditCard,
-  Menu,
-  X
-} from 'lucide-react';
-import { Sidebar } from '../../components/Sidebar';
+  Users,
+  Settings,
+} from "lucide-react";
+import { useState } from "react";
+import { Outlet } from "react-router-dom";
+import Header from "./Header/Header";
+import { Sidebar, SidebarItems } from "./Sidebar/Sidebar";
+
+const menuItems: SidebarItems = [
+  {
+    type: "link",
+    icon: LayoutDashboard,
+    label: "Dashboard",
+    path: "/dashboard",
+  },
+  { type: "link", icon: Tags, label: "Cupons", path: "/coupons" },
+  { type: "link", icon: CreditCard, label: "Vendas", path: "/sales" },
+  { type: "link", icon: Users, label: "Usuários", path: "/users" },
+  { type: "link", icon: Settings, label: "Configurações", path: "/settings" },
+  // {
+  //   type: "dropdown",
+  //   icon: <CiMail />,
+  //   label: "Newsletter",
+  //   activeCondition: pathname.includes("newsletter"),
+  //   dropItems: [
+  //     {
+  //       path: ROUTES.newsletter.listAll.call(),
+  //       label: "Listar Todos",
+  //     },
+  //   ],
+  // },
+];
 
 export function AdminLayout() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  const menuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-    { icon: Tags, label: 'Cupons', path: '/coupons' },
-    { icon: CreditCard, label: 'Vendas', path: '/sales' },
-    { icon: Users, label: 'Usuários', path: '/users' },
-    { icon: Settings, label: 'Configurações', path: '/settings' },
-  ];
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
   return (
-    <div className="flex h-screen">
-      <button
-        className="fixed top-4 left-4 z-50 lg:hidden text-white"
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-      >
-        {isSidebarOpen ? (
-          <X className="h-6 w-6" />
-        ) : (
-          <Menu className="h-6 w-6" />
-        )}
-      </button>
-
-      <motion.div
-        initial={{ x: -300 }}
-        animate={{ x: isSidebarOpen ? 0 : -300 }}
-        transition={{ duration: 0.3 }}
-        className="fixed lg:static w-64 h-full z-40"
-      >
-        <Sidebar items={menuItems} />
-      </motion.div>
-
-      <main className="flex-1 overflow-x-hidden overflow-y-auto bg-background p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto">
-          <Outlet />
+    <div className="dark:bg-boxdark-2 dark:text-bodydark">
+      <div className="flex h-screen overflow-hidden">
+        <Sidebar
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+          items={menuItems}
+        />
+        <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          <main>
+            <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+              <Outlet />
+            </div>
+          </main>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
