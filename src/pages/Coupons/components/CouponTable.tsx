@@ -25,21 +25,13 @@ export function CouponTable({
     <div className="overflow-x-auto">
       <table className="w-full text-left">
         <thead>
-          <tr className="bg-gray-100 border-b border">
-            <th className="py-3 px-4 font-medium text-text-secondary">
-              Código
-            </th>
-            <th className="py-3 px-4 font-medium text-text-secondary">
-              Desconto
-            </th>
-            <th className="py-3 px-4 font-medium text-text-secondary">Usado</th>
-            <th className="py-3 px-4 font-medium text-text-secondary">
-              Validade
-            </th>
-            <th className="py-3 px-4 font-medium text-text-secondary">
-              Status
-            </th>
-            <th className="py-3 px-4 font-medium text-text-secondary text-right">
+          <tr className="bg-gray-50 border-b border-gray-200">
+            <th className="py-3 px-4 font-medium text-gray-600">Código</th>
+            <th className="py-3 px-4 font-medium text-gray-600">Desconto</th>
+            <th className="py-3 px-4 font-medium text-gray-600">Usado</th>
+            <th className="py-3 px-4 font-medium text-gray-600">Validade</th>
+            <th className="py-3 px-4 font-medium text-gray-600">Status</th>
+            <th className="py-3 px-4 font-medium text-gray-600 text-right">
               Ações
             </th>
           </tr>
@@ -51,9 +43,9 @@ export function CouponTable({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, delay: index * 0.05 }}
-              className={`border-b border ${
-                index % 2 === 0 ? "bg-gray-50" : "bg-gray-100"
-              } hover:bg-gray-100/5 transition-colors`}
+              className={`border-b border-gray-200 ${
+                index % 2 === 0 ? "bg-white" : "bg-gray-50"
+              } hover:bg-gray-100 transition-colors`}
             >
               <td className="py-4 px-4 font-medium text-primary">
                 {coupon.code}
@@ -74,19 +66,19 @@ export function CouponTable({
               <td className="py-4 px-4">
                 <span className="inline-flex items-center">
                   <span className="font-medium">{coupon.usedCount}</span>
-                  <span className="text-text-secondary mx-1">/</span>
+                  <span className="text-gray-500 mx-1">/</span>
                   <span>{coupon.usageLimit}</span>
                 </span>
               </td>
-              <td className="py-4 px-4 text-text-secondary">
+              <td className="py-4 px-4 text-gray-600">
                 {formatDate(coupon.validUntil)}
               </td>
               <td className="py-4 px-4">
                 <span
                   className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-medium ${
                     coupon.isActive
-                      ? "bg-green-700 text-green-400 border border-green-800"
-                      : "bg-red-700 text-red-400 border border-red-800"
+                      ? "bg-green-100 text-green-600 border border-green-200"
+                      : "bg-red-100 text-red-600 border border-red-200"
                   }`}
                 >
                   {coupon.isActive ? "Ativo" : "Inativo"}
@@ -96,14 +88,14 @@ export function CouponTable({
                 <div className="inline-flex items-center space-x-1">
                   <button
                     onClick={() => onViewDetails(coupon)}
-                    className="p-2 hover:bg-blue-700/20 rounded-full transition-colors text-blue-400 hover:text-blue-300"
+                    className="p-2 hover:bg-blue-50 rounded-full transition-colors text-blue-500 hover:text-blue-600"
                     title="Ver detalhes"
                   >
                     <Eye className="h-5 w-5" />
                   </button>
                   <button
                     onClick={() => onEdit(coupon)}
-                    className="p-2 hover:bg-amber-700/20 rounded-full transition-colors text-amber-400 hover:text-amber-300"
+                    className="p-2 hover:bg-amber-50 rounded-full transition-colors text-amber-500 hover:text-amber-600"
                     title="Editar"
                   >
                     <Edit className="h-5 w-5" />
@@ -112,8 +104,8 @@ export function CouponTable({
                     onClick={() => onToggleStatus(coupon.id)}
                     className={`p-2 rounded-full transition-colors ${
                       coupon.isActive
-                        ? "hover:bg-red-700/20 text-green-400 hover:text-red-400"
-                        : "hover:bg-green-700/20 text-red-400 hover:text-green-400"
+                        ? "hover:bg-red-50 text-green-500 hover:text-red-500"
+                        : "hover:bg-green-50 text-red-500 hover:text-green-500"
                     }`}
                     title={coupon.isActive ? "Desativar" : "Ativar"}
                   >

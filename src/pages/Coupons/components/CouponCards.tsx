@@ -38,20 +38,20 @@ export function CouponCards({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, delay: index * 0.05 }}
-          className="p-5 bg-gray-100 rounded-lg border border-gray-100/30 shadow-sm hover:shadow-md transition-shadow"
+          className="p-5 bg-gray-50 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
         >
           <div className="flex justify-between items-start mb-4">
             <div className="flex items-center">
-              <div className="bg-gray-50/10 p-2 rounded-full mr-3">
-                <Tag className="text-red h-5 w-5" />
+              <div className="bg-gray-100 p-2 rounded-full mr-3">
+                <Tag className="text-primary h-5 w-5" />
               </div>
               <h3 className="font-bold text-lg">{coupon.code}</h3>
             </div>
             <span
               className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-medium ${
                 coupon.isActive
-                  ? "bg-green-700/20 text-green-400 border border-green-800"
-                  : "bg-red-/20 text-red-400 border border-red-800"
+                  ? "bg-green-100 text-green-600 border border-green-200"
+                  : "bg-red-100 text-red-600 border border-red-200"
               }`}
             >
               {coupon.isActive ? "Ativo" : "Inativo"}
@@ -60,7 +60,7 @@ export function CouponCards({
 
           <div className="space-y-3 mb-4">
             <div className="flex justify-between items-center">
-              <span className="text-text-secondary flex items-center">
+              <span className="text-gray-600 flex items-center">
                 {coupon.discountType === "percentage" ? (
                   <Percent className="h-4 w-4 mr-1 text-emerald-500" />
                 ) : (
@@ -81,14 +81,14 @@ export function CouponCards({
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-text-secondary">Uso:</span>
+              <span className="text-gray-600">Uso:</span>
               <div className="flex items-center">
                 <span className="font-medium">{coupon.usedCount}</span>
-                <span className="mx-1 text-text-secondary/50">/</span>
+                <span className="mx-1 text-gray-400">/</span>
                 <span>{coupon.usageLimit}</span>
-                <div className="ml-2 w-16 h-2 bg-background rounded-full overflow-hidden">
+                <div className="ml-2 w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gray-50 rounded-full"
+                    className="h-full bg-primary rounded-full"
                     style={{
                       width: `${Math.min(
                         (coupon.usedCount / (coupon.usageLimit ?? 10000)) * 100,
@@ -100,7 +100,7 @@ export function CouponCards({
               </div>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-text-secondary flex items-center">
+              <span className="text-gray-600 flex items-center">
                 <Calendar className="h-4 w-4 mr-1 text-purple-500" />
                 Validade:
               </span>
@@ -108,17 +108,17 @@ export function CouponCards({
             </div>
           </div>
 
-          <div className="flex justify-end space-x-2 pt-3 border-t border-gray-100/30">
+          <div className="flex justify-end space-x-2 pt-3 border-t border-gray-200">
             <button
               onClick={() => onViewDetails(coupon)}
-              className="p-2 hover:bg-blue-900/20 rounded-full transition-colors text-blue-400 hover:text-blue-300"
+              className="p-2 hover:bg-blue-50 rounded-full transition-colors text-blue-500 hover:text-blue-600"
               title="Ver detalhes"
             >
               <Eye className="h-5 w-5" />
             </button>
             <button
               onClick={() => onEdit(coupon)}
-              className="p-2 hover:bg-amber-900/20 rounded-full transition-colors text-amber-400 hover:text-amber-300"
+              className="p-2 hover:bg-amber-50 rounded-full transition-colors text-amber-500 hover:text-amber-600"
               title="Editar"
             >
               <Edit className="h-5 w-5" />
@@ -127,8 +127,8 @@ export function CouponCards({
               onClick={() => onToggleStatus(coupon.id)}
               className={`p-2 rounded-full transition-colors ${
                 coupon.isActive
-                  ? "hover:bg-red-700/20 text-green-400 hover:text-red-400"
-                  : "hover:bg-green-700/20 text-red-400 hover:text-green-400"
+                  ? "hover:bg-red-50 text-green-500 hover:text-red-500"
+                  : "hover:bg-green-50 text-red-500 hover:text-green-500"
               }`}
               title={coupon.isActive ? "Desativar" : "Ativar"}
             >
