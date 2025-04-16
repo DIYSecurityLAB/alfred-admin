@@ -1,5 +1,5 @@
 import { Search, FilterX, SortAsc } from "lucide-react";
-import type { CouponFilter } from "../../../data/types";
+import type { CouponFilter } from "../../../../data/types";
 
 interface CouponFiltersProps {
   filters: CouponFilter;

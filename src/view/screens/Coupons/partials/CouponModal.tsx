@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { X } from "lucide-react";
-import type { Coupon } from "../../../data/types";
+import type { Coupon } from "../../../../data/types";
 
 const couponSchema = z.object({
   code: z.string().min(3, "Código deve ter no mínimo 3 caracteres"),

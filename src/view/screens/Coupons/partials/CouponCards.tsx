@@ -9,7 +9,7 @@ import {
   Percent,
   DollarSign,
 } from "lucide-react";
-import type { Coupon } from "../../../data/types";
+import type { Coupon } from "../../../../data/types";
 
 interface CouponCardsProps {
   coupons: Coupon[];

@@ -1,12 +1,12 @@
+import { Pagination } from "@/components/Pagination";
+import { useCoupons } from "@/hooks/useCoupons";
 import { AnimatePresence } from "framer-motion";
 import { Plus, AlertCircle, X } from "lucide-react";
-import { useCoupons } from "../../hooks/useCoupons";
-import { CouponTable } from "./components/CouponTable";
-import { CouponCards } from "./components/CouponCards";
-import { CouponFilters } from "./components/CouponFilters";
-import { CouponModal } from "./components/CouponModal";
-import { CouponDetailsModal } from "./components/CouponDetailsModal";
-import { Pagination } from "../../components/Pagination";
+import { CouponCards } from "./partials/CouponCards";
+import { CouponDetailsModal } from "./partials/CouponDetailsModal";
+import { CouponFilters } from "./partials/CouponFilters";
+import { CouponModal } from "./partials/CouponModal";
+import { CouponTable } from "./partials/CouponTable";
 
 export function Coupons() {
   const {

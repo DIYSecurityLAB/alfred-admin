@@ -11,7 +11,7 @@ import {
   ShoppingBag,
   Users,
 } from "lucide-react";
-import type { Coupon } from "../../../data/types";
+import type { Coupon } from "../../../../data/types";
 
 interface CouponDetailsModalProps {
   coupon: Coupon;
