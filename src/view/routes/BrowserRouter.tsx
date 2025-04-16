@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AdminLayout } from "../layout/AdminLayout";
 import { Dashboard } from "../../pages/Dashboard";
-import { Reports } from "../../pages/Reports";
+import { Reports } from "../screens/Report/Report";
 import { Users } from "../../pages/Users";
 import { Settings } from "../../pages/Settings";
 import { DefaultLayout } from "../layout/DefaultLayout";
