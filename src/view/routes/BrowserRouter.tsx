@@ -3,7 +3,7 @@ import { AdminLayout } from "../layout/AdminLayout";
 import { Dashboard } from "../../pages/Dashboard";
 import { Reports } from "../screens/Report/Report";
 import { Users } from "../../pages/Users";
-import { Settings } from "../../pages/Settings";
+import { Settings } from "../screens/Settings/Settings";
 import { DefaultLayout } from "../layout/DefaultLayout";
 import { ROUTES } from "./Routes";
 import { Coupons } from "../screens/Coupons/Coupons";
