@@ -1,7 +1,15 @@
 import { Pagination } from "@/components/Pagination";
 import { useCoupons } from "@/view/screens/Coupons/useCoupons";
-import { AnimatePresence } from "framer-motion";
-import { Plus, AlertCircle, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Plus,
+  AlertCircle,
+  X,
+  Tag,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
+import { useState } from "react";
 import { CouponCards } from "./partials/CouponCards";
 import { CouponDetailsModal } from "./partials/CouponDetailsModal";
 import { CouponFilters } from "./partials/CouponFilters";
@@ -36,74 +44,165 @@ export function Coupons() {
     clearError,
   } = useCoupons();
 
+  const [collapsedHeader, setCollapsedHeader] = useState(false);
+
+  const toggleHeader = () => {
+    setCollapsedHeader(!collapsedHeader);
+  };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 100 },
+    },
+  };
+
+  const errorVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 100 },
+    },
+    exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[500px]">
         <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary mb-4"></div>
-          <p className="text-text-secondary">Carregando cupons...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+          <p className="text-gray-600">Carregando cupons...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">Cupons</h1>
-          <p className="text-text-secondary mt-1">
-            Gerencie todos os cupons de desconto
-          </p>
-        </div>
-        <button
-          onClick={openCreateModal}
-          className="bg-primary hover:bg-primary-dark text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm"
-        >
-          <Plus className="h-5 w-5" />
-          Novo Cupom
-        </button>
-      </div>
-
-      {error && (
-        <div className="bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start">
-          <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <p className="font-medium">Erro</p>
-            <p>{error}</p>
-          </div>
-          <button
-            onClick={clearError}
-            className="ml-auto text-red-500 hover:text-red-700"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-      )}
-
-      <div className="bg-gray-50 rounded-xl p-6 shadow-sm">
-        <CouponFilters filters={filters} onFilterChange={handleFilterChange} />
-        {coupons.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16">
-            <div className="bg-gray/10 p-3 rounded-full mb-4">
-              <AlertCircle className="h-8 w-8 text-primary" />
+    <motion.div
+      className="container mx-auto px-4 py-8"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.div
+        className={`bg-white rounded-lg shadow-md border border-blue-50 p-6 mb-8 transition-all duration-500 ${
+          collapsedHeader ? "cursor-pointer" : ""
+        }`}
+        variants={itemVariants}
+        onClick={collapsedHeader ? toggleHeader : undefined}
+      >
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <Tag className="h-6 w-6 text-blue-500 mr-3" />
+            <div>
+              <h1 className="text-3xl font-bold mb-2 text-gray-800">Cupons</h1>
+              {!collapsedHeader && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <p className="text-gray-600">
+                    Gerencie todos os cupons de desconto
+                  </p>
+                </motion.div>
+              )}
             </div>
-            <h3 className="text-xl font-medium mb-2">
+          </div>
+          <div className="flex items-center gap-4">
+            <motion.button
+              onClick={openCreateModal}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Plus className="h-5 w-5" />
+              Novo Cupom
+            </motion.button>
+            <button
+              onClick={toggleHeader}
+              className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+            >
+              {collapsedHeader ? (
+                <ChevronDown className="h-5 w-5 text-blue-500" />
+              ) : (
+                <ChevronUp className="h-5 w-5 text-blue-500" />
+              )}
+            </button>
+          </div>
+        </div>
+      </motion.div>
+
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center text-red-600 shadow-sm"
+            variants={errorVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <AlertCircle className="h-5 w-5 mr-2" />
+            <span>{error}</span>
+            <button
+              onClick={clearError}
+              className="ml-auto text-red-500 hover:text-red-700 transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden p-6"
+      >
+        <CouponFilters filters={filters} onFilterChange={handleFilterChange} />
+
+        {coupons.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center py-16"
+          >
+            <div className="bg-blue-50 p-3 rounded-full mb-4">
+              <AlertCircle className="h-8 w-8 text-blue-500" />
+            </div>
+            <h3 className="text-xl font-medium mb-2 text-gray-800">
               Nenhum cupom encontrado
             </h3>
-            <p className="text-white text-center max-w-md mb-6">
+            <p className="text-gray-600 text-center max-w-md mb-6">
               {filters.code || filters.status !== "all"
                 ? "Nenhum cupom corresponde aos filtros selecionados. Tente ajustar seus filtros."
                 : "Você ainda não criou nenhum cupom. Comece criando seu primeiro cupom de desconto!"}
             </p>
-            <button
+            <motion.button
               onClick={openCreateModal}
-              className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
             >
               <Plus className="h-5 w-5" />
               Criar Cupom
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         ) : (
           <>
             <div className="hidden lg:block mb-6">
@@ -122,22 +221,20 @@ export function Coupons() {
                 onToggleStatus={toggleCouponStatus}
               />
             </div>
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-gray-100">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-text-secondary">Mostrar</span>
+                <span className="text-sm text-gray-600">Mostrar</span>
                 <select
                   value={perPage}
                   onChange={(e) => setPerPage(Number(e.target.value))}
-                  className="border rounded-md px-2 py-1 text-sm"
+                  className="border rounded-md px-2 py-1 text-sm bg-gray-50 hover:border-blue-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all"
                 >
                   <option value={5}>5</option>
                   <option value={10}>10</option>
                   <option value={20}>20</option>
                   <option value={50}>50</option>
                 </select>
-                <span className="text-sm text-text-secondary">
-                  itens por página
-                </span>
+                <span className="text-sm text-gray-600">itens por página</span>
               </div>
 
               <Pagination
@@ -149,7 +246,8 @@ export function Coupons() {
             </div>
           </>
         )}
-      </div>
+      </motion.div>
+
       <AnimatePresence mode="wait">
         {isCreateModalOpen && (
           <CouponModal
@@ -182,6 +280,6 @@ export function Coupons() {
           />
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
