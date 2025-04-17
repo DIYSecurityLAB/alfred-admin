@@ -1,5 +1,5 @@
 import { Pagination } from "@/components/Pagination";
-import { useCoupons } from "@/hooks/useCoupons";
+import { useCoupons } from "@/view/screens/Coupons/useCoupons";
 import { AnimatePresence } from "framer-motion";
 import { Plus, AlertCircle, X } from "lucide-react";
 import { CouponCards } from "./partials/CouponCards";

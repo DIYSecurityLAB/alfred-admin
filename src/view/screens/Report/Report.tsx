@@ -10,12 +10,12 @@ import {
   ChevronDown,
   FileText,
 } from "lucide-react";
-import { useReports } from "../../../hooks/useReports";
 import { ReportFilters } from "./partials/ReportFilters";
 import { ReportTable } from "./partials/ReportTable";
 import { ReportCards } from "./partials/ReportCards";
 import { ReportDetailsModal } from "./partials/ReportDetailsModal";
 import { Pagination } from "../../../components/Pagination";
+import { useReports } from "./useReports";
 
 export function Reports() {
   const [isExporting, setIsExporting] = useState(false);

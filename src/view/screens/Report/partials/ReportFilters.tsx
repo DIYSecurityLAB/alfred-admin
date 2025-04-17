@@ -28,7 +28,6 @@ export function ReportFilters({
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setStartDate(e.target.value);
     if (e.target.value) {
-      // Convertendo formato yyyy-MM-dd para dd-MM-yyyy para API
       const [year, month, day] = e.target.value.split("-");
       onFilterChange({ startAt: `${day}-${month}-${year}` });
     } else {
@@ -39,7 +38,6 @@ export function ReportFilters({
   const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEndDate(e.target.value);
     if (e.target.value) {
-      // Convertendo formato yyyy-MM-dd para dd-MM-yyyy para API
       const [year, month, day] = e.target.value.split("-");
       onFilterChange({ endAt: `${day}-${month}-${year}` });
     } else {

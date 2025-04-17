@@ -1,8 +1,8 @@
 import {
-  LayoutDashboard,
+  // LayoutDashboard,
   Tags,
   CreditCard,
-  Users,
+  // Users,
   Settings,
 } from "lucide-react";
 import { useState } from "react";
@@ -11,15 +11,15 @@ import Header from "./Header/Header";
 import { Sidebar, SidebarItems } from "./Sidebar/Sidebar";
 
 const menuItems: SidebarItems = [
-  {
-    type: "link",
-    icon: LayoutDashboard,
-    label: "Dashboard",
-    path: "/dashboard",
-  },
+  // {
+  //   type: "link",
+  //   icon: LayoutDashboard,
+  //   label: "Dashboard",
+  //   path: "/dashboard",
+  // },
   { type: "link", icon: Tags, label: "Cupons", path: "/coupons" },
   { type: "link", icon: CreditCard, label: "Vendas", path: "/sales" },
-  { type: "link", icon: Users, label: "Usuários", path: "/users" },
+  // { type: "link", icon: Users, label: "Usuários", path: "/users" },
   { type: "link", icon: Settings, label: "Configurações", path: "/settings" },
   // {
   //   type: "dropdown",

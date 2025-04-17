@@ -12,7 +12,7 @@ import {
   ChevronDown,
   Power,
 } from "lucide-react";
-import { useConfig } from "../../../hooks/useConfig";
+import { useSettings } from "./useSettings";
 import { useState } from "react";
 
 const configSchema = z.object({
@@ -24,7 +24,7 @@ type ConfigFormData = z.infer<typeof configSchema>;
 
 export function Settings() {
   const { config, isLoading, error, updateConfig, isUpdating, clearError } =
-    useConfig();
+    useSettings();
   const [collapsedHeader, setCollapsedHeader] = useState(false);
 
   const {

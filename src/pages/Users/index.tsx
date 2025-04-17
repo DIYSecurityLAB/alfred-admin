@@ -1,4 +1,3 @@
-import React from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { AlertCircle } from 'lucide-react';
 import { useUsers } from '../../hooks/useUsers';

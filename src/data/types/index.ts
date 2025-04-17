@@ -1,4 +1,3 @@
-// Exportação explícita de todas as interfaces
 export interface User {
   id: string;
   username: string;
@@ -21,7 +20,7 @@ export interface UserFilter {
 export interface Coupon {
   id: string;
   code: string;
-  discountType: 'percentage' | 'fixed';  // Alterado para corresponder à API
+  discountType: 'percentage' | 'fixed';
   discountValue: number;
   minPurchaseValue: number;
   maxDiscountValue: number;
@@ -29,7 +28,7 @@ export interface Coupon {
   usedCount: number;
   isActive: boolean;
   validFrom: string;
-  validUntil: string | null | undefined;  // Atualizado para aceitar undefined também
+  validUntil: string | null | undefined;
 }
 
 export interface CouponFilter {
@@ -38,7 +37,7 @@ export interface CouponFilter {
 }
 
 export type CreateCouponDTO = Omit<Coupon, 'id' | 'usedCount'> & {
-  validUntil?: string | null; // Explicitamente marcando como opcional
+  validUntil?: string | null;
 };
 
 export type UpdateCouponDTO = Partial<CreateCouponDTO>;
@@ -133,11 +132,11 @@ export interface Deposit {
   paymentMethod: PaymentMethod;
   documentId: string | null;
   transactionDate: string;
-  cupom: string | null | undefined; // Atualizado para aceitar undefined
+  cupom: string | null | undefined;
   valueBRL: number;
   valueBTC: number;
   status: PaymentStatus;
-  username: string | null | undefined; // Atualizado para aceitar undefined
+  username: string | null | undefined;
 }
 
 export interface DepositReport extends Deposit {
