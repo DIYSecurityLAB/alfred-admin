@@ -20,7 +20,6 @@ export function Pagination({
   };
 
   const createPaginationItems = () => {
-    // Caso simples: menos de 7 + 2 * siblingCount páginas
     if (totalPages <= 7 + 2 * siblingCount) {
       return range(1, totalPages);
     }
@@ -31,21 +30,18 @@ export function Pagination({
     const shouldShowLeftDots = leftSiblingIndex > 2;
     const shouldShowRightDots = rightSiblingIndex < totalPages - 1;
 
-    // Caso 1: mostrar os pontos da esquerda
     if (shouldShowLeftDots && !shouldShowRightDots) {
       const rightItemCount = 3 + 2 * siblingCount;
       const rightRange = range(totalPages - rightItemCount + 1, totalPages);
       return [1, '...', ...rightRange];
     }
 
-    // Caso 2: mostrar os pontos da direita
     if (!shouldShowLeftDots && shouldShowRightDots) {
       const leftItemCount = 3 + 2 * siblingCount;
       const leftRange = range(1, leftItemCount);
       return [...leftRange, '...', totalPages];
     }
 
-    // Caso 3: mostrar os pontos da esquerda e da direita
     if (shouldShowLeftDots && shouldShowRightDots) {
       const middleRange = range(leftSiblingIndex, rightSiblingIndex);
       return [1, '...', ...middleRange, '...', totalPages];
@@ -59,7 +55,7 @@ export function Pagination({
       <button
         onClick={() => onPageChange(1)}
         disabled={currentPage === 1}
-        className="p-2 rounded-lg bg-background hover:bg-primary/10 disabled:opacity-50 disabled:hover:bg-background transition-colors"
+        className="p-2 rounded-lg bg-gray-200 hover:bg-gray-200/10 disabled:opacity-50 disabled:hover:bg-gray-200 transition-colors"
         aria-label="Primeira página"
       >
         <ChevronsLeft className="h-5 w-5" />
@@ -68,7 +64,7 @@ export function Pagination({
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="p-2 rounded-lg bg-background hover:bg-primary/10 disabled:opacity-50 disabled:hover:bg-background transition-colors"
+        className="p-2 rounded-lg bg-gray-200 hover:bg-gray-200/10 disabled:opacity-50 disabled:hover:bg-gray-200 transition-colors"
         aria-label="Página anterior"
       >
         <ChevronLeft className="h-5 w-5" />
@@ -89,8 +85,8 @@ export function Pagination({
             onClick={() => onPageChange(+item)}
             className={`px-3 py-1 rounded-lg transition-colors ${
               currentPage === item
-                ? 'bg-primary text-white'
-                : 'bg-background hover:bg-primary/10'
+                ? 'bg-gray-200 text-white'
+                : 'bg-gray-200 hover:bg-gray-200/10'
             }`}
           >
             {item}
@@ -101,7 +97,7 @@ export function Pagination({
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="p-2 rounded-lg bg-background hover:bg-primary/10 disabled:opacity-50 disabled:hover:bg-background transition-colors"
+        className="p-2 rounded-lg bg-gray-200 hover:bg-gray-200/10 disabled:opacity-50 disabled:hover:bg-gray-200 transition-colors"
         aria-label="Próxima página"
       >
         <ChevronRight className="h-5 w-5" />
@@ -110,7 +106,7 @@ export function Pagination({
       <button
         onClick={() => onPageChange(totalPages)}
         disabled={currentPage === totalPages}
-        className="p-2 rounded-lg bg-background hover:bg-primary/10 disabled:opacity-50 disabled:hover:bg-background transition-colors"
+        className="p-2 rounded-lg bg-gray-200 hover:bg-gray-200/10 disabled:opacity-50 disabled:hover:bg-gray-200 transition-colors"
         aria-label="Última página"
       >
         <ChevronsRight className="h-5 w-5" />

@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Modelo de configurações
 export const SettingsModel = z.object({
   maintenanceMode: z.boolean(),
   enabledPaymentMethods: z.array(

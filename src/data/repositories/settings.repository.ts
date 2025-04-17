@@ -2,7 +2,6 @@ import { DefaultResultError, Result } from '../../utils/Result';
 import { remoteDataSource } from '../datasource/Remote.datasource';
 import { z } from 'zod';
 
-// Modelos para validação com Zod
 export const SettingsModel = z.object({
   maintenanceMode: z.boolean(),
   enabledPaymentMethods: z.array(
@@ -15,7 +14,6 @@ export const SettingsModel = z.object({
 });
 export type SettingsModel = z.infer<typeof SettingsModel>;
 
-// Tipos de requisição e resposta
 export type GetSettingsRes = Promise<
   Result<SettingsModel, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
@@ -25,13 +23,11 @@ export type UpdateSettingsRes = Promise<
   Result<SettingsModel, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
-// Interface do repositório
 export interface SettingsRepository {
   getSettings(): GetSettingsRes;
   updateSettings(settings: UpdateSettingsReq): UpdateSettingsRes;
 }
 
-// Implementação do repositório
 export class SettingsRepositoryImpl implements SettingsRepository {
   constructor(private api = remoteDataSource) {}
 
@@ -73,5 +69,4 @@ export class SettingsRepositoryImpl implements SettingsRepository {
   }
 }
 
-// Singleton instance
 export const settingsRepository = new SettingsRepositoryImpl();

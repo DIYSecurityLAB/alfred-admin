@@ -2,7 +2,6 @@ import { DefaultResultError, Result } from '../../utils/Result';
 import { remoteDataSource } from '../datasource/Remote.datasource';
 import { z } from 'zod';
 
-// Modelos para validação com Zod
 export const UserModel = z.object({
   id: z.string(),
   username: z.string(),
@@ -30,7 +29,6 @@ export const UserFilterModel = z.object({
 });
 export type UserFilterModel = z.infer<typeof UserFilterModel>;
 
-// Tipos de requisição e resposta
 export type GetUsersReq = {
   page: number;
   limit: number;
@@ -63,7 +61,6 @@ export type UpdateUserLevelRes = Promise<
   Result<UserModel, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
-// Interface do repositório
 export interface UsersRepository {
   getUsers(req: GetUsersReq): GetUsersRes;
   getUserById(req: GetUserReq): GetUserRes;
@@ -71,7 +68,6 @@ export interface UsersRepository {
   updateUserLevel(req: UpdateUserLevelReq): UpdateUserLevelRes;
 }
 
-// Implementação do repositório
 export class UsersRepositoryImpl implements UsersRepository {
   constructor(private api = remoteDataSource) {}
 

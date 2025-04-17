@@ -1,4 +1,3 @@
-import React from 'react';
 import { DollarSign, Users, Tags, Clock, Package2, CreditCard, Wallet, TrendingUp, AlertCircle } from 'lucide-react';
 import { useDashboard } from '../../hooks/useDashboard';
 import { StatCard } from './components/StatCard';
