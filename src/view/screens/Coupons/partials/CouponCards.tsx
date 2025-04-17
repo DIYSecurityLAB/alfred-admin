@@ -8,6 +8,7 @@ import {
   Tag,
   Percent,
   DollarSign,
+  ShoppingBag,
 } from "lucide-react";
 import type { Coupon } from "../../../../data/types";
 
@@ -30,28 +31,52 @@ export function CouponCards({
     return new Date(dateString).toLocaleDateString();
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.05,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 100 },
+    },
+  };
+
   return (
-    <div className="space-y-4">
-      {coupons.map((coupon, index) => (
+    <motion.div
+      className="space-y-4"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {coupons.map((coupon) => (
         <motion.div
           key={coupon.id}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2, delay: index * 0.05 }}
-          className="p-5 bg-gray-50 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+          variants={itemVariants}
+          whileHover={{ scale: 1.01 }}
+          className="p-5 bg-white rounded-lg border border-gray-100 hover:border-blue-100 hover:bg-blue-50 transition-all duration-300 shadow-sm"
         >
           <div className="flex justify-between items-start mb-4">
             <div className="flex items-center">
-              <div className="bg-gray-100 p-2 rounded-full mr-3">
-                <Tag className="text-primary h-5 w-5" />
+              <div className="bg-blue-50 p-2 rounded-full mr-3">
+                <Tag className="text-blue-500 h-5 w-5" />
               </div>
-              <h3 className="font-bold text-lg">{coupon.code}</h3>
+              <h3 className="font-bold text-lg text-gray-800">{coupon.code}</h3>
             </div>
             <span
               className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-medium ${
                 coupon.isActive
-                  ? "bg-green-100 text-green-600 border border-green-200"
-                  : "bg-red-100 text-red-600 border border-red-200"
+                  ? "bg-green-50 text-green-600 border border-green-200"
+                  : "bg-red-50 text-red-600 border border-red-200"
               }`}
             >
               {coupon.isActive ? "Ativo" : "Inativo"}
@@ -62,7 +87,7 @@ export function CouponCards({
             <div className="flex justify-between items-center">
               <span className="text-gray-600 flex items-center">
                 {coupon.discountType === "percentage" ? (
-                  <Percent className="h-4 w-4 mr-1 text-emerald-500" />
+                  <Percent className="h-4 w-4 mr-1 text-blue-500" />
                 ) : (
                   <DollarSign className="h-4 w-4 mr-1 text-blue-500" />
                 )}
@@ -71,7 +96,7 @@ export function CouponCards({
               <span
                 className={`font-medium ${
                   coupon.discountType === "percentage"
-                    ? "text-emerald-500"
+                    ? "text-blue-500"
                     : "text-blue-500"
                 }`}
               >
@@ -80,15 +105,19 @@ export function CouponCards({
                   : `R$ ${coupon.discountValue.toFixed(2)}`}
               </span>
             </div>
+
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Uso:</span>
+              <span className="text-gray-600 flex items-center">
+                <ShoppingBag className="h-4 w-4 mr-1 text-blue-500" />
+                Uso:
+              </span>
               <div className="flex items-center">
                 <span className="font-medium">{coupon.usedCount}</span>
                 <span className="mx-1 text-gray-400">/</span>
                 <span>{coupon.usageLimit}</span>
                 <div className="ml-2 w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-primary rounded-full"
+                    className="h-full bg-blue-500 rounded-full"
                     style={{
                       width: `${Math.min(
                         (coupon.usedCount / (coupon.usageLimit ?? 10000)) * 100,
@@ -99,36 +128,47 @@ export function CouponCards({
                 </div>
               </div>
             </div>
+
             <div className="flex justify-between items-center">
               <span className="text-gray-600 flex items-center">
-                <Calendar className="h-4 w-4 mr-1 text-purple-500" />
+                <Calendar className="h-4 w-4 mr-1 text-blue-500" />
                 Validade:
               </span>
-              <span>{formatDate(coupon.validUntil)}</span>
+              <span className="text-gray-700">
+                {formatDate(coupon.validUntil)}
+              </span>
             </div>
           </div>
 
-          <div className="flex justify-end space-x-2 pt-3 border-t border-gray-200">
-            <button
+          <div className="flex justify-end space-x-2 pt-3 border-t border-gray-100">
+            <motion.button
               onClick={() => onViewDetails(coupon)}
-              className="p-2 hover:bg-blue-50 rounded-full transition-colors text-blue-500 hover:text-blue-600"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors text-blue-500 hover:text-blue-600 shadow-sm"
               title="Ver detalhes"
             >
               <Eye className="h-5 w-5" />
-            </button>
-            <button
+            </motion.button>
+
+            <motion.button
               onClick={() => onEdit(coupon)}
-              className="p-2 hover:bg-amber-50 rounded-full transition-colors text-amber-500 hover:text-amber-600"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-2 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors text-amber-500 hover:text-amber-600 shadow-sm"
               title="Editar"
             >
               <Edit className="h-5 w-5" />
-            </button>
-            <button
+            </motion.button>
+
+            <motion.button
               onClick={() => onToggleStatus(coupon.id)}
-              className={`p-2 rounded-full transition-colors ${
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className={`p-2 rounded-lg transition-colors shadow-sm ${
                 coupon.isActive
-                  ? "hover:bg-red-50 text-green-500 hover:text-red-500"
-                  : "hover:bg-green-50 text-red-500 hover:text-green-500"
+                  ? "bg-green-50 hover:bg-red-50 text-green-500 hover:text-red-500"
+                  : "bg-red-50 hover:bg-green-50 text-red-500 hover:text-green-500"
               }`}
               title={coupon.isActive ? "Desativar" : "Ativar"}
             >
@@ -137,10 +177,10 @@ export function CouponCards({
               ) : (
                 <ToggleLeft className="h-5 w-5" />
               )}
-            </button>
+            </motion.button>
           </div>
         </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 }
