@@ -47,7 +47,7 @@ export class RemoteDataSource {
 
   constructor(baseURL?: string) {
     this.api = axios.create({
-      baseURL: baseURL || import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+      baseURL: baseURL || import.meta.env.VITE_API_URL,
       headers: {},
     });
   }

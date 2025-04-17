@@ -2,7 +2,6 @@ import { DefaultResultError, Result } from '../../utils/Result';
 import { remoteDataSource } from '../datasource/Remote.datasource';
 import { ConfigModel } from '../model/Config.model';
 
-// Tipos de requisição e resposta
 export type ReadConfigRes = Promise<
   Result<ConfigModel, { code: 'SERIALIZATION' | 'NOT_FOUND' } | DefaultResultError>
 >;
@@ -15,13 +14,11 @@ export type UpdateConfigRes = Promise<
   Result<ConfigModel, { code: 'SERIALIZATION' | 'NOT_FOUND' } | DefaultResultError>
 >;
 
-// Interface do repositório
 export interface ConfigRepository {
   getConfig(): ReadConfigRes;
   updateConfig(config: UpdateConfigReq): UpdateConfigRes;
 }
 
-// Implementação do repositório
 export class ConfigRepositoryImpl implements ConfigRepository {
   constructor(private api = remoteDataSource) {}
 
@@ -63,5 +60,4 @@ export class ConfigRepositoryImpl implements ConfigRepository {
   }
 }
 
-// Singleton instance
 export const configRepository = new ConfigRepositoryImpl();

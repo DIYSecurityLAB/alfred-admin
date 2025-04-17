@@ -32,5 +32,4 @@ export class DashboardRepositoryImpl implements DashboardRepository {
   }
 }
 
-// Singleton instance
 export const dashboardRepository = new DashboardRepositoryImpl();

@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Modelo do usuário
 export const UserModel = z.object({
   id: z.string(),
   username: z.string(),
@@ -15,7 +14,6 @@ export const UserModel = z.object({
 });
 export type UserModel = z.infer<typeof UserModel>;
 
-// Lista de usuários com paginação
 export const UsersListModel = z.object({
   data: z.array(UserModel),
   total: z.number(),
@@ -25,7 +23,6 @@ export const UsersListModel = z.object({
 });
 export type UsersListModel = z.infer<typeof UsersListModel>;
 
-// Filtro de usuários
 export const UserFilterModel = z.object({
   username: z.string().optional(),
   status: z.enum(['all', 'active', 'inactive']).optional(),

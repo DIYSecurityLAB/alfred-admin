@@ -1,9 +1,8 @@
 import { z } from 'zod';
 
-// Modelo para inserção de cupom com campos requeridos e opcionais adequados
 export const InsertCouponModel = z.object({
   code: z.string().min(1),
-  discountType: z.enum(['percentage', 'fixed']),  // Alterado para discountType
+  discountType: z.enum(['percentage', 'fixed']),
   discountValue: z.number(),
   minPurchaseValue: z.number().optional().default(0),
   maxDiscountValue: z.number().optional().default(0),
@@ -25,15 +24,13 @@ export const ListCouponsModel = z.object({
 });
 export type ListCouponsModel = z.infer<typeof ListCouponsModel>;
 
-// Atualizado para corresponder à estrutura real da API
 export const ListedCouponModel = z.object({
   id: z.string().min(1),
   code: z.string().min(1),
-  discountType: z.enum(['percentage', 'fixed']),  // Alterado para discountType
+  discountType: z.enum(['percentage', 'fixed']),
   discountValue: z.number(),
   validFrom: z.string(),
   validUntil: z.string().nullable().optional(),
-  // Campos opcionais que podem não vir da API
   minPurchaseValue: z.number().optional().default(0),
   maxDiscountValue: z.number().optional().default(0),
   usageLimit: z.number().optional().default(100),
@@ -68,7 +65,6 @@ export const FilterCouponsModel = z.object({
 });
 export type FilterCouponsModel = z.infer<typeof FilterCouponsModel>;
 
-// Adicionando modelos para validação de cupons
 export const ValidateCouponModel = z.object({
   code: z.string().min(1),
 });

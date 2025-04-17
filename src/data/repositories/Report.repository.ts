@@ -1,26 +1,23 @@
-import { ExceptionHandler } from '../../utils/ExceptionHandler';
-import { DefaultResultError, Result } from '../../utils/Result';
-import { remoteDataSource } from '../datasource/Remote.datasource';
-import {
-  DepositFilterModel,
-  DepositListModel,
-  DepositModel
-} from '../model/Reports.model';
-import { DepositFilter, PaginatedResponse, DepositReport } from '../types';
-import { z } from 'zod';
+import { DefaultResultError, Result } from "../../utils/Result";
+import { remoteDataSource } from "../datasource/Remote.datasource";
+import { DepositListModel, DepositModel } from "../model/Reports.model";
+import { z } from "zod";
 
 export type GetAllReportsRes = Promise<
-  Result<DepositReport[], { code: 'SERIALIZATION' } | DefaultResultError>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Result<any[], { code: "SERIALIZATION" } | DefaultResultError>
 >;
 
 export type GetPaginatedReportsReq = {
   page: number;
   pageSize: number;
-  filters?: DepositFilter;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  filters?: any;
 };
 
 export type GetPaginatedReportsRes = Promise<
-  Result<PaginatedResponse<DepositReport>, { code: 'SERIALIZATION' } | DefaultResultError>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Result<any, { code: "SERIALIZATION" } | DefaultResultError>
 >;
 
 export type GetReportByIdReq = {
@@ -28,7 +25,11 @@ export type GetReportByIdReq = {
 };
 
 export type GetReportByIdRes = Promise<
-  Result<DepositReport, { code: 'SERIALIZATION' } | { code: 'NOT_FOUND' } | DefaultResultError>
+  Result<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any,
+    { code: "SERIALIZATION" } | { code: "NOT_FOUND" } | DefaultResultError
+  >
 >;
 
 export interface ReportRepository {
@@ -43,16 +44,16 @@ export class ReportRepositoryImpl implements ReportRepository {
   async getAll(): GetAllReportsRes {
     try {
       const result = await this.api.get({
-        url: '/report/deposit',
+        url: "/report/deposit",
         model: z.array(DepositModel),
       });
 
       if (!result) {
-        return Result.Error({ code: 'SERIALIZATION' });
+        return Result.Error({ code: "SERIALIZATION" });
       }
 
-      // Garantir que os tipos correspondam à interface DepositReport
-      const normalizedData: DepositReport[] = result.map(item => ({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const normalizedData: any[] = result.map((item) => ({
         id: item.id,
         transactionId: item.transactionId,
         phone: item.phone,
@@ -61,49 +62,48 @@ export class ReportRepositoryImpl implements ReportRepository {
         paymentMethod: item.paymentMethod,
         documentId: item.documentId,
         transactionDate: item.transactionDate,
-        cupom: item.cupom || null, // Normalizar para evitar undefined
+        cupom: item.cupom || null,
         valueBRL: item.valueBRL,
         valueBTC: item.valueBTC,
         status: item.status,
-        username: item.username || null, // Normalizar para evitar undefined
+        username: item.username || null,
         discountType: item.discountType,
         discountValue: item.discountValue,
-        valueCollected: item.valueCollected
+        valueCollected: item.valueCollected,
       }));
 
       return Result.Success(normalizedData);
     } catch (error) {
-      console.error('Error getting all reports:', error);
-      // Corrigindo o tratamento de erro
-      return Result.Error({ code: 'UNKNOWN_ERROR' });
+      console.error("Error getting all reports:", error);
+      return Result.Error({ code: "UNKNOWN_ERROR" });
     }
   }
 
   async getPaginated(req: GetPaginatedReportsReq): GetPaginatedReportsRes {
     try {
       let url = `/report/deposit/pagination?page=${req.page}&pageSize=${req.pageSize}`;
-      
+
       if (req.filters) {
         const { status, paymentMethod, startAt, endAt, username } = req.filters;
-        
+
         if (status) url += `&status=${status}`;
         if (paymentMethod) url += `&paymentMethod=${paymentMethod}`;
         if (startAt) url += `&startAt=${startAt}`;
         if (endAt) url += `&endAt=${endAt}`;
         if (username) url += `&username=${username}`;
       }
-      
+
       const result = await this.api.get({
         url,
         model: DepositListModel,
       });
 
       if (!result) {
-        return Result.Error({ code: 'SERIALIZATION' });
+        return Result.Error({ code: "SERIALIZATION" });
       }
 
-      // Normalizar os dados para garantir compatibilidade de tipos
-      const normalizedData: DepositReport[] = (result.data || []).map(item => ({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const normalizedData: any[] = (result.data || []).map((item) => ({
         id: item.id,
         transactionId: item.transactionId,
         phone: item.phone,
@@ -112,30 +112,29 @@ export class ReportRepositoryImpl implements ReportRepository {
         paymentMethod: item.paymentMethod,
         documentId: item.documentId,
         transactionDate: item.transactionDate,
-        cupom: item.cupom || null, // Normalizar para evitar undefined
+        cupom: item.cupom || null,
         valueBRL: item.valueBRL,
         valueBTC: item.valueBTC,
         status: item.status,
-        username: item.username || null, // Normalizar para evitar undefined
+        username: item.username || null,
         discountType: item.discountType,
         discountValue: item.discountValue,
-        valueCollected: item.valueCollected
+        valueCollected: item.valueCollected,
       }));
 
-      // Garantindo que o resultado corresponda ao tipo esperado
-      const paginatedResponse: PaginatedResponse<DepositReport> = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const paginatedResponse: any = {
         data: normalizedData,
         total: result.total || 0,
         page: result.page || 1,
         pageSize: result.pageSize || 10,
-        totalPages: result.totalPages || 1
+        totalPages: result.totalPages || 1,
       };
 
       return Result.Success(paginatedResponse);
     } catch (error) {
-      console.error('Error getting paginated reports:', error);
-      // Corrigindo o tratamento de erro
-      return Result.Error({ code: 'UNKNOWN_ERROR' });
+      console.error("Error getting paginated reports:", error);
+      return Result.Error({ code: "UNKNOWN_ERROR" });
     }
   }
 
@@ -147,11 +146,11 @@ export class ReportRepositoryImpl implements ReportRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: 'SERIALIZATION' });
+        return Result.Error({ code: "SERIALIZATION" });
       }
 
-      // Normalizar o resultado para garantir compatibilidade com a interface
-      const normalizedData: DepositReport = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const normalizedData: any = {
         id: result.id,
         transactionId: result.transactionId,
         phone: result.phone,
@@ -160,24 +159,22 @@ export class ReportRepositoryImpl implements ReportRepository {
         paymentMethod: result.paymentMethod,
         documentId: result.documentId,
         transactionDate: result.transactionDate,
-        cupom: result.cupom || null, // Normalizar para evitar undefined
+        cupom: result.cupom || null,
         valueBRL: result.valueBRL,
         valueBTC: result.valueBTC,
         status: result.status,
-        username: result.username || null, // Normalizar para evitar undefined
+        username: result.username || null,
         discountType: result.discountType,
         discountValue: result.discountValue,
-        valueCollected: result.valueCollected
+        valueCollected: result.valueCollected,
       };
 
       return Result.Success(normalizedData);
     } catch (error) {
-      console.error('Error getting report by id:', error);
-      // Corrigindo o tratamento de erro
-      return Result.Error({ code: 'UNKNOWN_ERROR' });
+      console.error("Error getting report by id:", error);
+      return Result.Error({ code: "UNKNOWN_ERROR" });
     }
   }
 }
 
-// Singleton instance
 export const reportRepository = new ReportRepositoryImpl();
