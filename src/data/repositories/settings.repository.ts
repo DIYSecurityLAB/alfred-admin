@@ -1,4 +1,4 @@
-import { DefaultResultError, Result } from '../../utils/Result';
+import { DefaultResultError, ResultOld } from '../../utils/ResultOld';
 import { remoteDataSource } from '../datasource/Remote.datasource';
 import { z } from 'zod';
 
@@ -15,12 +15,12 @@ export const SettingsModel = z.object({
 export type SettingsModel = z.infer<typeof SettingsModel>;
 
 export type GetSettingsRes = Promise<
-  Result<SettingsModel, { code: 'SERIALIZATION' } | DefaultResultError>
+  ResultOld<SettingsModel, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
 export type UpdateSettingsReq = Partial<SettingsModel>;
 export type UpdateSettingsRes = Promise<
-  Result<SettingsModel, { code: 'SERIALIZATION' } | DefaultResultError>
+  ResultOld<SettingsModel, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
 export interface SettingsRepository {
@@ -39,13 +39,13 @@ export class SettingsRepositoryImpl implements SettingsRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: 'SERIALIZATION' });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
-      return Result.Success(result);
+      return ResultOld.Success(result);
     } catch (error) {
       console.error('Error getting settings:', error);
-      return Result.Error({ code: 'UNKNOWN_ERROR' });
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 
@@ -58,13 +58,13 @@ export class SettingsRepositoryImpl implements SettingsRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: 'SERIALIZATION' });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
-      return Result.Success(result);
+      return ResultOld.Success(result);
     } catch (error) {
       console.error('Error updating settings:', error);
-      return Result.Error({ code: 'UNKNOWN_ERROR' });
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 }

@@ -6,7 +6,7 @@ import axios, {
   HttpStatusCode,
 } from 'axios';
 import { z } from 'zod';
-import { Result } from '../../utils/Result';
+import { ResultOld } from '../../utils/ResultOld';
 
 export type SerializeSchemas =
   | z.ZodObject<any>
@@ -72,7 +72,7 @@ export class RemoteDataSource {
     try {
       const { data } = await this.api.get<any>(url, {
         params,
-        timeout: 1800000, // Aumentado para 30 minutos (1.800.000 ms)
+        timeout: 1800000,
       });
 
       const serialized = model.safeParse(data);
@@ -96,7 +96,7 @@ export class RemoteDataSource {
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
     try {
       const { data } = await this.api.post<any>(url, body, {
-        timeout: 300000, // Aumentado para 5 minutos (300.000 ms)
+        timeout: 300000,
       });
 
       const serialized = model.safeParse(data);
@@ -120,7 +120,7 @@ export class RemoteDataSource {
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
     try {
       const { data } = await this.api.patch<any>(url, body, {
-        timeout: 300000, // Aumentado para 5 minutos (300.000 ms)
+        timeout: 300000,
       });
 
       const serialized = model.safeParse(data);
@@ -143,10 +143,9 @@ export class RemoteDataSource {
   }: RemoteDeleteReq<Response>): RemoteRequestRes<Response> {
     try {
       const { data } = await this.api.delete<any>(url, {
-        timeout: 300000, // Aumentado para 5 minutos (300.000 ms)
+        timeout: 300000,
       });
 
-      // Se a resposta for vazia, considere um objeto vazio para validação
       const responseData = data || {};
       
       const serialized = model.safeParse(responseData);
@@ -166,18 +165,17 @@ export class RemoteDataSource {
   public static checkError(err: AxiosError) {
     switch (err?.response?.status) {
       case HttpStatusCode.Unauthorized:
-        return Result.Error({ code: 'UNAUTHORIZED' });
+        return ResultOld.Error({ code: 'UNAUTHORIZED' });
       case HttpStatusCode.NotFound:
-        return Result.Error({ code: 'NOT_FOUND' });
+        return ResultOld.Error({ code: 'NOT_FOUND' });
       case HttpStatusCode.BadRequest:
-        return Result.Error({ code: 'BAD_REQUEST' });
+        return ResultOld.Error({ code: 'BAD_REQUEST' });
       case HttpStatusCode.Conflict:
-        return Result.Error({ code: 'ALREADY_EXISTS' });
+        return ResultOld.Error({ code: 'ALREADY_EXISTS' });
       default:
-        return Result.Error({ code: 'UNKNOWN_ERROR' });
+        return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 }
 
-// Singleton instance
 export const remoteDataSource = new RemoteDataSource();

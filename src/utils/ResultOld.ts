@@ -2,19 +2,19 @@ export type DefaultResultError = {
   code: 'UNKNOWN_ERROR' | 'UNAUTHORIZED' | 'NOT_FOUND' | 'BAD_REQUEST' | 'ALREADY_EXISTS' 
 };
 
-export class Result<T, E = DefaultResultError> {
+export class ResultOld<T, E = DefaultResultError> {
   private constructor(
     public readonly isSuccess: boolean,
     public readonly value?: T,
     public readonly error?: E
   ) {}
 
-  static Success<T, E>(value: T): Result<T, E> {
-    return new Result<T, E>(true, value);
+  static Success<T, E>(value: T): ResultOld<T, E> {
+    return new ResultOld<T, E>(true, value);
   }
 
-  static Error<T, E>(error: E): Result<T, E> {
-    return new Result<T, E>(false, undefined, error);
+  static Error<T, E>(error: E): ResultOld<T, E> {
+    return new ResultOld<T, E>(false, undefined, error);
   }
 
   public fold<R>(onSuccess: (value: T) => R, onError: (error: E) => R): R {

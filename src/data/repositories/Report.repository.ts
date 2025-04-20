@@ -1,11 +1,11 @@
-import { DefaultResultError, Result } from "../../utils/Result";
+import { DefaultResultError, ResultOld } from "../../utils/ResultOld";
 import { remoteDataSource } from "../datasource/Remote.datasource";
 import { DepositListModel, DepositModel } from "../model/Reports.model";
 import { z } from "zod";
 
 export type GetAllReportsRes = Promise<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Result<any[], { code: "SERIALIZATION" } | DefaultResultError>
+  ResultOld<any[], { code: "SERIALIZATION" } | DefaultResultError>
 >;
 
 export type GetPaginatedReportsReq = {
@@ -17,7 +17,7 @@ export type GetPaginatedReportsReq = {
 
 export type GetPaginatedReportsRes = Promise<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Result<any, { code: "SERIALIZATION" } | DefaultResultError>
+  ResultOld<any, { code: "SERIALIZATION" } | DefaultResultError>
 >;
 
 export type GetReportByIdReq = {
@@ -25,7 +25,7 @@ export type GetReportByIdReq = {
 };
 
 export type GetReportByIdRes = Promise<
-  Result<
+  ResultOld<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any,
     { code: "SERIALIZATION" } | { code: "NOT_FOUND" } | DefaultResultError
@@ -49,7 +49,7 @@ export class ReportRepositoryImpl implements ReportRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: "SERIALIZATION" });
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,10 +72,10 @@ export class ReportRepositoryImpl implements ReportRepository {
         valueCollected: item.valueCollected,
       }));
 
-      return Result.Success(normalizedData);
+      return ResultOld.Success(normalizedData);
     } catch (error) {
       console.error("Error getting all reports:", error);
-      return Result.Error({ code: "UNKNOWN_ERROR" });
+      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
     }
   }
 
@@ -99,7 +99,7 @@ export class ReportRepositoryImpl implements ReportRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: "SERIALIZATION" });
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -131,10 +131,10 @@ export class ReportRepositoryImpl implements ReportRepository {
         totalPages: result.totalPages || 1,
       };
 
-      return Result.Success(paginatedResponse);
+      return ResultOld.Success(paginatedResponse);
     } catch (error) {
       console.error("Error getting paginated reports:", error);
-      return Result.Error({ code: "UNKNOWN_ERROR" });
+      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
     }
   }
 
@@ -146,7 +146,7 @@ export class ReportRepositoryImpl implements ReportRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: "SERIALIZATION" });
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -169,10 +169,10 @@ export class ReportRepositoryImpl implements ReportRepository {
         valueCollected: result.valueCollected,
       };
 
-      return Result.Success(normalizedData);
+      return ResultOld.Success(normalizedData);
     } catch (error) {
       console.error("Error getting report by id:", error);
-      return Result.Error({ code: "UNKNOWN_ERROR" });
+      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
     }
   }
 }

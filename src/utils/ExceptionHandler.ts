@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { Result } from './Result';
+import { ResultOld } from './ResultOld';
 
 export function ExceptionHandler() {
   return function (
@@ -18,19 +18,19 @@ export function ExceptionHandler() {
         if (error instanceof AxiosError) {
           switch (error.response?.status) {
             case 401:
-              return Result.Error({ code: 'UNAUTHORIZED' });
+              return ResultOld.Error({ code: 'UNAUTHORIZED' });
             case 404:
-              return Result.Error({ code: 'NOT_FOUND' });
+              return ResultOld.Error({ code: 'NOT_FOUND' });
             case 400:
-              return Result.Error({ code: 'BAD_REQUEST' });
+              return ResultOld.Error({ code: 'BAD_REQUEST' });
             case 409:
-              return Result.Error({ code: 'ALREADY_EXISTS' });
+              return ResultOld.Error({ code: 'ALREADY_EXISTS' });
             default:
-              return Result.Error({ code: 'UNKNOWN_ERROR' });
+              return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
           }
         }
         
-        return Result.Error({ code: 'UNKNOWN_ERROR' });
+        return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
       }
     };
 
