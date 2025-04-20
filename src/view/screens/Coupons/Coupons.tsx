@@ -15,6 +15,7 @@ import { CouponDetailsModal } from "./partials/CouponDetailsModal";
 import { CouponFilters } from "./partials/CouponFilters";
 import { CouponModal } from "./partials/CouponModal";
 import { CouponTable } from "./partials/CouponTable";
+import { Loading } from "@/view/components/Loading";
 
 export function Coupons() {
   const {
@@ -82,14 +83,7 @@ export function Coupons() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-[500px]">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p className="text-gray-600">Carregando cupons...</p>
-        </div>
-      </div>
-    );
+    return <Loading label="Carregando cupons..." />;
   }
 
   return (
