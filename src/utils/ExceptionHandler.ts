@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Http } from "@/domain/HttpClient";
-import { isAxiosError } from "axios";
-import { Result } from "./Result";
-import { RemoteDataSource } from "@/data/datasource/Remote.datasource";
+import { RemoteDataSource } from '@/data/datasource/Remote.datasource';
+import { Http } from '@/domain/HttpClient';
+import { isAxiosError } from 'axios';
+import { Result } from './Result';
 
 export function ExceptionHandler() {
   return function (
     _target: any,
     _propertyKey: string,
-    descriptor: PropertyDescriptor
+    descriptor: PropertyDescriptor,
   ) {
     const originalMethod = descriptor.value;
 
@@ -26,7 +26,7 @@ export function ExceptionHandler() {
 
         console.error(error);
 
-        return Result.Error({ code: "UNKNOWN" });
+        return Result.Error({ code: 'UNKNOWN' });
       }
     };
 

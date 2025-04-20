@@ -1,11 +1,11 @@
-import { Result } from "../utils/Result";
+import { Result } from '../utils/Result';
 
 export class Http {
   public static async checkError(error: Error) {
-    if ("code" in error) {
+    if ('code' in error) {
       switch (error.code) {
-        case "EAI_AGAIN":
-          return Result.Error({ code: "NETWORK_ERROR" });
+        case 'EAI_AGAIN':
+          return Result.Error({ code: 'NETWORK_ERROR' });
       }
     }
   }

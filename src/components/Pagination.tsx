@@ -1,5 +1,9 @@
-import React from 'react';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from 'lucide-react';
 
 interface PaginationProps {
   currentPage: number;
@@ -73,7 +77,10 @@ export function Pagination({
       {paginationItems?.map((item, index) => {
         if (item === '...') {
           return (
-            <span key={`dots-${index}`} className="px-3 py-1 text-text-secondary">
+            <span
+              key={`dots-${index}`}
+              className="px-3 py-1 text-text-secondary"
+            >
               ...
             </span>
           );

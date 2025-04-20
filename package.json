@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
+    "format": "prettier --write .",
+    "lint": "npm run format && eslint . --fix",
     "preview": "vite preview",
     "prepare": "husky"
   },

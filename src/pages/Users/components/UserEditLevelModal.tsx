@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion } from 'framer-motion';
-import { X, Shield } from 'lucide-react';
-import type { User } from '../../../data/types';
+import { Shield, X } from 'lucide-react';
+import React, { useState } from 'react';
+// import type { User } from '../../../data/types';
 
 interface UserEditLevelModalProps {
-  user: User;
+  user: any;
   onClose: () => void;
   onSubmit: (level: number) => Promise<any>;
 }
@@ -12,17 +13,28 @@ interface UserEditLevelModalProps {
 // Função auxiliar para exibir o nível do usuário
 const getLevelName = (level: number) => {
   switch (level) {
-    case 0: return 'Básico';
-    case 1: return 'Iniciante';
-    case 2: return 'Intermediário';
-    case 3: return 'Avançado';
-    case 4: return 'Supervisor';
-    case 5: return 'Administrador';
-    default: return `Nível ${level}`;
+    case 0:
+      return 'Básico';
+    case 1:
+      return 'Iniciante';
+    case 2:
+      return 'Intermediário';
+    case 3:
+      return 'Avançado';
+    case 4:
+      return 'Supervisor';
+    case 5:
+      return 'Administrador';
+    default:
+      return `Nível ${level}`;
   }
 };
 
-export function UserEditLevelModal({ user, onClose, onSubmit }: UserEditLevelModalProps) {
+export function UserEditLevelModal({
+  user,
+  onClose,
+  onSubmit,
+}: UserEditLevelModalProps) {
   const [level, setLevel] = useState<number>(user.level);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -32,7 +44,7 @@ export function UserEditLevelModal({ user, onClose, onSubmit }: UserEditLevelMod
     try {
       await onSubmit(level);
     } catch (error) {
-      console.error("Erro ao atualizar nível:", error);
+      console.error('Erro ao atualizar nível:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -61,7 +73,9 @@ export function UserEditLevelModal({ user, onClose, onSubmit }: UserEditLevelMod
           <div>
             <div className="flex items-center mb-2">
               <Shield className="h-5 w-5 text-primary mr-2" />
-              <label className="text-lg font-medium">Usuário: {user.username}</label>
+              <label className="text-lg font-medium">
+                Usuário: {user.username}
+              </label>
             </div>
             <p className="text-text-secondary mb-4">
               Selecione o nível de acesso para este usuário.
@@ -69,11 +83,11 @@ export function UserEditLevelModal({ user, onClose, onSubmit }: UserEditLevelMod
 
             <div className="space-y-2">
               {[0, 1, 2, 3, 4, 5].map((levelOption) => (
-                <div 
+                <div
                   key={levelOption}
                   className={`p-3 border rounded-lg cursor-pointer transition-all ${
-                    level === levelOption 
-                      ? 'border-primary bg-primary/10' 
+                    level === levelOption
+                      ? 'border-primary bg-primary/10'
                       : 'border-surface bg-background hover:bg-primary/5'
                   }`}
                   onClick={() => setLevel(levelOption)}
@@ -88,8 +102,8 @@ export function UserEditLevelModal({ user, onClose, onSubmit }: UserEditLevelMod
                       className="mr-3 h-4 w-4 text-primary"
                     />
                     <div>
-                      <label 
-                        htmlFor={`level-${levelOption}`} 
+                      <label
+                        htmlFor={`level-${levelOption}`}
                         className="font-medium cursor-pointer"
                       >
                         Nível {levelOption}: {getLevelName(levelOption)}
@@ -97,9 +111,11 @@ export function UserEditLevelModal({ user, onClose, onSubmit }: UserEditLevelMod
                       <p className="text-sm text-text-secondary">
                         {levelOption === 0 && 'Acesso básico ao sistema.'}
                         {levelOption === 1 && 'Pode acessar recursos básicos.'}
-                        {levelOption === 2 && 'Pode acessar recursos intermediários.'}
+                        {levelOption === 2 &&
+                          'Pode acessar recursos intermediários.'}
                         {levelOption === 3 && 'Acesso avançado a recursos.'}
-                        {levelOption === 4 && 'Supervisão e acesso a dados sensíveis.'}
+                        {levelOption === 4 &&
+                          'Supervisão e acesso a dados sensíveis.'}
                         {levelOption === 5 && 'Acesso administrativo completo.'}
                       </p>
                     </div>

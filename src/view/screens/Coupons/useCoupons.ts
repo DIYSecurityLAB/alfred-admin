@@ -1,21 +1,21 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { couponRepository } from "../../../data/repositories/Coupon.repository";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { debounce } from 'lodash';
+import { useCallback, useState } from 'react';
+import { couponRepository } from '../../../data/repositories/Coupon.repository';
 import type {
   Coupon,
   CouponFilter,
   CreateCouponDTO,
   UpdateCouponDTO,
-} from "../../../data/types";
-import { debounce } from "lodash";
-import { useState, useCallback } from "react";
+} from '../../../data/types';
 
 export function useCoupons() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [filters, setFilters] = useState<CouponFilter>({
-    code: "",
-    status: "all",
-    sort: "none",
+    code: '',
+    status: 'all',
+    sort: 'none',
   });
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -26,7 +26,7 @@ export function useCoupons() {
   const queryClient = useQueryClient();
 
   const { data: allCouponsData, isLoading } = useQuery({
-    queryKey: ["allCoupons"],
+    queryKey: ['allCoupons'],
     queryFn: async () => {
       try {
         const result = await couponRepository.listAll({
@@ -36,12 +36,12 @@ export function useCoupons() {
         });
 
         if (!result.isSuccess) {
-          throw new Error(result.error?.code || "Erro desconhecido");
+          throw new Error(result.error?.code || 'Erro desconhecido');
         }
 
         return result.value?.data || [];
       } catch {
-        setError("Erro ao carregar cupons");
+        setError('Erro ao carregar cupons');
         return [];
       }
     },
@@ -54,28 +54,28 @@ export function useCoupons() {
 
     if (filters.code) {
       result = result.filter((coupon) =>
-        coupon.code.toLowerCase().includes(filters.code.toLowerCase())
+        coupon.code.toLowerCase().includes(filters.code.toLowerCase()),
       );
     }
 
-    if (filters.status !== "all") {
+    if (filters.status !== 'all') {
       result = result.filter((coupon) =>
-        filters.status === "active" ? coupon.isActive : !coupon.isActive
+        filters.status === 'active' ? coupon.isActive : !coupon.isActive,
       );
     }
 
-    if (filters.sort !== "none") {
+    if (filters.sort !== 'none') {
       result.sort((a, b) => {
         switch (filters.sort) {
-          case "most-used":
+          case 'most-used':
             return b.usedCount - a.usedCount;
-          case "least-used":
+          case 'least-used':
             return a.usedCount - b.usedCount;
-          case "newest":
+          case 'newest':
             return (
               new Date(b.validFrom).getTime() - new Date(a.validFrom).getTime()
             );
-          case "oldest":
+          case 'oldest':
             return (
               new Date(a.validFrom).getTime() - new Date(b.validFrom).getTime()
             );
@@ -100,7 +100,7 @@ export function useCoupons() {
       setFilters((prev) => ({ ...prev, ...newFilters }));
       setPage(1);
     }, 300),
-    []
+    [],
   );
 
   const createMutation = useMutation({
@@ -110,13 +110,13 @@ export function useCoupons() {
       if (!result.isSuccess) {
         const errorMessage = result.error?.code
           ? `Erro ao criar cupom: ${result.error.code}`
-          : "Erro desconhecido ao criar cupom";
+          : 'Erro desconhecido ao criar cupom';
         throw new Error(errorMessage);
       }
       return result.value;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allCoupons"] });
+      queryClient.invalidateQueries({ queryKey: ['allCoupons'] });
       setIsCreateModalOpen(false);
     },
     onError: (error: Error) => {
@@ -131,13 +131,13 @@ export function useCoupons() {
       if (!result.isSuccess) {
         const errorMessage = result.error?.code
           ? `Erro ao atualizar cupom: ${result.error.code}`
-          : "Erro desconhecido ao atualizar cupom";
+          : 'Erro desconhecido ao atualizar cupom';
         throw new Error(errorMessage);
       }
       return result.value;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allCoupons"] });
+      queryClient.invalidateQueries({ queryKey: ['allCoupons'] });
       setIsEditModalOpen(false);
     },
     onError: (error: Error) => {
@@ -152,14 +152,14 @@ export function useCoupons() {
       if (!result.isSuccess) {
         const errorMessage = result.error?.code
           ? `Erro ao alternar status: ${result.error.code}`
-          : "Erro desconhecido ao alternar status";
+          : 'Erro desconhecido ao alternar status';
         throw new Error(errorMessage);
       }
 
       return result.value;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allCoupons"] });
+      queryClient.invalidateQueries({ queryKey: ['allCoupons'] });
     },
     onError: (error: Error) => {
       setError(`Erro ao alterar status do cupom: ${error.message}`);
@@ -173,7 +173,7 @@ export function useCoupons() {
       if (!result.isSuccess) {
         const errorMessage = result.error?.code
           ? `Erro na validação: ${result.error.code}`
-          : "Erro desconhecido na validação";
+          : 'Erro desconhecido na validação';
         throw new Error(errorMessage);
       }
       return result.value;

@@ -1,6 +1,14 @@
-import { motion } from "framer-motion";
-import { Edit, Eye, Unlock, Calendar, User, FileText, Shield } from "lucide-react";
-import { BlockedUserData } from "../useBlockedUser";
+import { motion } from 'framer-motion';
+import {
+  Calendar,
+  Edit,
+  Eye,
+  FileText,
+  Shield,
+  Unlock,
+  User,
+} from 'lucide-react';
+import { BlockedUserData } from '../useBlockedUser';
 
 interface BlockedUserCardsProps {
   blockedUsers: BlockedUserData[];
@@ -66,16 +74,19 @@ export function BlockedUserCards({
               {user.documentId && (
                 <div className="flex items-center text-sm text-gray-600">
                   <FileText className="h-4 w-4 mr-2 text-gray-400" />
-                  <span className="font-medium mr-1">Doc:</span> {user.documentId}
+                  <span className="font-medium mr-1">Doc:</span>{' '}
+                  {user.documentId}
                 </div>
               )}
               <div className="flex items-center text-sm text-gray-600">
                 <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                <span className="font-medium mr-1">Bloqueado em:</span> {formatDate(user.createdAt)}
+                <span className="font-medium mr-1">Bloqueado em:</span>{' '}
+                {formatDate(user.createdAt)}
               </div>
               <div className="flex items-center text-sm text-gray-600">
                 <Shield className="h-4 w-4 mr-2 text-gray-400" />
-                <span className="font-medium mr-1">Bloqueado por:</span> {user.blockedBy}
+                <span className="font-medium mr-1">Bloqueado por:</span>{' '}
+                {user.blockedBy}
               </div>
             </div>
 

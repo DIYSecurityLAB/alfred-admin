@@ -1,23 +1,23 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  X, 
-  Copy, 
-  Calendar, 
-  User, 
-  Phone, 
-  Wallet, 
-  Network, 
-  CreditCard,
-  FileText,
-  Tag,
-  DollarSign,
-  Bitcoin,
-  CheckCircle,
+import { AnimatePresence, motion } from 'framer-motion';
+import {
   AlertCircle,
   AlertTriangle,
-  XCircle
+  Bitcoin,
+  Calendar,
+  CheckCircle,
+  Copy,
+  CreditCard,
+  DollarSign,
+  FileText,
+  Network,
+  Phone,
+  Tag,
+  User,
+  Wallet,
+  X,
+  XCircle,
 } from 'lucide-react';
+import React from 'react';
 
 interface ReportDetailsModalProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,7 +25,10 @@ interface ReportDetailsModalProps {
   onClose: () => void;
 }
 
-export function ReportDetailsModal({ report, onClose }: ReportDetailsModalProps) {
+export function ReportDetailsModal({
+  report,
+  onClose,
+}: ReportDetailsModalProps) {
   const [copied, setCopied] = React.useState<string | null>(null);
 
   const handleCopy = (text: string, field: string) => {
@@ -81,17 +84,22 @@ export function ReportDetailsModal({ report, onClose }: ReportDetailsModalProps)
 
   const backdrop = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1 }
+    visible: { opacity: 1 },
   };
 
   const modal = {
     hidden: { opacity: 0, y: 50, scale: 0.95 },
-    visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", damping: 25, stiffness: 400 } }
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { type: 'spring', damping: 25, stiffness: 400 },
+    },
   };
 
   return (
     <AnimatePresence>
-      <motion.div 
+      <motion.div
         className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
         variants={backdrop}
         initial="hidden"
@@ -106,7 +114,9 @@ export function ReportDetailsModal({ report, onClose }: ReportDetailsModalProps)
           className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto"
         >
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">Detalhes do Depósito</h2>
+            <h2 className="text-2xl font-bold text-gray-800">
+              Detalhes do Depósito
+            </h2>
             <motion.button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -125,25 +135,32 @@ export function ReportDetailsModal({ report, onClose }: ReportDetailsModalProps)
                   <Tag className="h-5 w-5 text-blue-500 mr-2" />
                   <h3 className="text-sm text-gray-500">ID da Transação</h3>
                 </div>
-                <motion.button 
-                  onClick={() => handleCopy(report.transactionId, 'transactionId')} 
+                <motion.button
+                  onClick={() =>
+                    handleCopy(report.transactionId, 'transactionId')
+                  }
                   className="p-1.5 hover:bg-blue-50 rounded-md transition-colors"
                   title="Copiar ID"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {copied === 'transactionId' ? 
-                    <CheckCircle className="h-5 w-5 text-emerald-500" /> : 
+                  {copied === 'transactionId' ? (
+                    <CheckCircle className="h-5 w-5 text-emerald-500" />
+                  ) : (
                     <Copy className="h-5 w-5 text-blue-500" />
-                  }
+                  )}
                 </motion.button>
               </div>
-              <p className="text-xl font-medium mt-1 font-mono text-gray-800">{report.transactionId}</p>
+              <p className="text-xl font-medium mt-1 font-mono text-gray-800">
+                {report.transactionId}
+              </p>
             </div>
 
             <div className="flex items-center">
               {getStatusIcon()}
-              <span className={`text-lg font-medium ${getStatusColor(report.status)}`}>
+              <span
+                className={`text-lg font-medium ${getStatusColor(report.status)}`}
+              >
                 {getStatusText(report.status)}
               </span>
             </div>
@@ -197,11 +214,14 @@ export function ReportDetailsModal({ report, onClose }: ReportDetailsModalProps)
                 <div>
                   <div className="flex items-center mb-1">
                     <CreditCard className="h-4 w-4 text-blue-500 mr-2" />
-                    <h3 className="text-sm text-gray-500">Método de Pagamento</h3>
+                    <h3 className="text-sm text-gray-500">
+                      Método de Pagamento
+                    </h3>
                   </div>
                   <p className="text-lg font-medium text-gray-800">
                     {report.paymentMethod === 'PIX' && 'PIX'}
-                    {report.paymentMethod === 'CREDIT_CARD' && 'Cartão de Crédito'}
+                    {report.paymentMethod === 'CREDIT_CARD' &&
+                      'Cartão de Crédito'}
                     {report.paymentMethod === 'CRYPTO' && 'Criptomoeda'}
                   </p>
                 </div>
@@ -236,7 +256,11 @@ export function ReportDetailsModal({ report, onClose }: ReportDetailsModalProps)
                       {report.cupom}
                       {report.discountValue && (
                         <span className="text-sm ml-2 text-emerald-600">
-                          ({report.discountType === 'percentage' ? report.discountValue + '%' : 'R$ ' + report.discountValue})
+                          (
+                          {report.discountType === 'percentage'
+                            ? report.discountValue + '%'
+                            : 'R$ ' + report.discountValue}
+                          )
                         </span>
                       )}
                     </p>
@@ -246,31 +270,39 @@ export function ReportDetailsModal({ report, onClose }: ReportDetailsModalProps)
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 space-y-3">
-              <h3 className="text-lg font-medium mb-2 text-gray-800">Valores</h3>
-              
+              <h3 className="text-lg font-medium mb-2 text-gray-800">
+                Valores
+              </h3>
+
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
                   <DollarSign className="h-5 w-5 text-emerald-500 mr-2" />
                   <span className="text-gray-700">Valor em BRL</span>
                 </div>
-                <span className="text-lg font-medium text-gray-800">R$ {report.valueBRL.toFixed(2)}</span>
+                <span className="text-lg font-medium text-gray-800">
+                  R$ {report.valueBRL.toFixed(2)}
+                </span>
               </div>
-              
+
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
                   <Bitcoin className="h-5 w-5 text-amber-500 mr-2" />
                   <span className="text-gray-700">Valor em BTC</span>
                 </div>
-                <span className="text-lg font-medium text-gray-800">{report.valueBTC.toFixed(8)} BTC</span>
+                <span className="text-lg font-medium text-gray-800">
+                  {report.valueBTC.toFixed(8)} BTC
+                </span>
               </div>
-              
+
               {report.valueCollected !== undefined && (
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
                     <DollarSign className="h-5 w-5 text-blue-500 mr-2" />
                     <span className="text-gray-700">Valor Coletado</span>
                   </div>
-                  <span className="text-lg font-medium text-gray-800">R$ {report.valueCollected.toFixed(2)}</span>
+                  <span className="text-lg font-medium text-gray-800">
+                    R$ {report.valueCollected.toFixed(2)}
+                  </span>
                 </div>
               )}
             </div>

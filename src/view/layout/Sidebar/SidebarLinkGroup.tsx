@@ -1,5 +1,5 @@
 // src/view/layout/Sidebar/SidebarLinkGroup.tsx
-import { ReactNode, useState } from "react";
+import { ReactNode, useState } from 'react';
 
 type SidebarLinkGroupProps = {
   children: (handleClick: () => void, open: boolean) => ReactNode;

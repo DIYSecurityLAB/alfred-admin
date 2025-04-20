@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 
 interface TopProductsTableProps {
@@ -25,7 +24,7 @@ export function TopProductsTable({
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4 }}
@@ -45,11 +44,16 @@ export function TopProductsTable({
           </thead>
           <tbody>
             {data.map((product, index) => (
-              <tr key={product.name} className="border-b border-gray-50 hover:bg-gray-50/50">
+              <tr
+                key={product.name}
+                className="border-b border-gray-50 hover:bg-gray-50/50"
+              >
                 <td className="py-3 pl-2 text-text-secondary">{index + 1}</td>
                 <td className="py-3 pl-2 font-medium">{product.name}</td>
                 <td className="py-3">{formatNumber(product.sales)}</td>
-                <td className="py-3 font-medium">{formatCurrency(product.revenue)}</td>
+                <td className="py-3 font-medium">
+                  {formatCurrency(product.revenue)}
+                </td>
               </tr>
             ))}
           </tbody>

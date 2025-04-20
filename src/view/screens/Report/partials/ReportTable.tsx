@@ -1,6 +1,6 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { Eye, Clipboard, Check } from "lucide-react";
+import { motion } from 'framer-motion';
+import { Check, Clipboard, Eye } from 'lucide-react';
+import React from 'react';
 
 interface ReportTableProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,35 +20,35 @@ export function ReportTable({ reports, onViewDetails }: ReportTableProps) {
 
   const getStatusColor = (status: string) => {
     const statusLower = status.toLowerCase();
-    if (statusLower.includes("complet") || statusLower === "paid") {
-      return "bg-green-100 text-green-600 border border-green-300";
-    } else if (statusLower.includes("pend") || statusLower === "review") {
-      return "bg-yellow-100 text-yellow-600 border border-yellow-300";
+    if (statusLower.includes('complet') || statusLower === 'paid') {
+      return 'bg-green-100 text-green-600 border border-green-300';
+    } else if (statusLower.includes('pend') || statusLower === 'review') {
+      return 'bg-yellow-100 text-yellow-600 border border-yellow-300';
     } else if (
-      statusLower.includes("cancel") ||
-      statusLower.includes("fail") ||
-      statusLower === "expired" ||
-      statusLower === "refunded"
+      statusLower.includes('cancel') ||
+      statusLower.includes('fail') ||
+      statusLower === 'expired' ||
+      statusLower === 'refunded'
     ) {
-      return "bg-red-100 text-red-600 border border-red-300";
+      return 'bg-red-100 text-red-600 border border-red-300';
     } else {
-      return "bg-gray-100 text-gray-600 border border-gray-300";
+      return 'bg-gray-100 text-gray-600 border border-gray-300';
     }
   };
 
   const getStatusText = (status: string) => {
     const statusMap: Record<string, string> = {
-      COMPLETED: "Completado",
-      PENDING: "Pendente",
-      CANCELLED: "Cancelado",
-      FAILED: "Falhou",
-      pending: "Pendente",
-      paid: "Pago",
-      canceled: "Cancelado",
-      review: "Em Revisão",
-      expired: "Expirado",
-      refunded: "Reembolsado",
-      complete: "Completado",
+      COMPLETED: 'Completado',
+      PENDING: 'Pendente',
+      CANCELLED: 'Cancelado',
+      FAILED: 'Falhou',
+      pending: 'Pendente',
+      paid: 'Pago',
+      canceled: 'Cancelado',
+      review: 'Em Revisão',
+      expired: 'Expirado',
+      refunded: 'Reembolsado',
+      complete: 'Completado',
     };
 
     return statusMap[status] || status;
@@ -56,16 +56,16 @@ export function ReportTable({ reports, onViewDetails }: ReportTableProps) {
 
   const getPaymentMethodText = (method: string) => {
     const methodMap: Record<string, string> = {
-      PIX: "PIX",
-      CREDIT_CARD: "Cartão de Crédito",
-      CRYPTO: "Criptomoeda",
-      CARD: "Cartão",
-      BANK_TRANSFER: "Transferência Bancária",
-      WISE: "Wise",
-      TICKET: "Boleto",
-      USDT: "USDT",
-      SWIFT: "Swift",
-      PAYPAL: "PayPal",
+      PIX: 'PIX',
+      CREDIT_CARD: 'Cartão de Crédito',
+      CRYPTO: 'Criptomoeda',
+      CARD: 'Cartão',
+      BANK_TRANSFER: 'Transferência Bancária',
+      WISE: 'Wise',
+      TICKET: 'Boleto',
+      USDT: 'USDT',
+      SWIFT: 'Swift',
+      PAYPAL: 'PayPal',
     };
 
     return methodMap[method] || method;
@@ -82,7 +82,7 @@ export function ReportTable({ reports, onViewDetails }: ReportTableProps) {
 
   const rowVariants = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } },
+    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } },
   };
 
   return (
@@ -135,7 +135,7 @@ export function ReportTable({ reports, onViewDetails }: ReportTableProps) {
                 </button>
               </td>
               <td className="py-4 px-6 text-gray-800">
-                {report.username || "N/A"}
+                {report.username || 'N/A'}
               </td>
               <td className="py-4 px-6 text-gray-800">
                 {report.transactionDate}
@@ -149,7 +149,7 @@ export function ReportTable({ reports, onViewDetails }: ReportTableProps) {
               <td className="py-4 px-6">
                 <span
                   className={`inline-flex items-center justify-center px-3 py-1.5 rounded-full text-sm font-medium ${getStatusColor(
-                    report.status
+                    report.status,
                   )}`}
                 >
                   {getStatusText(report.status)}

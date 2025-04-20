@@ -1,20 +1,20 @@
-import { Pagination } from "@/components/Pagination";
-import { motion, AnimatePresence } from "framer-motion";
+import { Pagination } from '@/components/Pagination';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Plus,
   AlertCircle,
-  X,
-  ShieldX,
-  ChevronUp,
   ChevronDown,
-} from "lucide-react";
-import { useState } from "react";
-import { useBlockedUsers } from "./useBlockedUser";
-import { BlockedUserFilters } from "./partials/BlockedUserFilters";
-import { BlockedUserTable } from "./partials/BlockedUserTable";
-import { BlockedUserCards } from "./partials/BlockedUserCards";
-import { BlockedUserModal } from "./partials/BlockedUserModal";
-import { BlockedUserDetailsModal } from "./partials/BlockedUserDetailsModal";
+  ChevronUp,
+  Plus,
+  ShieldX,
+  X,
+} from 'lucide-react';
+import { useState } from 'react';
+import { BlockedUserCards } from './partials/BlockedUserCards';
+import { BlockedUserDetailsModal } from './partials/BlockedUserDetailsModal';
+import { BlockedUserFilters } from './partials/BlockedUserFilters';
+import { BlockedUserModal } from './partials/BlockedUserModal';
+import { BlockedUserTable } from './partials/BlockedUserTable';
+import { useBlockedUsers } from './useBlockedUser';
 
 export function BlockedUsers() {
   const {
@@ -55,7 +55,7 @@ export function BlockedUsers() {
     visible: {
       opacity: 1,
       transition: {
-        when: "beforeChildren",
+        when: 'beforeChildren',
         staggerChildren: 0.1,
       },
     },
@@ -66,7 +66,7 @@ export function BlockedUsers() {
     visible: {
       y: 0,
       opacity: 1,
-      transition: { type: "spring", stiffness: 100 },
+      transition: { type: 'spring', stiffness: 100 },
     },
   };
 
@@ -75,7 +75,7 @@ export function BlockedUsers() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: "spring", stiffness: 100 },
+      transition: { type: 'spring', stiffness: 100 },
     },
     exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
   };
@@ -100,7 +100,7 @@ export function BlockedUsers() {
     >
       <motion.div
         className={`bg-white rounded-lg shadow-md border border-blue-50 p-6 mb-8 transition-all duration-500 ${
-          collapsedHeader ? "cursor-pointer" : ""
+          collapsedHeader ? 'cursor-pointer' : ''
         }`}
         variants={itemVariants}
         onClick={collapsedHeader ? toggleHeader : undefined}
@@ -109,7 +109,9 @@ export function BlockedUsers() {
           <div className="flex items-center">
             <ShieldX className="h-6 w-6 text-blue-500 mr-3" />
             <div>
-              <h1 className="text-3xl font-bold mb-2 text-gray-800">Usuários Bloqueados</h1>
+              <h1 className="text-3xl font-bold mb-2 text-gray-800">
+                Usuários Bloqueados
+              </h1>
               {!collapsedHeader && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -173,7 +175,10 @@ export function BlockedUsers() {
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden p-6"
       >
-        <BlockedUserFilters filters={filters} onFilterChange={handleFilterChange} />
+        <BlockedUserFilters
+          filters={filters}
+          onFilterChange={handleFilterChange}
+        />
 
         {blockedUsers.length === 0 ? (
           <motion.div
@@ -189,8 +194,8 @@ export function BlockedUsers() {
             </h3>
             <p className="text-gray-600 text-center max-w-md mb-6">
               {filters.search
-                ? "Nenhum usuário bloqueado corresponde aos filtros selecionados. Tente ajustar seus filtros."
-                : "Não há usuários bloqueados no sistema. Você pode bloquear um usuário quando necessário."}
+                ? 'Nenhum usuário bloqueado corresponde aos filtros selecionados. Tente ajustar seus filtros.'
+                : 'Não há usuários bloqueados no sistema. Você pode bloquear um usuário quando necessário.'}
             </p>
             <motion.button
               onClick={openCreateModal}

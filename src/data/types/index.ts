@@ -98,10 +98,10 @@ export interface Settings {
   emailNotifications: boolean;
 }
 
-export type PaymentMethod = 
-  | 'PIX' 
-  | 'CREDIT_CARD' 
-  | 'CRYPTO' 
+export type PaymentMethod =
+  | 'PIX'
+  | 'CREDIT_CARD'
+  | 'CRYPTO'
   | 'CARD'
   | 'BANK_TRANSFER'
   | 'WISE'
@@ -110,10 +110,10 @@ export type PaymentMethod =
   | 'SWIFT'
   | 'PAYPAL';
 
-export type PaymentStatus = 
-  | 'PENDING' 
-  | 'COMPLETED' 
-  | 'CANCELLED' 
+export type PaymentStatus =
+  | 'PENDING'
+  | 'COMPLETED'
+  | 'CANCELLED'
   | 'FAILED'
   | 'pending'
   | 'paid'
@@ -160,5 +160,3 @@ export interface PaginatedResponse<T> {
   pageSize: number;
   totalPages: number;
 }
-
-
