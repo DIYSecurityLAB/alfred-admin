@@ -1,38 +1,20 @@
 import {
-  // LayoutDashboard,
   Tags,
   CreditCard,
-  // Users,
   Settings,
+  UserX,
 } from "lucide-react";
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./Header/Header";
 import { Sidebar, SidebarItems } from "./Sidebar/Sidebar";
+import { ROUTES } from "../routes/Routes";
 
 const menuItems: SidebarItems = [
-  // {
-  //   type: "link",
-  //   icon: LayoutDashboard,
-  //   label: "Dashboard",
-  //   path: "/dashboard",
-  // },
   { type: "link", icon: Tags, label: "Cupons", path: "/coupons" },
   { type: "link", icon: CreditCard, label: "Vendas", path: "/sales" },
-  // { type: "link", icon: Users, label: "Usuários", path: "/users" },
+  { type: "link", icon: UserX, label: "Usuários Bloqueados", path: ROUTES.users.blocked },
   { type: "link", icon: Settings, label: "Configurações", path: "/settings" },
-  // {
-  //   type: "dropdown",
-  //   icon: <CiMail />,
-  //   label: "Newsletter",
-  //   activeCondition: pathname.includes("newsletter"),
-  //   dropItems: [
-  //     {
-  //       path: ROUTES.newsletter.listAll.call(),
-  //       label: "Listar Todos",
-  //     },
-  //   ],
-  // },
 ];
 
 export function AdminLayout() {
