@@ -1,5 +1,5 @@
 import { DefaultResultError, ResultOld } from '../../utils/ResultOld';
-import { remoteDataSource } from '../datasource/Remote.datasource';
+import { remoteDataSourceOld } from '../datasource/RemoteOld.datasource';
 import { DashboardStatsModel } from '../model/Dashboard.model';
 
 export type GetDashboardStatsRes = Promise<
@@ -11,7 +11,7 @@ export interface DashboardRepository {
 }
 
 export class DashboardRepositoryImpl implements DashboardRepository {
-  constructor(private api = remoteDataSource) {}
+  constructor(private api = remoteDataSourceOld) {}
 
   async getDashboardStats(): GetDashboardStatsRes {
     try {

@@ -1,5 +1,5 @@
 import { DefaultResultError, ResultOld } from '../../utils/ResultOld';
-import { remoteDataSource } from '../datasource/Remote.datasource';
+import { remoteDataSourceOld } from '../datasource/RemoteOld.datasource';
 import { z } from 'zod';
 
 export const SettingsModel = z.object({
@@ -29,7 +29,7 @@ export interface SettingsRepository {
 }
 
 export class SettingsRepositoryImpl implements SettingsRepository {
-  constructor(private api = remoteDataSource) {}
+  constructor(private api = remoteDataSourceOld) {}
 
   async getSettings(): GetSettingsRes {
     try {

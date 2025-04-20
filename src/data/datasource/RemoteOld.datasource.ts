@@ -42,7 +42,7 @@ export type HeaderValues =
   | 'Content-Type'
   | 'User-Agent';
 
-export class RemoteDataSource {
+export class RemoteDataSourceOld {
   private api: AxiosInstance;
 
   constructor(baseURL?: string) {
@@ -178,4 +178,4 @@ export class RemoteDataSource {
   }
 }
 
-export const remoteDataSource = new RemoteDataSource();
+export const remoteDataSourceOld = new RemoteDataSourceOld();

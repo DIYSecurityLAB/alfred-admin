@@ -1,5 +1,5 @@
 import { DefaultResultError, ResultOld } from '../../utils/ResultOld';
-import { remoteDataSource } from '../datasource/Remote.datasource';
+import { remoteDataSourceOld } from '../datasource/RemoteOld.datasource';
 import { z } from 'zod';
 
 export const UserModel = z.object({
@@ -69,7 +69,7 @@ export interface UsersRepository {
 }
 
 export class UsersRepositoryImpl implements UsersRepository {
-  constructor(private api = remoteDataSource) {}
+  constructor(private api = remoteDataSourceOld) {}
 
   async getUsers({ page, limit, filters }: GetUsersReq): GetUsersRes {
     try {

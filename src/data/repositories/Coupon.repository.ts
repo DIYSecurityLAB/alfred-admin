@@ -1,5 +1,5 @@
 import { DefaultResultError, ResultOld } from "../../utils/ResultOld";
-import { remoteDataSource } from "../datasource/Remote.datasource";
+import { remoteDataSourceOld } from "../datasource/RemoteOld.datasource";
 import {
   FilterCouponsModel,
   InsertCouponModel,
@@ -69,7 +69,7 @@ export interface CouponRepository {
 }
 
 export class CouponRepositoryImpl implements CouponRepository {
-  constructor(private api = remoteDataSource) {}
+  constructor(private api = remoteDataSourceOld) {}
 
   async toggleStatus(req: ToggleStatusReq): ToggleStatusRes {
     try {

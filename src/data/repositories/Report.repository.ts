@@ -1,5 +1,5 @@
 import { DefaultResultError, ResultOld } from "../../utils/ResultOld";
-import { remoteDataSource } from "../datasource/Remote.datasource";
+import { remoteDataSourceOld } from "../datasource/RemoteOld.datasource";
 import { DepositListModel, DepositModel } from "../model/Reports.model";
 import { z } from "zod";
 
@@ -39,7 +39,7 @@ export interface ReportRepository {
 }
 
 export class ReportRepositoryImpl implements ReportRepository {
-  constructor(private api = remoteDataSource) {}
+  constructor(private api = remoteDataSourceOld) {}
 
   async getAll(): GetAllReportsRes {
     try {
