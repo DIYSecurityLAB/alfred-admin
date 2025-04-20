@@ -1,9 +1,9 @@
-import { DefaultResultError, Result } from '../../utils/Result';
-import { remoteDataSource } from '../datasource/Remote.datasource';
+import { DefaultResultError, ResultOld } from '../../utils/ResultOld';
+import { remoteDataSourceOld } from '../datasource/RemoteOld.datasource';
 import { DashboardStatsModel } from '../model/Dashboard.model';
 
 export type GetDashboardStatsRes = Promise<
-  Result<DashboardStatsModel, { code: 'SERIALIZATION' } | DefaultResultError>
+  ResultOld<DashboardStatsModel, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
 export interface DashboardRepository {
@@ -11,7 +11,7 @@ export interface DashboardRepository {
 }
 
 export class DashboardRepositoryImpl implements DashboardRepository {
-  constructor(private api = remoteDataSource) {}
+  constructor(private api = remoteDataSourceOld) {}
 
   async getDashboardStats(): GetDashboardStatsRes {
     try {
@@ -21,13 +21,13 @@ export class DashboardRepositoryImpl implements DashboardRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: 'SERIALIZATION' });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
-      return Result.Success(result);
+      return ResultOld.Success(result);
     } catch (error) {
       console.error('Error getting dashboard stats:', error);
-      return Result.Error({ code: 'UNKNOWN_ERROR' });
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 }

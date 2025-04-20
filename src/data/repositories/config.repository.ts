@@ -1,63 +1,57 @@
-import { DefaultResultError, Result } from '../../utils/Result';
-import { remoteDataSource } from '../datasource/Remote.datasource';
-import { ConfigModel } from '../model/Config.model';
+import { Result, DefaultResultError } from "@/utils/Result";
+import { ConfigModel } from "../model/Config.model";
+import { RemoteDataSource } from "../datasource/Remote.datasource";
+import { ExceptionHandler } from "@/utils/ExceptionHandler";
 
-export type ReadConfigRes = Promise<
-  Result<ConfigModel, { code: 'SERIALIZATION' | 'NOT_FOUND' } | DefaultResultError>
+type ListRes = Promise<
+  Result<
+    ConfigModel,
+    { code: "SERIALIZATION" | "NOT_FOUND" } | DefaultResultError
+  >
 >;
 
-export type UpdateConfigReq = {
-  isSwapPegActive?: boolean;
-  isMaintenanceMode?: boolean;
-};
-export type UpdateConfigRes = Promise<
-  Result<ConfigModel, { code: 'SERIALIZATION' | 'NOT_FOUND' } | DefaultResultError>
+type UpdateReq = Partial<ConfigModel>;
+type UpdateRes = Promise<
+  Result<
+    ConfigModel,
+    { code: "SERIALIZATION" | "NOT_FOUND" } | DefaultResultError
+  >
 >;
 
 export interface ConfigRepository {
-  getConfig(): ReadConfigRes;
-  updateConfig(config: UpdateConfigReq): UpdateConfigRes;
+  list(): ListRes;
+  update(config: UpdateReq): UpdateRes;
 }
 
 export class ConfigRepositoryImpl implements ConfigRepository {
-  constructor(private api = remoteDataSource) {}
+  constructor(private readonly api: RemoteDataSource) {}
 
-  async getConfig(): ReadConfigRes {
-    try {
-      const result = await this.api.get({
-        url: '/config',
-        model: ConfigModel,
-      });
+  @ExceptionHandler()
+  async list(): ListRes {
+    const result = await this.api.get({
+      url: "/config",
+      model: ConfigModel,
+    });
 
-      if (!result) {
-        return Result.Error({ code: 'SERIALIZATION' });
-      }
-
-      return Result.Success(result);
-    } catch (error) {
-      console.error('Error getting config:', error);
-      return Result.Error({ code: 'UNKNOWN_ERROR' });
+    if (!result) {
+      return Result.Error({ code: "SERIALIZATION" });
     }
+
+    return Result.Success(result);
   }
 
-  async updateConfig(config: UpdateConfigReq): UpdateConfigRes {
-    try {
-      const result = await this.api.patch({
-        url: '/config',
-        model: ConfigModel,
-        body: config,
-      });
+  @ExceptionHandler()
+  async update(config: UpdateReq): UpdateRes {
+    const result = await this.api.patch({
+      url: "/config",
+      model: ConfigModel,
+      body: config,
+    });
 
-      if (!result) {
-        return Result.Error({ code: 'SERIALIZATION' });
-      }
-
-      return Result.Success(result);
-    } catch (error) {
-      console.error('Error updating config:', error);
-      return Result.Error({ code: 'UNKNOWN_ERROR' });
+    if (!result) {
+      return Result.Error({ code: "SERIALIZATION" });
     }
+
+    return Result.Success(result);
   }
 }
-
-export const configRepository = new ConfigRepositoryImpl();

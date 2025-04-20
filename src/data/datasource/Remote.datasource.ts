@@ -4,9 +4,9 @@ import axios, {
   AxiosInstance,
   AxiosRequestHeaders,
   HttpStatusCode,
-} from 'axios';
-import { z } from 'zod';
-import { Result } from '../../utils/Result';
+} from "axios";
+import { z } from "zod";
+import { Result } from "../../utils/Result";
 
 export type SerializeSchemas =
   | z.ZodObject<any>
@@ -25,29 +25,24 @@ export type RemotePostReq<Response extends SerializeSchemas> = {
   body?: any;
 };
 
-export type RemoteDeleteReq<Response extends SerializeSchemas> = {
-  url: string;
-  model: Response;
-};
-
 type RemoteRequestRes<Response extends SerializeSchemas> = Promise<
-  z.infer<Response> | null
+  Response["_type"] | null
 >;
 
 export type HeaderValues =
-  | 'Accept'
-  | 'Authorization'
-  | 'Content-Encoding'
-  | 'Content-Length'
-  | 'Content-Type'
-  | 'User-Agent';
+  | "Accept"
+  | "Authorization"
+  | "Content-Encoding"
+  | "Content-Length"
+  | "Content-Type"
+  | "User-Agent";
 
 export class RemoteDataSource {
   private api: AxiosInstance;
 
   constructor(baseURL?: string) {
     this.api = axios.create({
-      baseURL: baseURL || import.meta.env.VITE_API_URL,
+      baseURL: baseURL,
       headers: {},
     });
   }
@@ -69,24 +64,16 @@ export class RemoteDataSource {
     url,
     params,
   }: RemoteGetReq<Response>): RemoteRequestRes<Response> {
-    try {
-      const { data } = await this.api.get<any>(url, {
-        params,
-        timeout: 1800000, // Aumentado para 30 minutos (1.800.000 ms)
-      });
+    const { data } = await this.api.get<Response>(url, {
+      params,
+      timeout: 300000,
+    });
 
-      const serialized = model.safeParse(data);
+    const serialized = model.safeParse(data);
 
-      if (!serialized.success) {
-        console.error("Serialization error:", serialized.error.errors);
-        return null;
-      }
+    if (!serialized.success) return null;
 
-      return serialized.data;
-    } catch (error) {
-      console.error("API GET request error:", error);
-      throw error;
-    }
+    return serialized.data;
   }
 
   public async post<Response extends SerializeSchemas>({
@@ -94,23 +81,17 @@ export class RemoteDataSource {
     url,
     body,
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
-    try {
-      const { data } = await this.api.post<any>(url, body, {
-        timeout: 300000, // Aumentado para 5 minutos (300.000 ms)
-      });
+    const { data } = await this.api.post<Response>(url, body, {
+      timeout: 300000,
+    });
 
-      const serialized = model.safeParse(data);
+    const serialized = model.safeParse(data);
 
-      if (!serialized.success) {
-        console.error("Serialization error:", serialized.error.errors);
-        return null;
-      }
+    console.log(serialized.error?.errors);
 
-      return serialized.data;
-    } catch (error) {
-      console.error("API POST request error:", error);
-      throw error;
-    }
+    if (!serialized.success) return null;
+
+    return serialized.data;
   }
 
   public async patch<Response extends SerializeSchemas>({
@@ -118,66 +99,25 @@ export class RemoteDataSource {
     url,
     body,
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
-    try {
-      const { data } = await this.api.patch<any>(url, body, {
-        timeout: 300000, // Aumentado para 5 minutos (300.000 ms)
-      });
+    const { data } = await this.api.patch<Response>(url, body, {
+      timeout: 300000,
+    });
 
-      const serialized = model.safeParse(data);
+    const serialized = model.safeParse(data);
 
-      if (!serialized.success) {
-        console.error("Serialization error:", serialized.error.errors);
-        return null;
-      }
+    console.log(serialized.error?.errors);
 
-      return serialized.data;
-    } catch (error) {
-      console.error("API PATCH request error:", error);
-      throw error;
-    }
-  }
+    if (!serialized.success) return null;
 
-  public async delete<Response extends SerializeSchemas>({
-    model,
-    url,
-  }: RemoteDeleteReq<Response>): RemoteRequestRes<Response> {
-    try {
-      const { data } = await this.api.delete<any>(url, {
-        timeout: 300000, // Aumentado para 5 minutos (300.000 ms)
-      });
-
-      // Se a resposta for vazia, considere um objeto vazio para validação
-      const responseData = data || {};
-      
-      const serialized = model.safeParse(responseData);
-
-      if (!serialized.success) {
-        console.error("Serialization error:", serialized.error.errors);
-        return null;
-      }
-
-      return serialized.data;
-    } catch (error) {
-      console.error("API DELETE request error:", error);
-      throw error;
-    }
+    return serialized.data;
   }
 
   public static checkError(err: AxiosError) {
     switch (err?.response?.status) {
       case HttpStatusCode.Unauthorized:
-        return Result.Error({ code: 'UNAUTHORIZED' });
+        return Result.Error({ code: "UNAUTHORIZED" });
       case HttpStatusCode.NotFound:
-        return Result.Error({ code: 'NOT_FOUND' });
-      case HttpStatusCode.BadRequest:
-        return Result.Error({ code: 'BAD_REQUEST' });
-      case HttpStatusCode.Conflict:
-        return Result.Error({ code: 'ALREADY_EXISTS' });
-      default:
-        return Result.Error({ code: 'UNKNOWN_ERROR' });
+        return Result.Error({ code: "NOT_FOUND" });
     }
   }
 }
-
-// Singleton instance
-export const remoteDataSource = new RemoteDataSource();

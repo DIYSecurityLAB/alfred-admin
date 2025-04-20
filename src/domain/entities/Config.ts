@@ -1,12 +1,13 @@
 import { z } from "zod";
 
-export const ConfigModel = z.object({
-  id: z.number(),
-  isSwapPegActive: z.boolean(),
+export const Config = z.object({
   isMaintenanceMode: z.boolean(),
+  isSwapPegActive: z.boolean(),
   feeWithoutCouponBelowValue: z.number(),
   feeWithoutCouponAboveValue: z.number(),
   feeWithCouponAboveValue: z.number(),
   feeValue: z.number(),
 });
-export type ConfigModel = z.infer<typeof ConfigModel>;
+export type Config = z.infer<typeof Config>;
+
+export type UpdateConfig = Partial<Config>;

@@ -1,5 +1,5 @@
-import { DefaultResultError, Result } from "../../utils/Result";
-import { remoteDataSource } from "../datasource/Remote.datasource";
+import { DefaultResultError, ResultOld } from "../../utils/ResultOld";
+import { remoteDataSourceOld } from "../datasource/RemoteOld.datasource";
 import {
   FilterCouponsModel,
   InsertCouponModel,
@@ -15,7 +15,7 @@ import { z } from "zod";
 
 export type InsertReq = InsertCouponModel;
 export type InsertRes = Promise<
-  Result<
+  ResultOld<
     InsertedCouponModel,
     | { code: "BAD_REQUEST" }
     | { code: "ALREADY_EXISTS" }
@@ -30,17 +30,17 @@ export type ListALLReq = {
   filters?: FilterCouponsModel;
 };
 export type ListALLRes = Promise<
-  Result<ListedAllCouponsModel, { code: "SERIALIZATION" } | DefaultResultError>
+  ResultOld<ListedAllCouponsModel, { code: "SERIALIZATION" } | DefaultResultError>
 >;
 
 export type ListOneReq = ListCouponsModel;
 export type ListOneRes = Promise<
-  Result<ListedCouponModel, { code: "SERIALIZATION" } | DefaultResultError>
+  ResultOld<ListedCouponModel, { code: "SERIALIZATION" } | DefaultResultError>
 >;
 
 export type ToggleStatusReq = ToggleCouponStatusModel;
 export type ToggleStatusRes = Promise<
-  Result<
+  ResultOld<
     ToggledCouponStatusModel,
     { code: "SERIALIZATION" } | DefaultResultError
   >
@@ -48,7 +48,7 @@ export type ToggleStatusRes = Promise<
 
 export type DeleteReq = { id: string };
 export type DeleteRes = Promise<
-  Result<void, { code: "SERIALIZATION" } | DefaultResultError>
+  ResultOld<void, { code: "SERIALIZATION" } | DefaultResultError>
 >;
 
 export interface CouponRepository {
@@ -60,7 +60,7 @@ export interface CouponRepository {
   isValid(
     code: string
   ): Promise<
-    Result<
+    ResultOld<
       ValidateCouponResultModel,
       { code: "SERIALIZATION" } | DefaultResultError
     >
@@ -69,7 +69,7 @@ export interface CouponRepository {
 }
 
 export class CouponRepositoryImpl implements CouponRepository {
-  constructor(private api = remoteDataSource) {}
+  constructor(private api = remoteDataSourceOld) {}
 
   async toggleStatus(req: ToggleStatusReq): ToggleStatusRes {
     try {
@@ -80,13 +80,13 @@ export class CouponRepositoryImpl implements CouponRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: "SERIALIZATION" });
       }
 
-      return Result.Success(result);
+      return ResultOld.Success(result);
     } catch (error) {
       console.error("Error toggling coupon status:", error);
-      return Result.Error({ code: "UNKNOWN_ERROR" });
+      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
     }
   }
 
@@ -105,16 +105,16 @@ export class CouponRepositoryImpl implements CouponRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: "SERIALIZATION" });
       }
 
       console.log("API response structure:", Object.keys(result));
       console.log("Data count:", result.data?.length || 0);
 
-      return Result.Success(result);
+      return ResultOld.Success(result);
     } catch (error) {
       console.error("Error listing coupons:", error);
-      return Result.Error({ code: "UNKNOWN_ERROR" });
+      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
     }
   }
 
@@ -126,13 +126,13 @@ export class CouponRepositoryImpl implements CouponRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: "SERIALIZATION" });
       }
 
-      return Result.Success(result);
+      return ResultOld.Success(result);
     } catch (error) {
       console.error("Error getting coupon:", error);
-      return Result.Error({ code: "UNKNOWN_ERROR" });
+      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
     }
   }
 
@@ -145,13 +145,13 @@ export class CouponRepositoryImpl implements CouponRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: "SERIALIZATION" });
       }
 
-      return Result.Success(result);
+      return ResultOld.Success(result);
     } catch (error) {
       console.error("Error inserting coupon:", error);
-      return Result.Error({ code: "UNKNOWN_ERROR" });
+      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
     }
   }
 
@@ -164,20 +164,20 @@ export class CouponRepositoryImpl implements CouponRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: "SERIALIZATION" });
       }
 
-      return Result.Success(result);
+      return ResultOld.Success(result);
     } catch (error) {
       console.error("Error updating coupon:", error);
-      return Result.Error({ code: "UNKNOWN_ERROR" });
+      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
     }
   }
 
   async isValid(
     code: string
   ): Promise<
-    Result<
+    ResultOld<
       ValidateCouponResultModel,
       { code: "SERIALIZATION" } | DefaultResultError
     >
@@ -190,13 +190,13 @@ export class CouponRepositoryImpl implements CouponRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: "SERIALIZATION" });
       }
 
-      return Result.Success(result);
+      return ResultOld.Success(result);
     } catch (error) {
       console.error("Error validating coupon:", error);
-      return Result.Error({ code: "UNKNOWN_ERROR" });
+      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
     }
   }
 
@@ -207,10 +207,10 @@ export class CouponRepositoryImpl implements CouponRepository {
         model: z.object({}),
       });
 
-      return Result.Success(undefined);
+      return ResultOld.Success(undefined);
     } catch (error) {
       console.error("Error deleting coupon:", error);
-      return Result.Error({ code: "UNKNOWN_ERROR" });
+      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
     }
   }
 }
