@@ -1,32 +1,31 @@
 import { Pagination } from "@/components/Pagination";
-import { useCoupons } from "@/view/screens/Coupons/useCoupons";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
   AlertCircle,
   X,
-  Tag,
+  ShieldX,
   ChevronUp,
   ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
-import { CouponCards } from "./partials/CouponCards";
-import { CouponDetailsModal } from "./partials/CouponDetailsModal";
-import { CouponFilters } from "./partials/CouponFilters";
-import { CouponModal } from "./partials/CouponModal";
-import { CouponTable } from "./partials/CouponTable";
-import { Loading } from "@/view/components/Loading";
+import { useBlockedUsers } from "./useBlockedUser";
+import { BlockedUserFilters } from "./partials/BlockedUserFilters";
+import { BlockedUserTable } from "./partials/BlockedUserTable";
+import { BlockedUserCards } from "./partials/BlockedUserCards";
+import { BlockedUserModal } from "./partials/BlockedUserModal";
+import { BlockedUserDetailsModal } from "./partials/BlockedUserDetailsModal";
 
-export function Coupons() {
+export function BlockedUsers() {
   const {
-    coupons,
-    totalCoupons,
+    blockedUsers,
+    totalBlockedUsers,
     page,
     perPage,
     filters,
     isLoading,
     error,
-    selectedCoupon,
+    selectedBlockedUser,
     isCreateModalOpen,
     isEditModalOpen,
     isDetailsModalOpen,
@@ -39,11 +38,11 @@ export function Coupons() {
     setIsCreateModalOpen,
     setIsEditModalOpen,
     setIsDetailsModalOpen,
-    createCoupon,
-    updateCoupon,
-    toggleCouponStatus,
+    createBlockedUser,
+    updateBlockedUser,
+    unblockUser,
     clearError,
-  } = useCoupons();
+  } = useBlockedUsers();
 
   const [collapsedHeader, setCollapsedHeader] = useState(false);
 
@@ -51,7 +50,6 @@ export function Coupons() {
     setCollapsedHeader(!collapsedHeader);
   };
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -83,7 +81,14 @@ export function Coupons() {
   };
 
   if (isLoading) {
-    return <Loading label="Carregando cupons..." />;
+    return (
+      <div className="flex items-center justify-center h-[500px]">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+          <p className="text-gray-600">Carregando usuários bloqueados...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -102,9 +107,9 @@ export function Coupons() {
       >
         <div className="flex justify-between items-center">
           <div className="flex items-center">
-            <Tag className="h-6 w-6 text-blue-500 mr-3" />
+            <ShieldX className="h-6 w-6 text-blue-500 mr-3" />
             <div>
-              <h1 className="text-3xl font-bold mb-2 text-gray-800">Cupons</h1>
+              <h1 className="text-3xl font-bold mb-2 text-gray-800">Usuários Bloqueados</h1>
               {!collapsedHeader && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -112,7 +117,7 @@ export function Coupons() {
                   exit={{ opacity: 0 }}
                 >
                   <p className="text-gray-600">
-                    Gerencie todos os cupons de desconto
+                    Gerencie todos os usuários bloqueados no sistema
                   </p>
                 </motion.div>
               )}
@@ -126,7 +131,7 @@ export function Coupons() {
               whileTap={{ scale: 0.98 }}
             >
               <Plus className="h-5 w-5" />
-              Novo Cupom
+              Bloquear Usuário
             </motion.button>
             <button
               onClick={toggleHeader}
@@ -168,9 +173,9 @@ export function Coupons() {
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden p-6"
       >
-        <CouponFilters filters={filters} onFilterChange={handleFilterChange} />
+        <BlockedUserFilters filters={filters} onFilterChange={handleFilterChange} />
 
-        {coupons.length === 0 ? (
+        {blockedUsers.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -180,12 +185,12 @@ export function Coupons() {
               <AlertCircle className="h-8 w-8 text-blue-500" />
             </div>
             <h3 className="text-xl font-medium mb-2 text-gray-800">
-              Nenhum cupom encontrado
+              Nenhum usuário bloqueado encontrado
             </h3>
             <p className="text-gray-600 text-center max-w-md mb-6">
-              {filters.code || filters.status !== "all"
-                ? "Nenhum cupom corresponde aos filtros selecionados. Tente ajustar seus filtros."
-                : "Você ainda não criou nenhum cupom. Comece criando seu primeiro cupom de desconto!"}
+              {filters.search
+                ? "Nenhum usuário bloqueado corresponde aos filtros selecionados. Tente ajustar seus filtros."
+                : "Não há usuários bloqueados no sistema. Você pode bloquear um usuário quando necessário."}
             </p>
             <motion.button
               onClick={openCreateModal}
@@ -194,25 +199,25 @@ export function Coupons() {
               whileTap={{ scale: 0.98 }}
             >
               <Plus className="h-5 w-5" />
-              Criar Cupom
+              Bloquear Usuário
             </motion.button>
           </motion.div>
         ) : (
           <>
             <div className="hidden lg:block mb-6">
-              <CouponTable
-                coupons={coupons}
+              <BlockedUserTable
+                blockedUsers={blockedUsers}
                 onViewDetails={openDetailsModal}
                 onEdit={openEditModal}
-                onToggleStatus={toggleCouponStatus}
+                onUnblock={unblockUser}
               />
             </div>
             <div className="lg:hidden mb-6">
-              <CouponCards
-                coupons={coupons}
+              <BlockedUserCards
+                blockedUsers={blockedUsers}
                 onViewDetails={openDetailsModal}
                 onEdit={openEditModal}
-                onToggleStatus={toggleCouponStatus}
+                onUnblock={unblockUser}
               />
             </div>
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-gray-100">
@@ -233,7 +238,7 @@ export function Coupons() {
 
               <Pagination
                 currentPage={page}
-                totalItems={totalCoupons}
+                totalItems={totalBlockedUsers}
                 perPage={perPage}
                 onPageChange={handlePageChange}
               />
@@ -244,28 +249,28 @@ export function Coupons() {
 
       <AnimatePresence mode="wait">
         {isCreateModalOpen && (
-          <CouponModal
+          <BlockedUserModal
             key="create-modal"
             onClose={() => setIsCreateModalOpen(false)}
             onSubmit={async (data) => {
-              await createCoupon(data);
+              await createBlockedUser(data);
             }}
           />
         )}
-        {isEditModalOpen && selectedCoupon && (
-          <CouponModal
+        {isEditModalOpen && selectedBlockedUser && (
+          <BlockedUserModal
             key="edit-modal"
-            coupon={selectedCoupon}
+            blockedUser={selectedBlockedUser}
             onClose={() => setIsEditModalOpen(false)}
             onSubmit={async (data) => {
-              await updateCoupon({ id: selectedCoupon.id, data });
+              await updateBlockedUser({ id: selectedBlockedUser.id, data });
             }}
           />
         )}
-        {isDetailsModalOpen && selectedCoupon && (
-          <CouponDetailsModal
+        {isDetailsModalOpen && selectedBlockedUser && (
+          <BlockedUserDetailsModal
             key="details-modal"
-            coupon={selectedCoupon}
+            blockedUser={selectedBlockedUser}
             onClose={() => setIsDetailsModalOpen(false)}
             onEdit={() => {
               setIsDetailsModalOpen(false);

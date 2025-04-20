@@ -3,6 +3,9 @@ export const ROUTES = {
     coupons: '/coupons',
     dashboard: '/dashboard',
     sales: '/sales',
-    users: '/users',
+    users: {
+        home: '/users',
+        blocked: '/blocked-users'
+    },
     settings: '/settings',
 }

@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  configRepository,
-  UpdateConfigReq,
-} from "@/data/repositories/config.repository";
+import { Config, UpdateConfig } from "@/domain/entities/Config";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { UseCases } from "@/domain/usecases/UseCases";
 
 export function useSettings() {
+  const [collapsedHeader, setCollapsedHeader] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
@@ -13,11 +14,13 @@ export function useSettings() {
     queryKey: ["config"],
     queryFn: async () => {
       try {
-        const result = await configRepository.getConfig();
-        if (!result.isSuccess) {
+        const { result } = await UseCases.config.list.execute();
+
+        if (result.type === "ERROR") {
           throw new Error(result.error?.code || "Erro desconhecido");
         }
-        return result.value;
+
+        return result.data;
       } catch {
         setError("Erro ao carregar configurações");
         return null;
@@ -25,14 +28,39 @@ export function useSettings() {
     },
   });
 
-  // Atualizar configurações
+  const {
+    register,
+    handleSubmit,
+    formState: { isDirty },
+  } = useForm<Config>({
+    resolver: zodResolver(Config),
+    defaultValues: {
+      isMaintenanceMode: config?.isMaintenanceMode || false,
+      isSwapPegActive: config?.isSwapPegActive || false,
+      feeWithoutCouponBelowValue: config?.feeWithoutCouponBelowValue ?? 0,
+      feeWithoutCouponAboveValue: config?.feeWithoutCouponAboveValue ?? 0,
+      feeWithCouponAboveValue: config?.feeWithCouponAboveValue ?? 0,
+      feeValue: config?.feeValue ?? 0,
+    },
+    values: {
+      isMaintenanceMode: config?.isMaintenanceMode || false,
+      isSwapPegActive: config?.isSwapPegActive || false,
+      feeWithoutCouponBelowValue: config?.feeWithoutCouponBelowValue ?? 0,
+      feeWithoutCouponAboveValue: config?.feeWithoutCouponAboveValue ?? 0,
+      feeWithCouponAboveValue: config?.feeWithCouponAboveValue ?? 0,
+      feeValue: config?.feeValue ?? 0,
+    },
+  });
+
   const updateMutation = useMutation({
-    mutationFn: async (newConfig: UpdateConfigReq) => {
-      const result = await configRepository.updateConfig(newConfig);
-      if (!result.isSuccess) {
+    mutationFn: async (newConfig: UpdateConfig) => {
+      const { result } = await UseCases.config.update.execute(newConfig);
+
+      if (result.type === "ERROR") {
         throw new Error(result.error?.code || "Erro desconhecido");
       }
-      return result.value;
+
+      return result.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["config"] });
@@ -42,18 +70,58 @@ export function useSettings() {
     },
   });
 
-  const updateConfig = async (config: UpdateConfigReq) => {
-    return updateMutation.mutateAsync(config);
-  };
-
   const clearError = () => setError(null);
 
+  const onSubmit = async (data: UpdateConfig) => {
+    updateMutation.mutateAsync(data);
+  };
+
+  const toggleHeader = () => {
+    setCollapsedHeader(!collapsedHeader);
+  };
+
+  const variants = {
+    container: {
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: {
+          when: "beforeChildren",
+          staggerChildren: 0.1,
+        },
+      },
+    },
+    item: {
+      hidden: { y: 20, opacity: 0 },
+      visible: {
+        y: 0,
+        opacity: 1,
+        transition: { type: "spring", stiffness: 100 },
+      },
+    },
+    error: {
+      hidden: { opacity: 0, y: -20 },
+      visible: {
+        opacity: 1,
+        y: 0,
+        transition: { type: "spring", stiffness: 100 },
+      },
+      exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
+    },
+  };
+
   return {
-    config,
-    isLoading,
     error,
-    updateConfig,
-    isUpdating: updateMutation.isPending,
+    variants,
+    isLoading,
+    collapsedHeader,
     clearError,
+    toggleHeader,
+    onsubmit: handleSubmit(onSubmit),
+    isUpdating: updateMutation.isPending,
+    form: {
+      register,
+      isDirty,
+    },
   };
 }

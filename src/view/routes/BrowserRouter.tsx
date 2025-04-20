@@ -7,6 +7,7 @@ import { Settings } from "../screens/Settings/Settings";
 import { DefaultLayout } from "../layout/DefaultLayout";
 import { ROUTES } from "./Routes";
 import { Coupons } from "../screens/Coupons/Coupons";
+import { BlockedUsers } from "../screens/Users/BlockedUser";
 
 export function BrowserRouter() {
   return (
@@ -20,7 +21,8 @@ export function BrowserRouter() {
           <Route path={ROUTES.dashboard} element={<Dashboard />} />
           <Route path={ROUTES.coupons} element={<Coupons />} />
           <Route path={ROUTES.sales} element={<Reports />} />
-          <Route path={ROUTES.users} element={<Users />} />
+          <Route path={ROUTES.users.home} element={<Users />} />
+          <Route path={ROUTES.users.blocked} element={<BlockedUsers />} />
           <Route path={ROUTES.settings} element={<Settings />} />
         </Route>
       </Routes>

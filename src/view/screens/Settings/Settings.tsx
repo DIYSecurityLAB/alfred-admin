@@ -1,7 +1,4 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   AlertCircle,
   X,
@@ -11,91 +8,32 @@ import {
   ChevronUp,
   ChevronDown,
   Power,
+  DollarSign,
 } from "lucide-react";
 import { useSettings } from "./useSettings";
-import { useState } from "react";
-
-const configSchema = z.object({
-  isMaintenanceMode: z.boolean(),
-  isSwapPegActive: z.boolean(),
-});
-
-type ConfigFormData = z.infer<typeof configSchema>;
+import { Loading } from "@/view/components/Loading";
 
 export function Settings() {
-  const { config, isLoading, error, updateConfig, isUpdating, clearError } =
-    useSettings();
-  const [collapsedHeader, setCollapsedHeader] = useState(false);
-
   const {
-    register,
-    handleSubmit,
-    formState: { isDirty },
-  } = useForm<ConfigFormData>({
-    resolver: zodResolver(configSchema),
-    defaultValues: {
-      isMaintenanceMode: config?.isMaintenanceMode || false,
-      isSwapPegActive: config?.isSwapPegActive || false,
-    },
-    values: {
-      isMaintenanceMode: config?.isMaintenanceMode || false,
-      isSwapPegActive: config?.isSwapPegActive || false,
-    },
-  });
-
-  const onSubmit = async (data: ConfigFormData) => {
-    await updateConfig(data);
-  };
-
-  const toggleHeader = () => {
-    setCollapsedHeader(!collapsedHeader);
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        when: "beforeChildren",
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { type: "spring", stiffness: 100 },
-    },
-  };
-
-  const errorVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: "spring", stiffness: 100 },
-    },
-    exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
-  };
+    form,
+    error,
+    variants,
+    isLoading,
+    isUpdating,
+    collapsedHeader,
+    onsubmit,
+    clearError,
+    toggleHeader,
+  } = useSettings();
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-[500px]">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p className="text-gray-600">Carregando configurações...</p>
-        </div>
-      </div>
-    );
+    return <Loading label="Carregando configurações..." />;
   }
 
   return (
     <motion.div
       className="container mx-auto px-4 py-8"
-      variants={containerVariants}
+      variants={variants.container}
       initial="hidden"
       animate="visible"
     >
@@ -103,7 +41,7 @@ export function Settings() {
         className={`bg-white rounded-lg shadow-md border border-blue-50 p-6 mb-8 transition-all duration-500 ${
           collapsedHeader ? "cursor-pointer" : ""
         }`}
-        variants={itemVariants}
+        variants={variants.item}
         onClick={collapsedHeader ? toggleHeader : undefined}
       >
         <div className="flex justify-between items-center">
@@ -143,7 +81,7 @@ export function Settings() {
         {error && (
           <motion.div
             className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center text-red-600 shadow-sm"
-            variants={errorVariants}
+            variants={variants.error}
             initial="hidden"
             animate="visible"
             exit="exit"
@@ -165,7 +103,7 @@ export function Settings() {
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden"
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-6">
+        <form onSubmit={onsubmit} className="space-y-6 p-6">
           <div className="space-y-6">
             <div className="flex items-center gap-2 mb-4">
               <Power className="h-5 w-5 text-blue-500" />
@@ -187,7 +125,7 @@ export function Settings() {
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  {...register("isMaintenanceMode")}
+                  {...form.register("isMaintenanceMode")}
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
@@ -207,18 +145,133 @@ export function Settings() {
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  {...register("isSwapPegActive")}
+                  {...form.register("isSwapPegActive")}
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
               </label>
+            </motion.div>
+
+            <div className="flex items-center gap-2 mb-4 mt-8">
+              <DollarSign className="h-5 w-5 text-blue-500" />
+              <h2 className="text-xl font-semibold text-gray-800">
+                Configurações de Taxas
+              </h2>
+            </div>
+
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              className="p-5 bg-gray-50 rounded-lg border border-gray-100 hover:border-blue-100 hover:bg-blue-50 transition-all duration-300 shadow-sm"
+            >
+              <div className="mb-3">
+                <h3 className="font-medium text-gray-800">
+                  Taxa Sem Cupom (Abaixo do Valor)
+                </h3>
+                <p className="text-gray-600 text-sm mt-1">
+                  Taxa aplicada para transações sem cupom abaixo do valor limite
+                </p>
+              </div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <DollarSign className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="number"
+                  step="0.01"
+                  {...form.register("feeWithoutCouponBelowValue", {
+                    valueAsNumber: true,
+                  })}
+                  className="block w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-700"
+                  placeholder="0.00"
+                />
+              </div>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              className="p-5 bg-gray-50 rounded-lg border border-gray-100 hover:border-blue-100 hover:bg-blue-50 transition-all duration-300 shadow-sm"
+            >
+              <div className="mb-3">
+                <h3 className="font-medium text-gray-800">
+                  Taxa Sem Cupom (Acima do Valor)
+                </h3>
+                <p className="text-gray-600 text-sm mt-1">
+                  Taxa aplicada para transações sem cupom acima do valor limite
+                </p>
+              </div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <DollarSign className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="number"
+                  step="0.01"
+                  {...form.register("feeWithoutCouponAboveValue", {
+                    valueAsNumber: true,
+                  })}
+                  className="block w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-700"
+                  placeholder="0.00"
+                />
+              </div>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              className="p-5 bg-gray-50 rounded-lg border border-gray-100 hover:border-blue-100 hover:bg-blue-50 transition-all duration-300 shadow-sm"
+            >
+              <div className="mb-3">
+                <h3 className="font-medium text-gray-800">
+                  Taxa Com Cupom (Acima do Valor)
+                </h3>
+                <p className="text-gray-600 text-sm mt-1">
+                  Taxa aplicada para transações com cupom acima do valor limite
+                </p>
+              </div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <DollarSign className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="number"
+                  step="0.01"
+                  {...form.register("feeWithCouponAboveValue", {
+                    valueAsNumber: true,
+                  })}
+                  className="block w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-700"
+                  placeholder="0.00"
+                />
+              </div>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              className="p-5 bg-gray-50 rounded-lg border border-gray-100 hover:border-blue-100 hover:bg-blue-50 transition-all duration-300 shadow-sm"
+            >
+              <div className="mb-3">
+                <h3 className="font-medium text-gray-800">Valor de Corte</h3>
+                <p className="text-gray-600 text-sm mt-1">
+                  Valor base para cálculo das taxas maiores
+                </p>
+              </div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <DollarSign className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="number"
+                  step="0.01"
+                  {...form.register("feeValue", { valueAsNumber: true })}
+                  className="block w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-700"
+                  placeholder="0.00"
+                />
+              </div>
             </motion.div>
           </div>
 
           <div className="flex justify-end pt-4 border-t border-gray-100">
             <motion.button
               type="submit"
-              disabled={!isDirty || isUpdating}
+              disabled={!form.isDirty || isUpdating}
               className="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm hover:shadow"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}

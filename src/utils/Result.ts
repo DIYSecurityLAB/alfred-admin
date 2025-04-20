@@ -1,28 +1,34 @@
-export type DefaultResultError = { 
-  code: 'UNKNOWN_ERROR' | 'UNAUTHORIZED' | 'NOT_FOUND' | 'BAD_REQUEST' | 'ALREADY_EXISTS' 
-};
+export class ResultSuccess<S> {
+  constructor(public data: S) {}
+}
 
-export class Result<T, E = DefaultResultError> {
-  private constructor(
-    public readonly isSuccess: boolean,
-    public readonly value?: T,
-    public readonly error?: E
-  ) {}
+/* eslint-disable @typescript-eslint/no-explicit-any */
+type ResultErrorF = { code: string; payload?: any };
+export type DefaultResultError = { code: "UNKNOWN" };
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
-  static Success<T, E>(value: T): Result<T, E> {
-    return new Result<T, E>(true, value);
-  }
+export class ResultError<F> {
+  constructor(public error: F) {}
+}
 
-  static Error<T, E>(error: E): Result<T, E> {
-    return new Result<T, E>(false, undefined, error);
-  }
+export class Result<Success, Failure extends ResultErrorF> {
+  result:
+    | ({ type: "SUCCESS" } & ResultSuccess<Success>)
+    | ({ type: "ERROR" } & ResultError<Failure>);
 
-  public fold<R>(onSuccess: (value: T) => R, onError: (error: E) => R): R {
-    if (this.isSuccess && this.value !== undefined) {
-      return onSuccess(this.value);
-    } else if (!this.isSuccess && this.error !== undefined) {
-      return onError(this.error);
+  constructor(result: ResultSuccess<Success> | ResultError<Failure>) {
+    if (result instanceof ResultError) {
+      this.result = { type: "ERROR", ...result };
+    } else {
+      this.result = { type: "SUCCESS", ...result };
     }
-    throw new Error('Invalid state: Result must be either success with value or error with error object');
+  }
+
+  static Success<S>(data: S extends void ? never : S): Result<S, never> {
+    return new Result(new ResultSuccess(data));
+  }
+
+  static Error<F extends ResultErrorF>(error: F): Result<never, F> {
+    return new Result(new ResultError(error));
   }
 }

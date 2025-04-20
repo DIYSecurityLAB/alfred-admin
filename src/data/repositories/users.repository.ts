@@ -1,5 +1,5 @@
-import { DefaultResultError, Result } from '../../utils/Result';
-import { remoteDataSource } from '../datasource/Remote.datasource';
+import { DefaultResultError, ResultOld } from '../../utils/ResultOld';
+import { remoteDataSourceOld } from '../datasource/RemoteOld.datasource';
 import { z } from 'zod';
 
 export const UserModel = z.object({
@@ -35,14 +35,14 @@ export type GetUsersReq = {
   filters?: UserFilterModel;
 };
 export type GetUsersRes = Promise<
-  Result<UsersListModel, { code: 'SERIALIZATION' } | DefaultResultError>
+  ResultOld<UsersListModel, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
 export type GetUserReq = {
   id: string;
 };
 export type GetUserRes = Promise<
-  Result<UserModel, { code: 'SERIALIZATION' } | DefaultResultError>
+  ResultOld<UserModel, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
 export type UpdateUserStatusReq = {
@@ -50,7 +50,7 @@ export type UpdateUserStatusReq = {
   isActive: boolean;
 };
 export type UpdateUserStatusRes = Promise<
-  Result<UserModel, { code: 'SERIALIZATION' } | DefaultResultError>
+  ResultOld<UserModel, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
 export type UpdateUserLevelReq = {
@@ -58,7 +58,7 @@ export type UpdateUserLevelReq = {
   level: number;
 };
 export type UpdateUserLevelRes = Promise<
-  Result<UserModel, { code: 'SERIALIZATION' } | DefaultResultError>
+  ResultOld<UserModel, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
 export interface UsersRepository {
@@ -69,7 +69,7 @@ export interface UsersRepository {
 }
 
 export class UsersRepositoryImpl implements UsersRepository {
-  constructor(private api = remoteDataSource) {}
+  constructor(private api = remoteDataSourceOld) {}
 
   async getUsers({ page, limit, filters }: GetUsersReq): GetUsersRes {
     try {
@@ -87,13 +87,13 @@ export class UsersRepositoryImpl implements UsersRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: 'SERIALIZATION' });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
-      return Result.Success(result);
+      return ResultOld.Success(result);
     } catch (error) {
       console.error('Error getting users:', error);
-      return Result.Error({ code: 'UNKNOWN_ERROR' });
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 
@@ -105,13 +105,13 @@ export class UsersRepositoryImpl implements UsersRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: 'SERIALIZATION' });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
-      return Result.Success(result);
+      return ResultOld.Success(result);
     } catch (error) {
       console.error('Error getting user by ID:', error);
-      return Result.Error({ code: 'UNKNOWN_ERROR' });
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 
@@ -124,13 +124,13 @@ export class UsersRepositoryImpl implements UsersRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: 'SERIALIZATION' });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
-      return Result.Success(result);
+      return ResultOld.Success(result);
     } catch (error) {
       console.error('Error updating user status:', error);
-      return Result.Error({ code: 'UNKNOWN_ERROR' });
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 
@@ -143,13 +143,13 @@ export class UsersRepositoryImpl implements UsersRepository {
       });
 
       if (!result) {
-        return Result.Error({ code: 'SERIALIZATION' });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
-      return Result.Success(result);
+      return ResultOld.Success(result);
     } catch (error) {
       console.error('Error updating user level:', error);
-      return Result.Error({ code: 'UNKNOWN_ERROR' });
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 }
