@@ -1,17 +1,17 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { Loading } from '@/view/components/Loading';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertCircle,
-  X,
-  Settings as SettingsIcon,
-  Loader,
-  Save,
-  ChevronUp,
   ChevronDown,
-  Power,
+  ChevronUp,
   DollarSign,
-} from "lucide-react";
-import { useSettings } from "./useSettings";
-import { Loading } from "@/view/components/Loading";
+  Loader,
+  Power,
+  Save,
+  Settings as SettingsIcon,
+  X,
+} from 'lucide-react';
+import { useSettings } from './useSettings';
 
 export function Settings() {
   const {
@@ -39,7 +39,7 @@ export function Settings() {
     >
       <motion.div
         className={`bg-white rounded-lg shadow-md border border-blue-50 p-6 mb-8 transition-all duration-500 ${
-          collapsedHeader ? "cursor-pointer" : ""
+          collapsedHeader ? 'cursor-pointer' : ''
         }`}
         variants={variants.item}
         onClick={collapsedHeader ? toggleHeader : undefined}
@@ -125,7 +125,7 @@ export function Settings() {
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  {...form.register("isMaintenanceMode")}
+                  {...form.register('isMaintenanceMode')}
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
@@ -145,7 +145,7 @@ export function Settings() {
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  {...form.register("isSwapPegActive")}
+                  {...form.register('isSwapPegActive')}
                   className="sr-only peer"
                 />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
@@ -178,7 +178,7 @@ export function Settings() {
                 <input
                   type="number"
                   step="0.01"
-                  {...form.register("feeWithoutCouponBelowValue", {
+                  {...form.register('feeWithoutCouponBelowValue', {
                     valueAsNumber: true,
                   })}
                   className="block w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-700"
@@ -206,7 +206,7 @@ export function Settings() {
                 <input
                   type="number"
                   step="0.01"
-                  {...form.register("feeWithoutCouponAboveValue", {
+                  {...form.register('feeWithoutCouponAboveValue', {
                     valueAsNumber: true,
                   })}
                   className="block w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-700"
@@ -234,7 +234,7 @@ export function Settings() {
                 <input
                   type="number"
                   step="0.01"
-                  {...form.register("feeWithCouponAboveValue", {
+                  {...form.register('feeWithCouponAboveValue', {
                     valueAsNumber: true,
                   })}
                   className="block w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-700"
@@ -260,7 +260,7 @@ export function Settings() {
                 <input
                   type="number"
                   step="0.01"
-                  {...form.register("feeValue", { valueAsNumber: true })}
+                  {...form.register('feeValue', { valueAsNumber: true })}
                   className="block w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-700"
                   placeholder="0.00"
                 />

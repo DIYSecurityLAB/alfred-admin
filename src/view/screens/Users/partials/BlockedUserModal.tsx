@@ -1,7 +1,7 @@
-import { X } from "lucide-react";
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-import { BlockedUserData } from "../useBlockedUser";
+import { motion } from 'framer-motion';
+import { X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { BlockedUserData } from '../useBlockedUser';
 
 interface BlockedUserModalProps {
   blockedUser?: BlockedUserData;
@@ -20,24 +20,29 @@ export function BlockedUserModal({
   onSubmit,
 }: BlockedUserModalProps) {
   const [formData, setFormData] = useState({
-    documentId: "",
-    username: "",
-    userId: "",
-    reason: "",
+    documentId: '',
+    username: '',
+    userId: '',
+    reason: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [blockMethod, setBlockMethod] = useState<'document' | 'username' | 'userId'>(
-    blockedUser?.documentId ? 'document' : 
-    blockedUser?.username ? 'username' : 'userId'
+  const [blockMethod, setBlockMethod] = useState<
+    'document' | 'username' | 'userId'
+  >(
+    blockedUser?.documentId
+      ? 'document'
+      : blockedUser?.username
+        ? 'username'
+        : 'userId',
   );
 
   useEffect(() => {
     if (blockedUser) {
       setFormData({
-        documentId: blockedUser.documentId || "",
-        username: blockedUser.username || "",
-        userId: blockedUser.userId || "",
+        documentId: blockedUser.documentId || '',
+        username: blockedUser.username || '',
+        userId: blockedUser.userId || '',
         reason: blockedUser.reason,
       });
     }
@@ -45,46 +50,48 @@ export function BlockedUserModal({
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (blockMethod === 'document' && !formData.documentId.trim()) {
-      newErrors.documentId = "Documento é obrigatório";
+      newErrors.documentId = 'Documento é obrigatório';
     }
-    
+
     if (blockMethod === 'username' && !formData.username.trim()) {
-      newErrors.username = "Username é obrigatório";
+      newErrors.username = 'Username é obrigatório';
     }
-    
+
     if (blockMethod === 'userId' && !formData.userId.trim()) {
-      newErrors.userId = "ID do usuário é obrigatório";
+      newErrors.userId = 'ID do usuário é obrigatório';
     }
-    
+
     if (!formData.reason.trim()) {
-      newErrors.reason = "Razão é obrigatória";
+      newErrors.reason = 'Razão é obrigatória';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsSubmitting(true);
-    
+
     const submitData = {
-      ...(blockMethod === 'document' ? { documentId: formData.documentId } : {}),
+      ...(blockMethod === 'document'
+        ? { documentId: formData.documentId }
+        : {}),
       ...(blockMethod === 'username' ? { username: formData.username } : {}),
       ...(blockMethod === 'userId' ? { userId: formData.userId } : {}),
       reason: formData.reason,
     };
-    
+
     try {
       await onSubmit(submitData);
       onClose();
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error('Error submitting form:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -100,7 +107,7 @@ export function BlockedUserModal({
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-100">
           <h2 className="text-xl font-bold text-gray-800">
-            {blockedUser ? "Editar Usuário Bloqueado" : "Bloquear Usuário"}
+            {blockedUser ? 'Editar Usuário Bloqueado' : 'Bloquear Usuário'}
           </h2>
           <button
             onClick={onClose}
@@ -156,21 +163,28 @@ export function BlockedUserModal({
 
           {(blockMethod === 'document' || blockedUser?.documentId) && (
             <div className="mb-4">
-              <label htmlFor="documentId" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="documentId"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Documento
               </label>
               <input
                 type="text"
                 id="documentId"
                 value={formData.documentId}
-                onChange={(e) => setFormData({ ...formData, documentId: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, documentId: e.target.value })
+                }
                 className={`w-full px-3 py-2 border rounded-md ${
                   errors.documentId
                     ? 'border-red-300 focus:border-red-500 focus:ring focus:ring-red-200'
                     : 'border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'
                 } focus:ring-opacity-50 transition-colors`}
                 placeholder="Ex: 12345678900"
-                disabled={blockedUser !== undefined || blockMethod !== 'document'}
+                disabled={
+                  blockedUser !== undefined || blockMethod !== 'document'
+                }
               />
               {errors.documentId && (
                 <p className="mt-1 text-sm text-red-600">{errors.documentId}</p>
@@ -180,21 +194,28 @@ export function BlockedUserModal({
 
           {(blockMethod === 'username' || blockedUser?.username) && (
             <div className="mb-4">
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Username
               </label>
               <input
                 type="text"
                 id="username"
                 value={formData.username}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
                 className={`w-full px-3 py-2 border rounded-md ${
                   errors.username
                     ? 'border-red-300 focus:border-red-500 focus:ring focus:ring-red-200'
                     : 'border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'
                 } focus:ring-opacity-50 transition-colors`}
                 placeholder="Ex: joaosilva"
-                disabled={blockedUser !== undefined || blockMethod !== 'username'}
+                disabled={
+                  blockedUser !== undefined || blockMethod !== 'username'
+                }
               />
               {errors.username && (
                 <p className="mt-1 text-sm text-red-600">{errors.username}</p>
@@ -204,14 +225,19 @@ export function BlockedUserModal({
 
           {(blockMethod === 'userId' || blockedUser?.userId) && (
             <div className="mb-4">
-              <label htmlFor="userId" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="userId"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 ID do Usuário
               </label>
               <input
                 type="text"
                 id="userId"
                 value={formData.userId}
-                onChange={(e) => setFormData({ ...formData, userId: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, userId: e.target.value })
+                }
                 className={`w-full px-3 py-2 border rounded-md ${
                   errors.userId
                     ? 'border-red-300 focus:border-red-500 focus:ring focus:ring-red-200'
@@ -227,13 +253,18 @@ export function BlockedUserModal({
           )}
 
           <div className="mb-4">
-            <label htmlFor="reason" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="reason"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Razão do bloqueio
             </label>
             <textarea
               id="reason"
               value={formData.reason}
-              onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, reason: e.target.value })
+              }
               className={`w-full px-3 py-2 border rounded-md ${
                 errors.reason
                   ? 'border-red-300 focus:border-red-500 focus:ring focus:ring-red-200'

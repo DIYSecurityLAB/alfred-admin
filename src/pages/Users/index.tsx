@@ -1,13 +1,13 @@
 import { AnimatePresence } from 'framer-motion';
 import { AlertCircle } from 'lucide-react';
+import { Pagination } from '../../components/Pagination';
 import { useUsers } from '../../hooks/useUsers';
-import { UserTable } from './components/UserTable';
+import { StatusConfirmModal } from './components/StatusConfirmModal';
 import { UserCards } from './components/UserCards';
-import { UserFilters } from './components/UserFilters';
 import { UserDetailsModal } from './components/UserDetailsModal';
 import { UserEditLevelModal } from './components/UserEditLevelModal';
-import { StatusConfirmModal } from './components/StatusConfirmModal';
-import { Pagination } from '../../components/Pagination';
+import { UserFilters } from './components/UserFilters';
+import { UserTable } from './components/UserTable';
 
 export function Users() {
   const {
@@ -51,17 +51,16 @@ export function Users() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold">Usuários</h1>
-          <p className="text-text-secondary mt-1">Gerencie os usuários do sistema</p>
+          <p className="text-text-secondary mt-1">
+            Gerencie os usuários do sistema
+          </p>
         </div>
       </div>
 
       {/* Conteúdo Principal */}
       <div className="bg-surface rounded-xl p-6 shadow-sm">
         {/* Filtros */}
-        <UserFilters
-          filters={filters}
-          onFilterChange={handleFilterChange}
-        />
+        <UserFilters filters={filters} onFilterChange={handleFilterChange} />
 
         {/* Mensagem quando não há usuários */}
         {users.length === 0 ? (
@@ -69,9 +68,13 @@ export function Users() {
             <div className="bg-primary/10 p-3 rounded-full mb-4">
               <AlertCircle className="h-8 w-8 text-primary" />
             </div>
-            <h3 className="text-xl font-medium mb-2">Nenhum usuário encontrado</h3>
+            <h3 className="text-xl font-medium mb-2">
+              Nenhum usuário encontrado
+            </h3>
             <p className="text-text-secondary text-center max-w-md mb-6">
-              {(filters.username || filters.status !== 'all' || filters.level !== undefined) 
+              {filters.username ||
+              filters.status !== 'all' ||
+              filters.level !== undefined
                 ? 'Nenhum usuário corresponde aos filtros selecionados. Tente ajustar seus filtros.'
                 : 'Não há usuários registrados no sistema.'}
             </p>
@@ -112,7 +115,9 @@ export function Users() {
                   <option value={20}>20</option>
                   <option value={50}>50</option>
                 </select>
-                <span className="text-sm text-text-secondary">itens por página</span>
+                <span className="text-sm text-text-secondary">
+                  itens por página
+                </span>
               </div>
 
               <Pagination

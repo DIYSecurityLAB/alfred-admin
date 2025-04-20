@@ -1,10 +1,6 @@
 import { z } from 'zod';
 
-export const SaleStatusEnum = z.enum([
-  'pending',
-  'completed',
-  'cancelled'
-]);
+export const SaleStatusEnum = z.enum(['pending', 'completed', 'cancelled']);
 export type SaleStatusEnum = z.infer<typeof SaleStatusEnum>;
 
 export const SaleItemModel = z.object({

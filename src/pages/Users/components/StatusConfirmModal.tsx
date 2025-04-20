@@ -1,15 +1,20 @@
-import React from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion } from 'framer-motion';
-import { X, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
-import type { User } from '../../../data/types';
+import { CheckCircle, X, XCircle } from 'lucide-react';
+import React from 'react';
+// import type { User } from '../../../data/types';
 
 interface StatusConfirmModalProps {
-  user: User;
+  user: any;
   onClose: () => void;
   onConfirm: () => Promise<any>;
 }
 
-export function StatusConfirmModal({ user, onClose, onConfirm }: StatusConfirmModalProps) {
+export function StatusConfirmModal({
+  user,
+  onClose,
+  onConfirm,
+}: StatusConfirmModalProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const handleConfirm = async () => {
@@ -45,7 +50,9 @@ export function StatusConfirmModal({ user, onClose, onConfirm }: StatusConfirmMo
         </div>
 
         <div className="flex flex-col items-center text-center mb-6 py-2">
-          <div className={`${user.isActive ? 'bg-red-50' : 'bg-green-50'} p-3 rounded-full mb-4`}>
+          <div
+            className={`${user.isActive ? 'bg-red-50' : 'bg-green-50'} p-3 rounded-full mb-4`}
+          >
             {user.isActive ? (
               <XCircle className="h-8 w-8 text-red-500" />
             ) : (
@@ -76,14 +83,16 @@ export function StatusConfirmModal({ user, onClose, onConfirm }: StatusConfirmMo
             onClick={handleConfirm}
             disabled={isSubmitting}
             className={`px-4 py-2.5 text-white rounded-lg transition-colors disabled:opacity-50 ${
-              user.isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
+              user.isActive
+                ? 'bg-red-500 hover:bg-red-600'
+                : 'bg-green-500 hover:bg-green-600'
             }`}
           >
             {isSubmitting
               ? 'Processando...'
               : user.isActive
-              ? 'Desativar'
-              : 'Ativar'}
+                ? 'Desativar'
+                : 'Ativar'}
           </button>
         </div>
       </motion.div>

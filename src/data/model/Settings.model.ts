@@ -5,9 +5,9 @@ export const SettingsModel = z.object({
   enabledPaymentMethods: z.array(
     z.object({
       method: z.string(),
-      enabled: z.boolean()
-    })
+      enabled: z.boolean(),
+    }),
   ),
-  emailNotifications: z.boolean()
+  emailNotifications: z.boolean(),
 });
 export type SettingsModel = z.infer<typeof SettingsModel>;

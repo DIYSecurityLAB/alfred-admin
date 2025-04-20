@@ -1,13 +1,13 @@
-import classNames from "classnames";
-import { useEffect, useRef, useState } from "react";
-import { NavLink } from "react-router-dom";
-import { ArrowLeft, ChevronDown, LucideIcon } from "lucide-react";
-import { ROUTES } from "@/view/routes/Routes";
-import { SidebarLinkGroup } from "./SidebarLinkGroup";
-import { motion, AnimatePresence } from "framer-motion";
+import { ROUTES } from '@/view/routes/Routes';
+import classNames from 'classnames';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowLeft, ChevronDown, LucideIcon } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import { SidebarLinkGroup } from './SidebarLinkGroup';
 
 type Item = {
-  type: "link";
+  type: 'link';
   icon: LucideIcon;
   label: string;
   path: string;
@@ -19,7 +19,7 @@ type DropItem = {
 };
 
 type DropdownItem = {
-  type: "dropdown";
+  type: 'dropdown';
   icon: LucideIcon;
   label: string;
   activeCondition: boolean;
@@ -38,9 +38,9 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
   const trigger = useRef<HTMLButtonElement | null>(null);
   const sidebar = useRef<HTMLElement | null>(null);
 
-  const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
+  const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
   const [sidebarExpanded, setSidebarExpanded] = useState(
-    storedSidebarExpanded === null ? false : storedSidebarExpanded === "true"
+    storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true',
   );
 
   useEffect(() => {
@@ -55,25 +55,25 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
 
       setSidebarOpen(false);
     };
-    document.addEventListener("click", clickHandler);
-    return () => document.removeEventListener("click", clickHandler);
+    document.addEventListener('click', clickHandler);
+    return () => document.removeEventListener('click', clickHandler);
   });
 
   useEffect(() => {
     const keyHandler = ({ key }: KeyboardEvent) => {
-      if (!sidebarOpen || key !== "Escape") return;
+      if (!sidebarOpen || key !== 'Escape') return;
       setSidebarOpen(false);
     };
-    document.addEventListener("keydown", keyHandler);
-    return () => document.removeEventListener("keydown", keyHandler);
+    document.addEventListener('keydown', keyHandler);
+    return () => document.removeEventListener('keydown', keyHandler);
   });
 
   useEffect(() => {
-    localStorage.setItem("sidebar-expanded", sidebarExpanded.toString());
+    localStorage.setItem('sidebar-expanded', sidebarExpanded.toString());
     if (sidebarExpanded) {
-      document.querySelector("body")?.classList.add("sidebar-expanded");
+      document.querySelector('body')?.classList.add('sidebar-expanded');
     } else {
-      document.querySelector("body")?.classList.remove("sidebar-expanded");
+      document.querySelector('body')?.classList.remove('sidebar-expanded');
     }
   }, [sidebarExpanded]);
 
@@ -81,11 +81,11 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
     <aside
       ref={sidebar}
       className={classNames(
-        "absolute left-0 top-0 z-9999 flex h-screen flex-col overflow-y-hidden",
-        "w-72 bg-gradient-to-b from-blue-900 to-blue-800 text-white shadow-lg",
-        "transition-all duration-300 ease-in-out",
-        "lg:static lg:translate-x-0",
-        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        'absolute left-0 top-0 z-9999 flex h-screen flex-col overflow-y-hidden',
+        'w-72 bg-gradient-to-b from-blue-900 to-blue-800 text-white shadow-lg',
+        'transition-all duration-300 ease-in-out',
+        'lg:static lg:translate-x-0',
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full',
       )}
     >
       <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-blue-700 lg:pt-8">
@@ -119,7 +119,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
 
             <ul className="flex flex-col gap-2">
               {items.map((item) => {
-                if (item.type === "link") {
+                if (item.type === 'link') {
                   const Icon = item.icon;
                   return (
                     <li key={item.label}>
@@ -127,11 +127,11 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
                         to={item.path}
                         className={({ isActive }) =>
                           classNames(
-                            "group relative flex items-center gap-3 rounded-lg py-2.5 px-4 font-medium",
-                            "transition-all duration-200 ease-in-out",
+                            'group relative flex items-center gap-3 rounded-lg py-2.5 px-4 font-medium',
+                            'transition-all duration-200 ease-in-out',
                             isActive
-                              ? "bg-white/10 text-white backdrop-blur-sm shadow-md"
-                              : "text-blue-100 hover:bg-white/5 hover:text-white"
+                              ? 'bg-white/10 text-white backdrop-blur-sm shadow-md'
+                              : 'text-blue-100 hover:bg-white/5 hover:text-white',
                           )
                         }
                       >
@@ -139,10 +139,10 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
                           <>
                             <span
                               className={classNames(
-                                "flex items-center justify-center p-1.5 rounded-md",
+                                'flex items-center justify-center p-1.5 rounded-md',
                                 isActive
-                                  ? "bg-blue-500 text-white"
-                                  : "text-blue-200 group-hover:text-white"
+                                  ? 'bg-blue-500 text-white'
+                                  : 'text-blue-200 group-hover:text-white',
                               )}
                             >
                               <Icon size={18} />
@@ -167,7 +167,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
                   );
                 }
 
-                if (item.type === "dropdown") {
+                if (item.type === 'dropdown') {
                   const Icon = item.icon;
                   return (
                     <SidebarLinkGroup
@@ -183,19 +183,19 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
                               else setSidebarExpanded(true);
                             }}
                             className={classNames(
-                              "w-full text-left flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium",
-                              "transition-all duration-200 ease-in-out",
+                              'w-full text-left flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium',
+                              'transition-all duration-200 ease-in-out',
                               item.activeCondition
-                                ? "bg-white/10 text-white backdrop-blur-sm shadow-md"
-                                : "text-blue-100 hover:bg-white/5 hover:text-white"
+                                ? 'bg-white/10 text-white backdrop-blur-sm shadow-md'
+                                : 'text-blue-100 hover:bg-white/5 hover:text-white',
                             )}
                           >
                             <span
                               className={classNames(
-                                "flex items-center justify-center p-1.5 rounded-md",
+                                'flex items-center justify-center p-1.5 rounded-md',
                                 item.activeCondition
-                                  ? "bg-blue-500 text-white"
-                                  : "text-blue-200 group-hover:text-white"
+                                  ? 'bg-blue-500 text-white'
+                                  : 'text-blue-200 group-hover:text-white',
                               )}
                             >
                               <Icon size={18} />
@@ -206,8 +206,8 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
                             <ChevronDown
                               size={16}
                               className={classNames(
-                                "ml-auto transition-transform duration-300",
-                                open ? "rotate-180" : "rotate-0"
+                                'ml-auto transition-transform duration-300',
+                                open ? 'rotate-180' : 'rotate-0',
                               )}
                             />
                           </button>
@@ -215,11 +215,11 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
                             {open && (
                               <motion.div
                                 initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: "auto" }}
+                                animate={{ opacity: 1, height: 'auto' }}
                                 exit={{ opacity: 0, height: 0 }}
                                 transition={{
                                   duration: 0.3,
-                                  ease: "easeInOut",
+                                  ease: 'easeInOut',
                                 }}
                                 className="overflow-hidden"
                               >
@@ -230,11 +230,11 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
                                         to={dropitem.path}
                                         className={({ isActive }) =>
                                           classNames(
-                                            "block rounded-md px-4 py-2 text-xs font-medium",
-                                            "transition-all duration-200 ease-in-out",
+                                            'block rounded-md px-4 py-2 text-xs font-medium',
+                                            'transition-all duration-200 ease-in-out',
                                             isActive
-                                              ? "bg-blue-600/50 text-white shadow-sm"
-                                              : "text-blue-200 hover:bg-white/5 hover:text-white"
+                                              ? 'bg-blue-600/50 text-white shadow-sm'
+                                              : 'text-blue-200 hover:bg-white/5 hover:text-white',
                                           )
                                         }
                                       >

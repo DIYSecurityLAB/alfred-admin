@@ -1,25 +1,25 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from 'framer-motion';
 import {
+  AlertCircle,
+  ChevronDown,
+  ChevronUp,
+  FileText,
   LayoutDashboard,
   LayoutGrid,
   Loader,
-  AlertCircle,
   X,
-  ChevronUp,
-  ChevronDown,
-  FileText,
-} from "lucide-react";
-import { ReportFilters } from "./partials/ReportFilters";
-import { ReportTable } from "./partials/ReportTable";
-import { ReportCards } from "./partials/ReportCards";
-import { ReportDetailsModal } from "./partials/ReportDetailsModal";
-import { Pagination } from "../../../components/Pagination";
-import { useReports } from "./useReports";
+} from 'lucide-react';
+import { useState } from 'react';
+import { Pagination } from '../../../components/Pagination';
+import { ReportCards } from './partials/ReportCards';
+import { ReportDetailsModal } from './partials/ReportDetailsModal';
+import { ReportFilters } from './partials/ReportFilters';
+import { ReportTable } from './partials/ReportTable';
+import { useReports } from './useReports';
 
 export function Reports() {
   const [isExporting, setIsExporting] = useState(false);
-  const [exportProgress, setExportProgress] = useState<string>("");
+  const [exportProgress, setExportProgress] = useState<string>('');
   const [collapsedHeader, setCollapsedHeader] = useState(false);
 
   const {
@@ -45,25 +45,25 @@ export function Reports() {
 
   const handleExportToExcel = async () => {
     setIsExporting(true);
-    setExportProgress("Iniciando exportação...");
+    setExportProgress('Iniciando exportação...');
     try {
       setTimeout(() => {
-        if (isExporting) setExportProgress("Buscando dados do servidor...");
+        if (isExporting) setExportProgress('Buscando dados do servidor...');
       }, 1000);
 
       setTimeout(() => {
         if (isExporting)
-          setExportProgress("Processando dados para exportação...");
+          setExportProgress('Processando dados para exportação...');
       }, 5000);
 
       setTimeout(() => {
-        if (isExporting) setExportProgress("Gerando arquivo Excel...");
+        if (isExporting) setExportProgress('Gerando arquivo Excel...');
       }, 10000);
 
       return await exportToExcel();
     } finally {
       setIsExporting(false);
-      setExportProgress("");
+      setExportProgress('');
     }
   };
 
@@ -76,7 +76,7 @@ export function Reports() {
     visible: {
       opacity: 1,
       transition: {
-        when: "beforeChildren",
+        when: 'beforeChildren',
         staggerChildren: 0.1,
       },
     },
@@ -87,7 +87,7 @@ export function Reports() {
     visible: {
       y: 0,
       opacity: 1,
-      transition: { type: "spring", stiffness: 100 },
+      transition: { type: 'spring', stiffness: 100 },
     },
   };
 
@@ -96,7 +96,7 @@ export function Reports() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: "spring", stiffness: 100 },
+      transition: { type: 'spring', stiffness: 100 },
     },
     exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
   };
@@ -110,7 +110,7 @@ export function Reports() {
     >
       <motion.div
         className={`bg-white rounded-lg shadow-md border border-blue-50 p-6 mb-8 transition-all duration-500 ${
-          collapsedHeader ? "cursor-pointer" : ""
+          collapsedHeader ? 'cursor-pointer' : ''
         }`}
         variants={itemVariants}
         onClick={collapsedHeader ? toggleHeader : undefined}
@@ -150,7 +150,7 @@ export function Reports() {
         {!collapsedHeader && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
+            animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
           >
             <ReportFilters
@@ -194,18 +194,18 @@ export function Reports() {
           <FileText className="h-5 w-5 text-blue-500" />
           <span className="text-gray-700">
             {totalReports === 0
-              ? "Nenhum resultado encontrado"
+              ? 'Nenhum resultado encontrado'
               : `Mostrando ${reports.length} de ${totalReports} resultados`}
           </span>
         </div>
 
         <div className="flex gap-2">
           <button
-            onClick={() => setViewMode("table")}
+            onClick={() => setViewMode('table')}
             className={`p-2 rounded-lg transition-all duration-300 ${
-              viewMode === "table"
-                ? "bg-blue-500 text-white shadow-md"
-                : "bg-gray-100 hover:bg-blue-100 text-gray-700 hover:shadow-sm"
+              viewMode === 'table'
+                ? 'bg-blue-500 text-white shadow-md'
+                : 'bg-gray-100 hover:bg-blue-100 text-gray-700 hover:shadow-sm'
             }`}
             title="Visualizar em tabela"
           >
@@ -213,11 +213,11 @@ export function Reports() {
           </button>
 
           <button
-            onClick={() => setViewMode("cards")}
+            onClick={() => setViewMode('cards')}
             className={`p-2 rounded-lg transition-all duration-300 ${
-              viewMode === "cards"
-                ? "bg-blue-500 text-white shadow-md"
-                : "bg-gray-100 hover:bg-blue-100 text-gray-700 hover:shadow-sm"
+              viewMode === 'cards'
+                ? 'bg-blue-500 text-white shadow-md'
+                : 'bg-gray-100 hover:bg-blue-100 text-gray-700 hover:shadow-sm'
             }`}
             title="Visualizar em cards"
           >
@@ -257,7 +257,7 @@ export function Reports() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            {viewMode === "table" ? (
+            {viewMode === 'table' ? (
               <motion.div
                 className="bg-white rounded-lg shadow-md overflow-hidden mb-6"
                 variants={itemVariants}

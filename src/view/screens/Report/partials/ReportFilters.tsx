@@ -1,5 +1,5 @@
-import React from "react";
-import { Search, FilterX, Calendar, Download, Loader } from "lucide-react";
+import { Calendar, Download, FilterX, Loader, Search } from 'lucide-react';
+import React from 'react';
 
 interface ReportFiltersProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,17 +18,17 @@ export function ReportFilters({
   onClearFilters,
   onExportToExcel,
   isExporting = false,
-  exportProgress = "",
+  exportProgress = '',
 }: ReportFiltersProps) {
   const [startDate, setStartDate] = React.useState<string>(
-    filters.startAt || ""
+    filters.startAt || '',
   );
-  const [endDate, setEndDate] = React.useState<string>(filters.endAt || "");
+  const [endDate, setEndDate] = React.useState<string>(filters.endAt || '');
 
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setStartDate(e.target.value);
     if (e.target.value) {
-      const [year, month, day] = e.target.value.split("-");
+      const [year, month, day] = e.target.value.split('-');
       onFilterChange({ startAt: `${day}-${month}-${year}` });
     } else {
       onFilterChange({ startAt: undefined });
@@ -38,7 +38,7 @@ export function ReportFilters({
   const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEndDate(e.target.value);
     if (e.target.value) {
-      const [year, month, day] = e.target.value.split("-");
+      const [year, month, day] = e.target.value.split('-');
       onFilterChange({ endAt: `${day}-${month}-${year}` });
     } else {
       onFilterChange({ endAt: undefined });
@@ -58,7 +58,7 @@ export function ReportFilters({
             <input
               type="text"
               placeholder="Buscar por usuário..."
-              value={filters.username || ""}
+              value={filters.username || ''}
               onChange={(e) =>
                 onFilterChange({ username: e.target.value || undefined })
               }
@@ -68,7 +68,7 @@ export function ReportFilters({
 
           <div className="w-full md:w-48">
             <select
-              value={filters.status || ""}
+              value={filters.status || ''}
               onChange={(e) =>
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onFilterChange({ status: (e.target.value as any) || undefined })
@@ -77,10 +77,10 @@ export function ReportFilters({
               style={{
                 backgroundImage:
                   "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "right 0.75rem center",
-                backgroundSize: "1.5em 1.5em",
-                paddingRight: "2.5rem",
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'right 0.75rem center',
+                backgroundSize: '1.5em 1.5em',
+                paddingRight: '2.5rem',
               }}
             >
               <option value="">Todos os status</option>
@@ -100,7 +100,7 @@ export function ReportFilters({
 
           <div className="w-full md:w-48">
             <select
-              value={filters.paymentMethod || ""}
+              value={filters.paymentMethod || ''}
               onChange={(e) =>
                 onFilterChange({
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -111,10 +111,10 @@ export function ReportFilters({
               style={{
                 backgroundImage:
                   "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "right 0.75rem center",
-                backgroundSize: "1.5em 1.5em",
-                paddingRight: "2.5rem",
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'right 0.75rem center',
+                backgroundSize: '1.5em 1.5em',
+                paddingRight: '2.5rem',
               }}
             >
               <option value="">Todos os métodos</option>
@@ -150,7 +150,7 @@ export function ReportFilters({
               <>
                 <Loader className="h-5 w-5 animate-spin" />
                 <span className="hidden md:inline">
-                  {exportProgress || "Exportando..."}
+                  {exportProgress || 'Exportando...'}
                 </span>
               </>
             ) : (

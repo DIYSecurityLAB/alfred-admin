@@ -1,13 +1,13 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { AdminLayout } from "../layout/AdminLayout";
-import { Dashboard } from "../../pages/Dashboard";
-import { Reports } from "../screens/Report/Report";
-import { Users } from "../../pages/Users";
-import { Settings } from "../screens/Settings/Settings";
-import { DefaultLayout } from "../layout/DefaultLayout";
-import { ROUTES } from "./Routes";
-import { Coupons } from "../screens/Coupons/Coupons";
-import { BlockedUsers } from "../screens/Users/BlockedUser";
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { Dashboard } from '../../pages/Dashboard';
+import { Users } from '../../pages/Users';
+import { AdminLayout } from '../layout/AdminLayout';
+import { DefaultLayout } from '../layout/DefaultLayout';
+import { Coupons } from '../screens/Coupons/Coupons';
+import { Reports } from '../screens/Report/Report';
+import { Settings } from '../screens/Settings/Settings';
+import { BlockedUsers } from '../screens/Users/BlockedUser';
+import { ROUTES } from './Routes';
 
 export function BrowserRouter() {
   return (

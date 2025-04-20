@@ -1,16 +1,16 @@
+import { z } from 'zod';
 import { DefaultResultError, ResultOld } from '../../utils/ResultOld';
 import { remoteDataSourceOld } from '../datasource/RemoteOld.datasource';
-import { z } from 'zod';
 
 export const SettingsModel = z.object({
   maintenanceMode: z.boolean(),
   enabledPaymentMethods: z.array(
     z.object({
       method: z.string(),
-      enabled: z.boolean()
-    })
+      enabled: z.boolean(),
+    }),
   ),
-  emailNotifications: z.boolean()
+  emailNotifications: z.boolean(),
 });
 export type SettingsModel = z.infer<typeof SettingsModel>;
 

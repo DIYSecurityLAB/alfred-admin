@@ -1,14 +1,13 @@
-import React from 'react';
+import { motion } from 'framer-motion';
 import {
-  PieChart,
-  Pie,
   Cell,
-  ResponsiveContainer,
   Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
   Tooltip,
   TooltipProps,
 } from 'recharts';
-import { motion } from 'framer-motion';
 
 interface TransactionStatusChartProps {
   data: {
@@ -29,7 +28,7 @@ export function TransactionStatusChart({
       </div>
     );
   }
-  
+
   const COLORS = [
     '#4ade80', // complete
     '#facc15', // pending
@@ -49,7 +48,7 @@ export function TransactionStatusChart({
     expired: 'Expirado',
     refunded: 'Reembolsado',
   };
-  
+
   const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
@@ -71,7 +70,7 @@ export function TransactionStatusChart({
   const totalCount = data.reduce((sum, item) => sum + item.count, 0);
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
@@ -93,13 +92,16 @@ export function TransactionStatusChart({
               nameKey="status"
             >
               {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
               ))}
             </Pie>
             <Tooltip content={<CustomTooltip />} />
-            <Legend 
-              formatter={(value) => statusLabels[value] || value} 
-              layout="horizontal" 
+            <Legend
+              formatter={(value) => statusLabels[value] || value}
+              layout="horizontal"
               verticalAlign="bottom"
             />
           </PieChart>

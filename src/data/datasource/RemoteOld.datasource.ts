@@ -30,9 +30,8 @@ export type RemoteDeleteReq<Response extends SerializeSchemas> = {
   model: Response;
 };
 
-type RemoteRequestRes<Response extends SerializeSchemas> = Promise<
-  z.infer<Response> | null
->;
+type RemoteRequestRes<Response extends SerializeSchemas> =
+  Promise<z.infer<Response> | null>;
 
 export type HeaderValues =
   | 'Accept'
@@ -78,13 +77,13 @@ export class RemoteDataSourceOld {
       const serialized = model.safeParse(data);
 
       if (!serialized.success) {
-        console.error("Serialization error:", serialized.error.errors);
+        console.error('Serialization error:', serialized.error.errors);
         return null;
       }
 
       return serialized.data;
     } catch (error) {
-      console.error("API GET request error:", error);
+      console.error('API GET request error:', error);
       throw error;
     }
   }
@@ -102,13 +101,13 @@ export class RemoteDataSourceOld {
       const serialized = model.safeParse(data);
 
       if (!serialized.success) {
-        console.error("Serialization error:", serialized.error.errors);
+        console.error('Serialization error:', serialized.error.errors);
         return null;
       }
 
       return serialized.data;
     } catch (error) {
-      console.error("API POST request error:", error);
+      console.error('API POST request error:', error);
       throw error;
     }
   }
@@ -126,13 +125,13 @@ export class RemoteDataSourceOld {
       const serialized = model.safeParse(data);
 
       if (!serialized.success) {
-        console.error("Serialization error:", serialized.error.errors);
+        console.error('Serialization error:', serialized.error.errors);
         return null;
       }
 
       return serialized.data;
     } catch (error) {
-      console.error("API PATCH request error:", error);
+      console.error('API PATCH request error:', error);
       throw error;
     }
   }
@@ -147,17 +146,17 @@ export class RemoteDataSourceOld {
       });
 
       const responseData = data || {};
-      
+
       const serialized = model.safeParse(responseData);
 
       if (!serialized.success) {
-        console.error("Serialization error:", serialized.error.errors);
+        console.error('Serialization error:', serialized.error.errors);
         return null;
       }
 
       return serialized.data;
     } catch (error) {
-      console.error("API DELETE request error:", error);
+      console.error('API DELETE request error:', error);
       throw error;
     }
   }

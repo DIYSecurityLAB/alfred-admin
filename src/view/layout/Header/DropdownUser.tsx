@@ -1,15 +1,15 @@
-import ClickOutside from "@/view/components/ClickOutside";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import ClickOutside from '@/view/components/ClickOutside';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  ChevronDown,
-  User,
   Calendar,
-  Settings,
+  ChevronDown,
   LogOut,
+  Settings,
   Shield,
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+  User,
+} from 'lucide-react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -39,7 +39,7 @@ const DropdownUser = () => {
         <ChevronDown
           size={16}
           className={`text-slate-500 transition-transform duration-200 ${
-            dropdownOpen ? "rotate-180" : ""
+            dropdownOpen ? 'rotate-180' : ''
           }`}
         />
       </button>
@@ -108,7 +108,7 @@ const DropdownUser = () => {
               <li>
                 <button
                   className="w-full flex items-center gap-3 rounded-md px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors duration-200"
-                  onClick={() => alert("Logout não implementado!")}
+                  onClick={() => alert('Logout não implementado!')}
                 >
                   <LogOut size={18} className="text-red-500" />
                   Sair

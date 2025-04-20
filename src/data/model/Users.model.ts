@@ -26,6 +26,6 @@ export type UsersListModel = z.infer<typeof UsersListModel>;
 export const UserFilterModel = z.object({
   username: z.string().optional(),
   status: z.enum(['all', 'active', 'inactive']).optional(),
-  level: z.number().optional()
+  level: z.number().optional(),
 });
 export type UserFilterModel = z.infer<typeof UserFilterModel>;

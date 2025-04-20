@@ -1,15 +1,14 @@
-import React from 'react';
+import { motion } from 'framer-motion';
 import {
-  AreaChart,
   Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  TooltipProps,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  TooltipProps
 } from 'recharts';
-import { motion } from 'framer-motion';
 
 interface RevenueChartProps {
   data: { date: string; revenue: number }[];
@@ -34,13 +33,17 @@ export function RevenueChart({
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('pt-BR', { 
-      month: 'short', 
-      day: 'numeric' 
+    return new Intl.DateTimeFormat('pt-BR', {
+      month: 'short',
+      day: 'numeric',
     }).format(date);
   };
 
-  const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-background p-3 border border-surface rounded-md shadow-md">
@@ -62,7 +65,7 @@ export function RevenueChart({
   ] as const;
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-surface p-6 rounded-xl shadow-sm"
@@ -98,15 +101,19 @@ export function RevenueChart({
                 <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-            <XAxis 
-              dataKey="date" 
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="#f0f0f0"
+            />
+            <XAxis
+              dataKey="date"
               tickFormatter={formatDate}
               axisLine={false}
               tickLine={false}
             />
-            <YAxis 
-              tickFormatter={(value) => `R$${value/1000}k`}
+            <YAxis
+              tickFormatter={(value) => `R$${value / 1000}k`}
               axisLine={false}
               tickLine={false}
             />

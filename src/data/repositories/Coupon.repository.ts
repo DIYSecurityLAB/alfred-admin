@@ -1,5 +1,6 @@
-import { DefaultResultError, ResultOld } from "../../utils/ResultOld";
-import { remoteDataSourceOld } from "../datasource/RemoteOld.datasource";
+import { z } from 'zod';
+import { DefaultResultError, ResultOld } from '../../utils/ResultOld';
+import { remoteDataSourceOld } from '../datasource/RemoteOld.datasource';
 import {
   FilterCouponsModel,
   InsertCouponModel,
@@ -10,16 +11,15 @@ import {
   ToggleCouponStatusModel,
   ToggledCouponStatusModel,
   ValidateCouponResultModel,
-} from "../model/Coupons.model";
-import { z } from "zod";
+} from '../model/Coupons.model';
 
 export type InsertReq = InsertCouponModel;
 export type InsertRes = Promise<
   ResultOld<
     InsertedCouponModel,
-    | { code: "BAD_REQUEST" }
-    | { code: "ALREADY_EXISTS" }
-    | { code: "SERIALIZATION" }
+    | { code: 'BAD_REQUEST' }
+    | { code: 'ALREADY_EXISTS' }
+    | { code: 'SERIALIZATION' }
     | DefaultResultError
   >
 >;
@@ -30,25 +30,28 @@ export type ListALLReq = {
   filters?: FilterCouponsModel;
 };
 export type ListALLRes = Promise<
-  ResultOld<ListedAllCouponsModel, { code: "SERIALIZATION" } | DefaultResultError>
+  ResultOld<
+    ListedAllCouponsModel,
+    { code: 'SERIALIZATION' } | DefaultResultError
+  >
 >;
 
 export type ListOneReq = ListCouponsModel;
 export type ListOneRes = Promise<
-  ResultOld<ListedCouponModel, { code: "SERIALIZATION" } | DefaultResultError>
+  ResultOld<ListedCouponModel, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
 export type ToggleStatusReq = ToggleCouponStatusModel;
 export type ToggleStatusRes = Promise<
   ResultOld<
     ToggledCouponStatusModel,
-    { code: "SERIALIZATION" } | DefaultResultError
+    { code: 'SERIALIZATION' } | DefaultResultError
   >
 >;
 
 export type DeleteReq = { id: string };
 export type DeleteRes = Promise<
-  ResultOld<void, { code: "SERIALIZATION" } | DefaultResultError>
+  ResultOld<void, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
 export interface CouponRepository {
@@ -58,11 +61,11 @@ export interface CouponRepository {
   insert(req: InsertReq): InsertRes;
   update(id: string, data: Partial<InsertReq>): InsertRes;
   isValid(
-    code: string
+    code: string,
   ): Promise<
     ResultOld<
       ValidateCouponResultModel,
-      { code: "SERIALIZATION" } | DefaultResultError
+      { code: 'SERIALIZATION' } | DefaultResultError
     >
   >;
   delete(req: DeleteReq): DeleteRes;
@@ -80,13 +83,13 @@ export class CouponRepositoryImpl implements CouponRepository {
       });
 
       if (!result) {
-        return ResultOld.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
       return ResultOld.Success(result);
     } catch (error) {
-      console.error("Error toggling coupon status:", error);
-      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
+      console.error('Error toggling coupon status:', error);
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 
@@ -95,8 +98,8 @@ export class CouponRepositoryImpl implements CouponRepository {
       let url = `/coupons/list-all?page=${req.page}&limit=${req.limit}`;
 
       if (req.filters?.code) url += `&code=${req.filters.code}`;
-      if (req.filters?.status && req.filters.status !== "all") {
-        url += `&isActive=${req.filters.status === "active"}`;
+      if (req.filters?.status && req.filters.status !== 'all') {
+        url += `&isActive=${req.filters.status === 'active'}`;
       }
 
       const result = await this.api.get({
@@ -105,16 +108,16 @@ export class CouponRepositoryImpl implements CouponRepository {
       });
 
       if (!result) {
-        return ResultOld.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
-      console.log("API response structure:", Object.keys(result));
-      console.log("Data count:", result.data?.length || 0);
+      console.log('API response structure:', Object.keys(result));
+      console.log('Data count:', result.data?.length || 0);
 
       return ResultOld.Success(result);
     } catch (error) {
-      console.error("Error listing coupons:", error);
-      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
+      console.error('Error listing coupons:', error);
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 
@@ -126,13 +129,13 @@ export class CouponRepositoryImpl implements CouponRepository {
       });
 
       if (!result) {
-        return ResultOld.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
       return ResultOld.Success(result);
     } catch (error) {
-      console.error("Error getting coupon:", error);
-      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
+      console.error('Error getting coupon:', error);
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 
@@ -145,13 +148,13 @@ export class CouponRepositoryImpl implements CouponRepository {
       });
 
       if (!result) {
-        return ResultOld.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
       return ResultOld.Success(result);
     } catch (error) {
-      console.error("Error inserting coupon:", error);
-      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
+      console.error('Error inserting coupon:', error);
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 
@@ -164,22 +167,22 @@ export class CouponRepositoryImpl implements CouponRepository {
       });
 
       if (!result) {
-        return ResultOld.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
       return ResultOld.Success(result);
     } catch (error) {
-      console.error("Error updating coupon:", error);
-      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
+      console.error('Error updating coupon:', error);
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 
   async isValid(
-    code: string
+    code: string,
   ): Promise<
     ResultOld<
       ValidateCouponResultModel,
-      { code: "SERIALIZATION" } | DefaultResultError
+      { code: 'SERIALIZATION' } | DefaultResultError
     >
   > {
     try {
@@ -190,13 +193,13 @@ export class CouponRepositoryImpl implements CouponRepository {
       });
 
       if (!result) {
-        return ResultOld.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
       return ResultOld.Success(result);
     } catch (error) {
-      console.error("Error validating coupon:", error);
-      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
+      console.error('Error validating coupon:', error);
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 
@@ -209,8 +212,8 @@ export class CouponRepositoryImpl implements CouponRepository {
 
       return ResultOld.Success(undefined);
     } catch (error) {
-      console.error("Error deleting coupon:", error);
-      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
+      console.error('Error deleting coupon:', error);
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 }

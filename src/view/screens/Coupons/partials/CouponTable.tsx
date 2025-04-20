@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
-import { Eye, Edit, ToggleLeft, ToggleRight } from "lucide-react";
-import type { Coupon } from "../../../../data/types";
+import { motion } from 'framer-motion';
+import { Edit, Eye, ToggleLeft, ToggleRight } from 'lucide-react';
+import type { Coupon } from '../../../../data/types';
 
 interface CouponTableProps {
   coupons: Coupon[];
@@ -17,7 +17,7 @@ export function CouponTable({
   onToggleStatus,
 }: CouponTableProps) {
   const formatDate = (dateString: string | null | undefined) => {
-    if (!dateString) return "-";
+    if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString();
   };
 
@@ -26,7 +26,7 @@ export function CouponTable({
     visible: {
       opacity: 1,
       transition: {
-        when: "beforeChildren",
+        when: 'beforeChildren',
         staggerChildren: 0.05,
       },
     },
@@ -37,7 +37,7 @@ export function CouponTable({
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: "spring", stiffness: 100 },
+      transition: { type: 'spring', stiffness: 100 },
     },
   };
 
@@ -68,7 +68,7 @@ export function CouponTable({
                 key={coupon.id}
                 variants={rowVariants}
                 className={`border-b border-gray-200 ${
-                  index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                  index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                 } hover:bg-blue-50 transition-colors`}
                 whileHover={{ scale: 1.01, x: 5 }}
               >
@@ -77,7 +77,7 @@ export function CouponTable({
                 </td>
                 <td className="py-4 px-4">
                   <span className="font-medium">
-                    {coupon.discountType === "percentage" ? (
+                    {coupon.discountType === 'percentage' ? (
                       <span className="text-emerald-500">
                         {coupon.discountValue}%
                       </span>
@@ -102,11 +102,11 @@ export function CouponTable({
                   <span
                     className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-medium ${
                       coupon.isActive
-                        ? "bg-green-100 text-green-600 border border-green-200"
-                        : "bg-red-100 text-red-600 border border-red-200"
+                        ? 'bg-green-100 text-green-600 border border-green-200'
+                        : 'bg-red-100 text-red-600 border border-red-200'
                     }`}
                   >
-                    {coupon.isActive ? "Ativo" : "Inativo"}
+                    {coupon.isActive ? 'Ativo' : 'Inativo'}
                   </span>
                 </td>
                 <td className="py-4 px-4 text-right">
@@ -133,10 +133,10 @@ export function CouponTable({
                       onClick={() => onToggleStatus(coupon.id)}
                       className={`p-2 rounded-full transition-colors ${
                         coupon.isActive
-                          ? "hover:bg-red-50 text-green-500 hover:text-red-500"
-                          : "hover:bg-green-50 text-red-500 hover:text-green-500"
+                          ? 'hover:bg-red-50 text-green-500 hover:text-red-500'
+                          : 'hover:bg-green-50 text-red-500 hover:text-green-500'
                       }`}
-                      title={coupon.isActive ? "Desativar" : "Ativar"}
+                      title={coupon.isActive ? 'Desativar' : 'Ativar'}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                     >

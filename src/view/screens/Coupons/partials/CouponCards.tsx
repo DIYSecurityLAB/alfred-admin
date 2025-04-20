@@ -1,16 +1,16 @@
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 import {
-  Eye,
+  Calendar,
+  DollarSign,
   Edit,
+  Eye,
+  Percent,
+  ShoppingBag,
+  Tag,
   ToggleLeft,
   ToggleRight,
-  Calendar,
-  Tag,
-  Percent,
-  DollarSign,
-  ShoppingBag,
-} from "lucide-react";
-import type { Coupon } from "../../../../data/types";
+} from 'lucide-react';
+import type { Coupon } from '../../../../data/types';
 
 interface CouponCardsProps {
   coupons: Coupon[];
@@ -27,7 +27,7 @@ export function CouponCards({
   onToggleStatus,
 }: CouponCardsProps) {
   const formatDate = (dateString: string | null | undefined) => {
-    if (!dateString) return "-";
+    if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString();
   };
 
@@ -36,7 +36,7 @@ export function CouponCards({
     visible: {
       opacity: 1,
       transition: {
-        when: "beforeChildren",
+        when: 'beforeChildren',
         staggerChildren: 0.05,
       },
     },
@@ -47,7 +47,7 @@ export function CouponCards({
     visible: {
       y: 0,
       opacity: 1,
-      transition: { type: "spring", stiffness: 100 },
+      transition: { type: 'spring', stiffness: 100 },
     },
   };
 
@@ -75,18 +75,18 @@ export function CouponCards({
             <span
               className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-medium ${
                 coupon.isActive
-                  ? "bg-green-50 text-green-600 border border-green-200"
-                  : "bg-red-50 text-red-600 border border-red-200"
+                  ? 'bg-green-50 text-green-600 border border-green-200'
+                  : 'bg-red-50 text-red-600 border border-red-200'
               }`}
             >
-              {coupon.isActive ? "Ativo" : "Inativo"}
+              {coupon.isActive ? 'Ativo' : 'Inativo'}
             </span>
           </div>
 
           <div className="space-y-3 mb-4">
             <div className="flex justify-between items-center">
               <span className="text-gray-600 flex items-center">
-                {coupon.discountType === "percentage" ? (
+                {coupon.discountType === 'percentage' ? (
                   <Percent className="h-4 w-4 mr-1 text-blue-500" />
                 ) : (
                   <DollarSign className="h-4 w-4 mr-1 text-blue-500" />
@@ -95,12 +95,12 @@ export function CouponCards({
               </span>
               <span
                 className={`font-medium ${
-                  coupon.discountType === "percentage"
-                    ? "text-blue-500"
-                    : "text-blue-500"
+                  coupon.discountType === 'percentage'
+                    ? 'text-blue-500'
+                    : 'text-blue-500'
                 }`}
               >
-                {coupon.discountType === "percentage"
+                {coupon.discountType === 'percentage'
                   ? `${coupon.discountValue}%`
                   : `R$ ${coupon.discountValue.toFixed(2)}`}
               </span>
@@ -121,7 +121,7 @@ export function CouponCards({
                     style={{
                       width: `${Math.min(
                         (coupon.usedCount / (coupon.usageLimit ?? 10000)) * 100,
-                        100
+                        100,
                       )}%`,
                     }}
                   ></div>
@@ -167,10 +167,10 @@ export function CouponCards({
               whileTap={{ scale: 0.95 }}
               className={`p-2 rounded-lg transition-colors shadow-sm ${
                 coupon.isActive
-                  ? "bg-green-50 hover:bg-red-50 text-green-500 hover:text-red-500"
-                  : "bg-red-50 hover:bg-green-50 text-red-500 hover:text-green-500"
+                  ? 'bg-green-50 hover:bg-red-50 text-green-500 hover:text-red-500'
+                  : 'bg-red-50 hover:bg-green-50 text-red-500 hover:text-green-500'
               }`}
-              title={coupon.isActive ? "Desativar" : "Ativar"}
+              title={coupon.isActive ? 'Desativar' : 'Ativar'}
             >
               {coupon.isActive ? (
                 <ToggleRight className="h-5 w-5" />

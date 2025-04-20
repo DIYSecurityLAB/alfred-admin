@@ -1,9 +1,9 @@
-import { Link } from "react-router-dom";
-import { Search, Menu } from "lucide-react";
-import { DropdownNotification } from "./DropdownNotification";
-import { DropdownMessage } from "./DropdownMessage";
-import DropdownUser from "./DropdownUser";
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
+import { Menu, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { DropdownMessage } from './DropdownMessage';
+import { DropdownNotification } from './DropdownNotification';
+import DropdownUser from './DropdownUser';
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
@@ -38,7 +38,7 @@ const Header = (props: {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              alert("Busca não implementada!");
+              alert('Busca não implementada!');
             }}
           >
             <div className="relative group">

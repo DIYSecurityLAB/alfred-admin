@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from 'react';
 
 interface Props {
   children: React.ReactNode;
@@ -34,15 +34,15 @@ const ClickOutside: React.FC<Props> = ({
       if (!clickedInside) onClick();
     };
 
-    document.addEventListener("mousedown", handleClickListener);
+    document.addEventListener('mousedown', handleClickListener);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickListener);
+      document.removeEventListener('mousedown', handleClickListener);
     };
   }, [exceptionRef, onClick]);
 
   return (
-    <div ref={wrapperRef} className={`${className || ""}`}>
+    <div ref={wrapperRef} className={`${className || ''}`}>
       {children}
     </div>
   );

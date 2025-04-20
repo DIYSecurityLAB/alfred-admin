@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Bell } from "lucide-react";
-import ClickOutside from "@/view/components/ClickOutside";
-import { motion, AnimatePresence } from "framer-motion";
+import ClickOutside from '@/view/components/ClickOutside';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Bell } from 'lucide-react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export function DropdownNotification() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -78,7 +78,7 @@ export function DropdownNotification() {
                       17 Abr, 2025 • 10:30
                     </span>
                   </Link>
-                  
+
                   <Link
                     className="flex flex-col gap-2 px-5 py-4 rounded-md hover:bg-slate-50 transition-colors duration-200"
                     to="#"
@@ -101,7 +101,7 @@ export function DropdownNotification() {
                       17 Abr, 2025 • 09:45
                     </span>
                   </Link>
-                  
+
                   <Link
                     className="flex flex-col gap-2 px-5 py-4 rounded-md hover:bg-slate-50 transition-colors duration-200"
                     to="#"
@@ -126,7 +126,7 @@ export function DropdownNotification() {
                   </Link>
                 </div>
               </div>
-              
+
               <div className="border-t border-slate-100 p-2">
                 <Link
                   to="#"

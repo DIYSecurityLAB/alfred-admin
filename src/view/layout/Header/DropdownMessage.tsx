@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { MessageCircle } from "lucide-react";
-import ClickOutside from "@/view/components/ClickOutside";
-import { motion, AnimatePresence } from "framer-motion";
+import ClickOutside from '@/view/components/ClickOutside';
+import { AnimatePresence, motion } from 'framer-motion';
+import { MessageCircle } from 'lucide-react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export function DropdownMessage() {
   const [dropdownOpen, setDropdownOpen] = useState(false);

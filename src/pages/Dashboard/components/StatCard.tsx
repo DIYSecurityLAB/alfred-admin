@@ -1,6 +1,6 @@
-import React, { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowDown, ArrowUp } from 'lucide-react';
+import { ReactNode } from 'react';
 
 interface StatCardProps {
   title: string;
@@ -21,7 +21,7 @@ export function StatCard({
   changeLabel,
   iconBg = 'bg-primary-light',
   iconColor = 'text-primary',
-  delay = 0
+  delay = 0,
 }: StatCardProps) {
   return (
     <motion.div
@@ -36,22 +36,27 @@ export function StatCard({
           <div className={iconColor}>{icon}</div>
         </div>
       </div>
-      
+
       <div className="flex flex-col space-y-2">
         <span className="text-2xl font-bold">{value}</span>
-        
-        {(change !== undefined && changeLabel) && (
+
+        {change !== undefined && changeLabel && (
           <div className="flex items-center">
             {change > 0 ? (
               <ArrowUp className="h-4 w-4 text-green-500 mr-1" />
             ) : change < 0 ? (
               <ArrowDown className="h-4 w-4 text-red-500 mr-1" />
             ) : null}
-            
-            <span className={`text-sm ${
-              change > 0 ? 'text-green-500' : 
-              change < 0 ? 'text-red-500' : 'text-text-secondary'
-            }`}>
+
+            <span
+              className={`text-sm ${
+                change > 0
+                  ? 'text-green-500'
+                  : change < 0
+                    ? 'text-red-500'
+                    : 'text-text-secondary'
+              }`}
+            >
               {Math.abs(change).toFixed(1)}% {changeLabel}
             </span>
           </div>

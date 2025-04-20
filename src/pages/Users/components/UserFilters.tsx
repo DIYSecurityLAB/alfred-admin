@@ -1,5 +1,5 @@
+import { FilterX, Search } from 'lucide-react';
 import React from 'react';
-import { Search, FilterX } from 'lucide-react';
 import type { UserFilter } from '../../../data/types';
 
 interface UserFiltersProps {
@@ -12,7 +12,7 @@ export function UserFilters({ filters, onFilterChange }: UserFiltersProps) {
     onFilterChange({
       username: '',
       status: 'all',
-      level: undefined
+      level: undefined,
     });
   };
 
@@ -43,7 +43,9 @@ export function UserFilters({ filters, onFilterChange }: UserFiltersProps) {
         <div className="w-full">
           <select
             value={filters.status}
-            onChange={(e) => onFilterChange({ status: e.target.value as UserFilter['status'] })}
+            onChange={(e) =>
+              onFilterChange({ status: e.target.value as UserFilter['status'] })
+            }
             className="w-full px-4 py-2.5 bg-background rounded-lg border border-surface focus:outline-none focus:border-primary"
           >
             <option value="all">Todos os status</option>
@@ -68,7 +70,7 @@ export function UserFilters({ filters, onFilterChange }: UserFiltersProps) {
           </select>
         </div>
       </div>
-      
+
       <div className="flex justify-end mt-4">
         <button
           onClick={handleClearFilters}
