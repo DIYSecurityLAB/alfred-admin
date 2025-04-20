@@ -1,12 +1,17 @@
-export type DefaultResultError = { 
-  code: 'UNKNOWN_ERROR' | 'UNAUTHORIZED' | 'NOT_FOUND' | 'BAD_REQUEST' | 'ALREADY_EXISTS' 
+export type DefaultResultError = {
+  code:
+    | 'UNKNOWN_ERROR'
+    | 'UNAUTHORIZED'
+    | 'NOT_FOUND'
+    | 'BAD_REQUEST'
+    | 'ALREADY_EXISTS';
 };
 
 export class ResultOld<T, E = DefaultResultError> {
   private constructor(
     public readonly isSuccess: boolean,
     public readonly value?: T,
-    public readonly error?: E
+    public readonly error?: E,
   ) {}
 
   static Success<T, E>(value: T): ResultOld<T, E> {
@@ -23,6 +28,8 @@ export class ResultOld<T, E = DefaultResultError> {
     } else if (!this.isSuccess && this.error !== undefined) {
       return onError(this.error);
     }
-    throw new Error('Invalid state: Result must be either success with value or error with error object');
+    throw new Error(
+      'Invalid state: Result must be either success with value or error with error object',
+    );
   }
 }

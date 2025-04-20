@@ -1,14 +1,6 @@
-import {
-  X,
-  Edit,
-  Calendar,
-  User,
-  FileText,
-  Shield,
-  Clock,
-} from "lucide-react";
-import { motion } from "framer-motion";
-import { BlockedUserData } from "../useBlockedUser";
+import { motion } from 'framer-motion';
+import { Calendar, Clock, Edit, FileText, Shield, User, X } from 'lucide-react';
+import { BlockedUserData } from '../useBlockedUser';
 
 interface BlockedUserDetailsModalProps {
   blockedUser: BlockedUserData;
@@ -23,12 +15,12 @@ export function BlockedUserDetailsModal({
 }: BlockedUserDetailsModalProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     }).format(date);
   };
 
@@ -57,11 +49,11 @@ export function BlockedUserDetailsModal({
             <div className="h-12 w-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-medium mr-3 text-lg">
               {blockedUser.username
                 ? blockedUser.username.charAt(0).toUpperCase()
-                : "U"}
+                : 'U'}
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-800">
-                {blockedUser.username || "Usuário sem nome"}
+                {blockedUser.username || 'Usuário sem nome'}
               </h3>
               <div className="px-2.5 py-1 rounded-full bg-red-50 text-red-700 text-sm inline-block mt-1">
                 {blockedUser.reason}

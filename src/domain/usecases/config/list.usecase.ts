@@ -1,13 +1,13 @@
-import { ConfigRepository } from "@/data/repositories/config.repository";
-import { Config } from "@/domain/entities/Config";
-import { DefaultResultError, Result } from "@/utils/Result";
-import { UseCase } from "@/utils/UseCase";
+import { ConfigRepository } from '@/data/repositories/config.repository';
+import { Config } from '@/domain/entities/Config';
+import { DefaultResultError, Result } from '@/utils/Result';
+import { UseCase } from '@/utils/UseCase';
 
 export type ListReq = object;
 export type ListRes = Promise<
   Result<
     Config,
-    { code: "SERIALIZATION" } | { code: "NOT_FOUND" } | DefaultResultError
+    { code: 'SERIALIZATION' } | { code: 'NOT_FOUND' } | DefaultResultError
   >
 >;
 
@@ -19,14 +19,14 @@ export class ListConfigUseCaseImpl implements ListConfigUseCase {
   async execute(): ListRes {
     const { result } = await this.repository.list();
 
-    if (result.type === "ERROR") {
+    if (result.type === 'ERROR') {
       switch (result.error.code) {
-        case "SERIALIZATION":
-          return Result.Error({ code: "SERIALIZATION" });
-        case "NOT_FOUND":
-          return Result.Error({ code: "NOT_FOUND" });
+        case 'SERIALIZATION':
+          return Result.Error({ code: 'SERIALIZATION' });
+        case 'NOT_FOUND':
+          return Result.Error({ code: 'NOT_FOUND' });
         default:
-          return Result.Error({ code: "UNKNOWN" });
+          return Result.Error({ code: 'UNKNOWN' });
       }
     }
 

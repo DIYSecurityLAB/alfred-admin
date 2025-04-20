@@ -1,6 +1,13 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { X, CheckCircle, XCircle, Calendar, User as UserIcon, Mail, Shield } from 'lucide-react';
+import {
+  Calendar,
+  CheckCircle,
+  Mail,
+  Shield,
+  User as UserIcon,
+  X,
+  XCircle,
+} from 'lucide-react';
 import type { User } from '../../../data/types';
 
 interface UserDetailsModalProps {
@@ -12,17 +19,28 @@ interface UserDetailsModalProps {
 // Função auxiliar para exibir o nível do usuário
 const getLevelName = (level: number) => {
   switch (level) {
-    case 0: return 'Básico';
-    case 1: return 'Iniciante';
-    case 2: return 'Intermediário';
-    case 3: return 'Avançado';
-    case 4: return 'Supervisor';
-    case 5: return 'Administrador';
-    default: return `Nível ${level}`;
+    case 0:
+      return 'Básico';
+    case 1:
+      return 'Iniciante';
+    case 2:
+      return 'Intermediário';
+    case 3:
+      return 'Avançado';
+    case 4:
+      return 'Supervisor';
+    case 5:
+      return 'Administrador';
+    default:
+      return `Nível ${level}`;
   }
 };
 
-export function UserDetailsModal({ user, onClose, onEdit }: UserDetailsModalProps) {
+export function UserDetailsModal({
+  user,
+  onClose,
+  onEdit,
+}: UserDetailsModalProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString();
   };
@@ -63,7 +81,9 @@ export function UserDetailsModal({ user, onClose, onEdit }: UserDetailsModalProp
             ) : (
               <XCircle className="h-5 w-5 text-red-500 mr-2" />
             )}
-            <span className={`text-lg font-medium ${user.isActive ? 'text-green-600' : 'text-red-600'}`}>
+            <span
+              className={`text-lg font-medium ${user.isActive ? 'text-green-600' : 'text-red-600'}`}
+            >
               {user.isActive ? 'Usuário Ativo' : 'Usuário Inativo'}
             </span>
           </div>
@@ -77,18 +97,14 @@ export function UserDetailsModal({ user, onClose, onEdit }: UserDetailsModalProp
                   <Mail className="h-4 w-4 text-primary mr-2" />
                   <h3 className="text-sm text-text-secondary">Email</h3>
                 </div>
-                <p className="text-lg font-medium">
-                  {user.email || 'N/A'}
-                </p>
+                <p className="text-lg font-medium">{user.email || 'N/A'}</p>
               </div>
 
               {/* Nome */}
               {user.name && (
                 <div>
                   <h3 className="text-sm text-text-secondary mb-1">Nome</h3>
-                  <p className="text-lg font-medium">
-                    {user.name}
-                  </p>
+                  <p className="text-lg font-medium">{user.name}</p>
                 </div>
               )}
 
@@ -112,14 +128,22 @@ export function UserDetailsModal({ user, onClose, onEdit }: UserDetailsModalProp
               <div>
                 <div className="flex items-center mb-1">
                   <Shield className="h-4 w-4 text-primary mr-2" />
-                  <h3 className="text-sm text-text-secondary">Nível de Acesso</h3>
+                  <h3 className="text-sm text-text-secondary">
+                    Nível de Acesso
+                  </h3>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`px-2.5 py-1 rounded-full text-sm font-medium 
-                    ${user.level >= 4 ? 'bg-purple-500/20 text-purple-600' : 
-                      user.level >= 3 ? 'bg-blue-500/20 text-blue-600' : 
-                      user.level >= 2 ? 'bg-green-500/20 text-green-600' : 
-                      'bg-gray-200 text-gray-700'}`}
+                  <span
+                    className={`px-2.5 py-1 rounded-full text-sm font-medium 
+                    ${
+                      user.level >= 4
+                        ? 'bg-purple-500/20 text-purple-600'
+                        : user.level >= 3
+                          ? 'bg-blue-500/20 text-blue-600'
+                          : user.level >= 2
+                            ? 'bg-green-500/20 text-green-600'
+                            : 'bg-gray-200 text-gray-700'
+                    }`}
                   >
                     {getLevelName(user.level)}
                   </span>
@@ -132,7 +156,9 @@ export function UserDetailsModal({ user, onClose, onEdit }: UserDetailsModalProp
               {/* Provider ID, se disponível */}
               {user.providerId && (
                 <div>
-                  <h3 className="text-sm text-text-secondary mb-1">Provider ID</h3>
+                  <h3 className="text-sm text-text-secondary mb-1">
+                    Provider ID
+                  </h3>
                   <p className="text-base font-medium break-all">
                     {user.providerId}
                   </p>

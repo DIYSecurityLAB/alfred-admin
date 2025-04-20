@@ -1,22 +1,22 @@
 import { z } from 'zod';
 
 export const PaymentMethodEnum = z.enum([
-  'PIX', 
-  'CREDIT_CARD', 
-  'CRYPTO', 
+  'PIX',
+  'CREDIT_CARD',
+  'CRYPTO',
   'CARD',
   'BANK_TRANSFER',
   'WISE',
   'TICKET',
   'USDT',
   'SWIFT',
-  'PAYPAL'
+  'PAYPAL',
 ]);
 
 export const PaymentStatusEnum = z.enum([
-  'PENDING', 
-  'COMPLETED', 
-  'CANCELLED', 
+  'PENDING',
+  'COMPLETED',
+  'CANCELLED',
   'FAILED',
   'pending',
   'paid',
@@ -24,7 +24,7 @@ export const PaymentStatusEnum = z.enum([
   'review',
   'expired',
   'refunded',
-  'complete'
+  'complete',
 ]);
 
 export const DepositModel = z.object({
@@ -43,7 +43,7 @@ export const DepositModel = z.object({
   username: z.string().nullable().optional(),
   discountType: z.enum(['percentage', 'fixed']).optional(),
   discountValue: z.number().optional(),
-  valueCollected: z.number().optional()
+  valueCollected: z.number().optional(),
 });
 export type DepositModel = z.infer<typeof DepositModel>;
 
@@ -52,7 +52,7 @@ export const DepositListModel = z.object({
   total: z.number().optional().default(0),
   page: z.number().optional().default(1),
   pageSize: z.number().optional().default(10),
-  totalPages: z.number().optional().default(1)
+  totalPages: z.number().optional().default(1),
 });
 export type DepositListModel = z.infer<typeof DepositListModel>;
 
@@ -61,6 +61,6 @@ export const DepositFilterModel = z.object({
   paymentMethod: PaymentMethodEnum.optional(),
   startAt: z.string().optional(),
   endAt: z.string().optional(),
-  username: z.string().optional()
+  username: z.string().optional(),
 });
 export type DepositFilterModel = z.infer<typeof DepositFilterModel>;

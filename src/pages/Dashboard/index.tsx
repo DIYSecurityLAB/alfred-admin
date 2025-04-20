@@ -1,11 +1,21 @@
-import { DollarSign, Users, Tags, Clock, Package2, CreditCard, Wallet, TrendingUp, AlertCircle } from 'lucide-react';
+import {
+  AlertCircle,
+  Clock,
+  CreditCard,
+  DollarSign,
+  Package2,
+  Tags,
+  TrendingUp,
+  Users,
+  Wallet,
+} from 'lucide-react';
 import { useDashboard } from '../../hooks/useDashboard';
-import { StatCard } from './components/StatCard';
-import { RevenueChart } from './components/RevenueChart';
 import { PaymentMethodsChart } from './components/PaymentMethodsChart';
+import { RevenueChart } from './components/RevenueChart';
+import { StatCard } from './components/StatCard';
+import { TopProductsTable } from './components/TopProductsTable';
 import { TransactionStatusChart } from './components/TransactionStatusChart';
 import { UserRegistrationChart } from './components/UserRegistrationChart';
-import { TopProductsTable } from './components/TopProductsTable';
 
 export function Dashboard() {
   const {
@@ -38,9 +48,11 @@ export function Dashboard() {
           <div className="bg-red-100 p-3 rounded-full mb-4 inline-flex">
             <AlertCircle className="h-8 w-8 text-red-600" />
           </div>
-          <p className="text-red-600 font-medium">Erro ao carregar os dados da dashboard.</p>
+          <p className="text-red-600 font-medium">
+            Erro ao carregar os dados da dashboard.
+          </p>
           {error && <p className="text-red-500 mt-2">{error}</p>}
-          <button 
+          <button
             onClick={clearError}
             className="mt-4 bg-primary text-white px-4 py-2 rounded hover:bg-primary-dark"
           >
@@ -56,7 +68,9 @@ export function Dashboard() {
       {/* Cabeçalho */}
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-text-secondary mt-1">Visão geral de métricas e vendas</p>
+        <p className="text-text-secondary mt-1">
+          Visão geral de métricas e vendas
+        </p>
       </div>
 
       {/* Cards Estatísticos */}
@@ -69,7 +83,7 @@ export function Dashboard() {
           iconColor="text-blue-600"
           delay={0}
         />
-        
+
         <StatCard
           title="Receita Total"
           value={formatCurrency(stats.totalRevenue)}
@@ -78,18 +92,20 @@ export function Dashboard() {
           iconColor="text-green-600"
           delay={1}
         />
-        
+
         <StatCard
           title="Usuários"
           value={formatNumber(stats.totalUsers)}
-          change={stats.newUsers > 0 ? (stats.newUsers / stats.totalUsers) * 100 : 0}
+          change={
+            stats.newUsers > 0 ? (stats.newUsers / stats.totalUsers) * 100 : 0
+          }
           changeLabel="novos este mês"
           icon={<Users className="h-5 w-5" />}
           iconBg="bg-purple-100"
           iconColor="text-purple-600"
           delay={2}
         />
-        
+
         <StatCard
           title="Cupons Ativos"
           value={formatNumber(stats.activeCoupons)}
@@ -110,7 +126,7 @@ export function Dashboard() {
           iconColor="text-amber-600"
           delay={4}
         />
-        
+
         <StatCard
           title="Método + Utilizado"
           value="PIX"
@@ -119,7 +135,7 @@ export function Dashboard() {
           iconColor="text-blue-600"
           delay={5}
         />
-        
+
         <StatCard
           title="Taxa de Conversão"
           value={formatPercentage(stats.conversionRate)}
@@ -128,7 +144,7 @@ export function Dashboard() {
           iconColor="text-green-600"
           delay={6}
         />
-        
+
         <StatCard
           title="Valor Médio"
           value={formatCurrency(stats.totalRevenue / stats.totalSales)}
@@ -138,7 +154,7 @@ export function Dashboard() {
           delay={7}
         />
       </div>
-      
+
       {/* Gráfico principal */}
       <RevenueChart
         data={stats.revenueByDay}
@@ -146,7 +162,7 @@ export function Dashboard() {
         setDateRange={setDateRange}
         formatCurrency={formatCurrency}
       />
-      
+
       {/* Gráficos secundários */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <PaymentMethodsChart
@@ -154,20 +170,20 @@ export function Dashboard() {
           formatCurrency={formatCurrency}
           formatNumber={formatNumber}
         />
-        
+
         <TransactionStatusChart
           data={stats.transactionsByStatus}
           formatNumber={formatNumber}
         />
       </div>
-      
+
       {/* Linha final */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <UserRegistrationChart
           data={stats.userRegistrationByMonth}
           formatNumber={formatNumber}
         />
-        
+
         <TopProductsTable
           data={stats.topProducts}
           formatCurrency={formatCurrency}

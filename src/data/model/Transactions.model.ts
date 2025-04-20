@@ -7,7 +7,7 @@ export const TransactionStatusEnum = z.enum([
   'review',
   'expired',
   'refunded',
-  'complete'
+  'complete',
 ]);
 export type TransactionStatusEnum = z.infer<typeof TransactionStatusEnum>;
 
@@ -15,15 +15,11 @@ export const PaymentMethodEnum = z.enum([
   'PIX',
   'CREDIT_CARD',
   'CRYPTO',
-  'BANK_TRANSFER'
+  'BANK_TRANSFER',
 ]);
 export type PaymentMethodEnum = z.infer<typeof PaymentMethodEnum>;
 
-export const CryptoTypeEnum = z.enum([
-  'BTC',
-  'ETH',
-  'USDT'
-]);
+export const CryptoTypeEnum = z.enum(['BTC', 'ETH', 'USDT']);
 export type CryptoTypeEnum = z.infer<typeof CryptoTypeEnum>;
 
 export const TransactionModel = z.object({
@@ -61,10 +57,12 @@ export const TransactionFilterModel = z.object({
   transactionId: z.string().optional(),
   status: z.union([TransactionStatusEnum, z.literal('all')]).optional(),
   paymentMethod: z.union([PaymentMethodEnum, z.literal('all')]).optional(),
-  dateRange: z.object({
-    start: z.string(),
-    end: z.string(),
-  }).optional(),
+  dateRange: z
+    .object({
+      start: z.string(),
+      end: z.string(),
+    })
+    .optional(),
 });
 export type TransactionFilterModel = z.infer<typeof TransactionFilterModel>;
 
@@ -72,4 +70,6 @@ export const UpdateTransactionStatusModel = z.object({
   id: z.string(),
   status: TransactionStatusEnum,
 });
-export type UpdateTransactionStatusModel = z.infer<typeof UpdateTransactionStatusModel>;
+export type UpdateTransactionStatusModel = z.infer<
+  typeof UpdateTransactionStatusModel
+>;

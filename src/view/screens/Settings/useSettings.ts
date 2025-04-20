@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Config, UpdateConfig } from "@/domain/entities/Config";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { UseCases } from "@/domain/usecases/UseCases";
+import { Config, UpdateConfig } from '@/domain/entities/Config';
+import { UseCases } from '@/domain/usecases/UseCases';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 export function useSettings() {
   const [collapsedHeader, setCollapsedHeader] = useState(false);
@@ -11,18 +11,18 @@ export function useSettings() {
   const queryClient = useQueryClient();
 
   const { data: config, isLoading } = useQuery({
-    queryKey: ["config"],
+    queryKey: ['config'],
     queryFn: async () => {
       try {
         const { result } = await UseCases.config.list.execute();
 
-        if (result.type === "ERROR") {
-          throw new Error(result.error?.code || "Erro desconhecido");
+        if (result.type === 'ERROR') {
+          throw new Error(result.error?.code || 'Erro desconhecido');
         }
 
         return result.data;
       } catch {
-        setError("Erro ao carregar configurações");
+        setError('Erro ao carregar configurações');
         return null;
       }
     },
@@ -56,14 +56,14 @@ export function useSettings() {
     mutationFn: async (newConfig: UpdateConfig) => {
       const { result } = await UseCases.config.update.execute(newConfig);
 
-      if (result.type === "ERROR") {
-        throw new Error(result.error?.code || "Erro desconhecido");
+      if (result.type === 'ERROR') {
+        throw new Error(result.error?.code || 'Erro desconhecido');
       }
 
       return result.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["config"] });
+      queryClient.invalidateQueries({ queryKey: ['config'] });
     },
     onError: (error: Error) => {
       setError(`Erro ao atualizar configurações: ${error.message}`);
@@ -86,7 +86,7 @@ export function useSettings() {
       visible: {
         opacity: 1,
         transition: {
-          when: "beforeChildren",
+          when: 'beforeChildren',
           staggerChildren: 0.1,
         },
       },
@@ -96,7 +96,7 @@ export function useSettings() {
       visible: {
         y: 0,
         opacity: 1,
-        transition: { type: "spring", stiffness: 100 },
+        transition: { type: 'spring', stiffness: 100 },
       },
     },
     error: {
@@ -104,7 +104,7 @@ export function useSettings() {
       visible: {
         opacity: 1,
         y: 0,
-        transition: { type: "spring", stiffness: 100 },
+        transition: { type: 'spring', stiffness: 100 },
       },
       exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
     },

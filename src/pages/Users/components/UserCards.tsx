@@ -1,6 +1,11 @@
-import React from 'react';
-import { Eye, Edit2, ToggleRight, User as UserIcon, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
+import {
+  Calendar,
+  Edit2,
+  Eye,
+  ToggleRight,
+  User as UserIcon,
+} from 'lucide-react';
 import type { User as UserType } from '../../../data/types';
 
 interface UserCardsProps {
@@ -13,13 +18,20 @@ interface UserCardsProps {
 // Função auxiliar para exibir o nível do usuário
 const getLevelName = (level: number) => {
   switch (level) {
-    case 0: return 'Básico';
-    case 1: return 'Iniciante';
-    case 2: return 'Intermediário';
-    case 3: return 'Avançado';
-    case 4: return 'Supervisor';
-    case 5: return 'Administrador';
-    default: return `Nível ${level}`;
+    case 0:
+      return 'Básico';
+    case 1:
+      return 'Iniciante';
+    case 2:
+      return 'Intermediário';
+    case 3:
+      return 'Avançado';
+    case 4:
+      return 'Supervisor';
+    case 5:
+      return 'Administrador';
+    default:
+      return `Nível ${level}`;
   }
 };
 
@@ -59,19 +71,26 @@ export function UserCards({
               <p className="text-sm text-text-secondary">Email:</p>
               <p className="font-medium truncate">{user.email}</p>
             </div>
-            
+
             <div>
               <p className="text-sm text-text-secondary">Nível:</p>
-              <p className={`font-medium 
-                ${user.level >= 4 ? 'text-purple-600' : 
-                  user.level >= 3 ? 'text-blue-600' : 
-                  user.level >= 2 ? 'text-green-600' : 
-                  'text-gray-700'}`}>
+              <p
+                className={`font-medium 
+                ${
+                  user.level >= 4
+                    ? 'text-purple-600'
+                    : user.level >= 3
+                      ? 'text-blue-600'
+                      : user.level >= 2
+                        ? 'text-green-600'
+                        : 'text-gray-700'
+                }`}
+              >
                 {getLevelName(user.level)}
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center text-sm text-text-secondary mb-4">
             <Calendar className="h-4 w-4 mr-1" />
             <span>
@@ -97,9 +116,11 @@ export function UserCards({
             <button
               onClick={() => onToggleStatus(user)}
               className="p-2 hover:bg-amber-500/20 rounded-lg transition-colors"
-              title={user.isActive ? "Desativar" : "Ativar"}
+              title={user.isActive ? 'Desativar' : 'Ativar'}
             >
-              <ToggleRight className={`h-5 w-5 ${user.isActive ? "text-green-500" : "text-red-500"}`} />
+              <ToggleRight
+                className={`h-5 w-5 ${user.isActive ? 'text-green-500' : 'text-red-500'}`}
+              />
             </button>
           </div>
         </motion.div>

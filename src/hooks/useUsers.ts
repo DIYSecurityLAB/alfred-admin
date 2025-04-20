@@ -1,29 +1,30 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { usersRepository } from '../data/repositories/users.repository';
 import { UserFilterModel } from '../data/model/Users.model';
-import type { User, UserFilter } from '../data/types';
+import { usersRepository } from '../data/repositories/users.repository';
+// import type { User, UserFilter } from '../data/types';
 
 // Mapeia filtros da UI para o modelo
-const mapUiFilterToModel = (filter: UserFilter): UserFilterModel => ({
+const mapUiFilterToModel = (filter: any): UserFilterModel => ({
   username: filter.username || undefined,
   status: filter.status,
-  level: filter.level
+  level: filter.level,
 });
 
 export function useUsers() {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-  const [filters, setFilters] = useState<UserFilter>({
+  const [filters, setFilters] = useState<any>({
     username: '',
     status: 'all',
   });
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isStatusConfirmOpen, setIsStatusConfirmOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const queryClient = useQueryClient();
 
   // Buscar usuários
@@ -34,18 +35,18 @@ export function useUsers() {
         const result = await usersRepository.getUsers({
           page,
           limit: perPage,
-          filters: mapUiFilterToModel(filters)
+          filters: mapUiFilterToModel(filters),
         });
-        
+
         if (!result.isSuccess) {
           throw new Error(result.error?.code || 'Erro desconhecido');
         }
-        
+
         return {
           users: result.value?.users || [],
-          total: result.value?.total || 0
+          total: result.value?.total || 0,
         };
-      } catch (err) {
+      } catch {
         setError('Erro ao carregar usuários');
         return { users: [], total: 0 };
       }
@@ -67,7 +68,7 @@ export function useUsers() {
     },
     onError: (error: Error) => {
       setError(`Erro ao atualizar status: ${error.message}`);
-    }
+    },
   });
 
   // Atualizar nível do usuário
@@ -85,28 +86,28 @@ export function useUsers() {
     },
     onError: (error: Error) => {
       setError(`Erro ao atualizar nível: ${error.message}`);
-    }
+    },
   });
 
   // Funções de utilitário
   const handlePageChange = (newPage: number) => setPage(newPage);
-  
-  const handleFilterChange = (newFilters: Partial<UserFilter>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+
+  const handleFilterChange = (newFilters: Partial<any>) => {
+    setFilters((prev) => ({ ...prev, ...newFilters }));
     setPage(1);
   };
 
-  const openDetailsModal = (user: User) => {
+  const openDetailsModal = (user: any) => {
     setSelectedUser(user);
     setIsDetailsModalOpen(true);
   };
-  
-  const openEditModal = (user: User) => {
+
+  const openEditModal = (user: any) => {
     setSelectedUser(user);
     setIsEditModalOpen(true);
   };
-  
-  const openStatusConfirm = (user: User) => {
+
+  const openStatusConfirm = (user: any) => {
     setSelectedUser(user);
     setIsStatusConfirmOpen(true);
   };

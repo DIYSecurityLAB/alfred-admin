@@ -1,21 +1,21 @@
-import { Pagination } from "@/components/Pagination";
-import { useCoupons } from "@/view/screens/Coupons/useCoupons";
-import { motion, AnimatePresence } from "framer-motion";
+import { Pagination } from '@/components/Pagination';
+import { Loading } from '@/view/components/Loading';
+import { useCoupons } from '@/view/screens/Coupons/useCoupons';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Plus,
   AlertCircle,
-  X,
-  Tag,
-  ChevronUp,
   ChevronDown,
-} from "lucide-react";
-import { useState } from "react";
-import { CouponCards } from "./partials/CouponCards";
-import { CouponDetailsModal } from "./partials/CouponDetailsModal";
-import { CouponFilters } from "./partials/CouponFilters";
-import { CouponModal } from "./partials/CouponModal";
-import { CouponTable } from "./partials/CouponTable";
-import { Loading } from "@/view/components/Loading";
+  ChevronUp,
+  Plus,
+  Tag,
+  X,
+} from 'lucide-react';
+import { useState } from 'react';
+import { CouponCards } from './partials/CouponCards';
+import { CouponDetailsModal } from './partials/CouponDetailsModal';
+import { CouponFilters } from './partials/CouponFilters';
+import { CouponModal } from './partials/CouponModal';
+import { CouponTable } from './partials/CouponTable';
 
 export function Coupons() {
   const {
@@ -57,7 +57,7 @@ export function Coupons() {
     visible: {
       opacity: 1,
       transition: {
-        when: "beforeChildren",
+        when: 'beforeChildren',
         staggerChildren: 0.1,
       },
     },
@@ -68,7 +68,7 @@ export function Coupons() {
     visible: {
       y: 0,
       opacity: 1,
-      transition: { type: "spring", stiffness: 100 },
+      transition: { type: 'spring', stiffness: 100 },
     },
   };
 
@@ -77,7 +77,7 @@ export function Coupons() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: "spring", stiffness: 100 },
+      transition: { type: 'spring', stiffness: 100 },
     },
     exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
   };
@@ -95,7 +95,7 @@ export function Coupons() {
     >
       <motion.div
         className={`bg-white rounded-lg shadow-md border border-blue-50 p-6 mb-8 transition-all duration-500 ${
-          collapsedHeader ? "cursor-pointer" : ""
+          collapsedHeader ? 'cursor-pointer' : ''
         }`}
         variants={itemVariants}
         onClick={collapsedHeader ? toggleHeader : undefined}
@@ -183,9 +183,9 @@ export function Coupons() {
               Nenhum cupom encontrado
             </h3>
             <p className="text-gray-600 text-center max-w-md mb-6">
-              {filters.code || filters.status !== "all"
-                ? "Nenhum cupom corresponde aos filtros selecionados. Tente ajustar seus filtros."
-                : "Você ainda não criou nenhum cupom. Comece criando seu primeiro cupom de desconto!"}
+              {filters.code || filters.status !== 'all'
+                ? 'Nenhum cupom corresponde aos filtros selecionados. Tente ajustar seus filtros.'
+                : 'Você ainda não criou nenhum cupom. Comece criando seu primeiro cupom de desconto!'}
             </p>
             <motion.button
               onClick={openCreateModal}

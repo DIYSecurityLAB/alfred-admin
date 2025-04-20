@@ -1,11 +1,11 @@
-import { DefaultResultError, ResultOld } from "../../utils/ResultOld";
-import { remoteDataSourceOld } from "../datasource/RemoteOld.datasource";
-import { DepositListModel, DepositModel } from "../model/Reports.model";
-import { z } from "zod";
+import { z } from 'zod';
+import { DefaultResultError, ResultOld } from '../../utils/ResultOld';
+import { remoteDataSourceOld } from '../datasource/RemoteOld.datasource';
+import { DepositListModel, DepositModel } from '../model/Reports.model';
 
 export type GetAllReportsRes = Promise<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ResultOld<any[], { code: "SERIALIZATION" } | DefaultResultError>
+  ResultOld<any[], { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
 export type GetPaginatedReportsReq = {
@@ -17,7 +17,7 @@ export type GetPaginatedReportsReq = {
 
 export type GetPaginatedReportsRes = Promise<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ResultOld<any, { code: "SERIALIZATION" } | DefaultResultError>
+  ResultOld<any, { code: 'SERIALIZATION' } | DefaultResultError>
 >;
 
 export type GetReportByIdReq = {
@@ -28,7 +28,7 @@ export type GetReportByIdRes = Promise<
   ResultOld<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any,
-    { code: "SERIALIZATION" } | { code: "NOT_FOUND" } | DefaultResultError
+    { code: 'SERIALIZATION' } | { code: 'NOT_FOUND' } | DefaultResultError
   >
 >;
 
@@ -44,12 +44,12 @@ export class ReportRepositoryImpl implements ReportRepository {
   async getAll(): GetAllReportsRes {
     try {
       const result = await this.api.get({
-        url: "/report/deposit",
+        url: '/report/deposit',
         model: z.array(DepositModel),
       });
 
       if (!result) {
-        return ResultOld.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,8 +74,8 @@ export class ReportRepositoryImpl implements ReportRepository {
 
       return ResultOld.Success(normalizedData);
     } catch (error) {
-      console.error("Error getting all reports:", error);
-      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
+      console.error('Error getting all reports:', error);
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 
@@ -99,7 +99,7 @@ export class ReportRepositoryImpl implements ReportRepository {
       });
 
       if (!result) {
-        return ResultOld.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -133,8 +133,8 @@ export class ReportRepositoryImpl implements ReportRepository {
 
       return ResultOld.Success(paginatedResponse);
     } catch (error) {
-      console.error("Error getting paginated reports:", error);
-      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
+      console.error('Error getting paginated reports:', error);
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 
@@ -146,7 +146,7 @@ export class ReportRepositoryImpl implements ReportRepository {
       });
 
       if (!result) {
-        return ResultOld.Error({ code: "SERIALIZATION" });
+        return ResultOld.Error({ code: 'SERIALIZATION' });
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -171,8 +171,8 @@ export class ReportRepositoryImpl implements ReportRepository {
 
       return ResultOld.Success(normalizedData);
     } catch (error) {
-      console.error("Error getting report by id:", error);
-      return ResultOld.Error({ code: "UNKNOWN_ERROR" });
+      console.error('Error getting report by id:', error);
+      return ResultOld.Error({ code: 'UNKNOWN_ERROR' });
     }
   }
 }

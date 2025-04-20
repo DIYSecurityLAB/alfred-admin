@@ -1,7 +1,7 @@
-import { Edit, Eye, Unlock, MoreVertical } from "lucide-react";
-import { motion } from "framer-motion";
-import { useState } from "react";
-import { BlockedUserData } from "../useBlockedUser";
+import { motion } from 'framer-motion';
+import { Edit, Eye, MoreVertical, Unlock } from 'lucide-react';
+import { useState } from 'react';
+import { BlockedUserData } from '../useBlockedUser';
 
 interface BlockedUserTableProps {
   blockedUsers: BlockedUserData[];
@@ -38,12 +38,24 @@ export function BlockedUserTable({
       <table className="min-w-full border-collapse">
         <thead>
           <tr className="bg-gray-50 border-b border-gray-200">
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">Usuário</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">ID/Documento</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">Razão</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">Bloqueado em</th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">Bloqueado por</th>
-            <th className="py-3 px-4 text-center text-sm font-medium text-gray-600">Ações</th>
+            <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
+              Usuário
+            </th>
+            <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
+              ID/Documento
+            </th>
+            <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
+              Razão
+            </th>
+            <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
+              Bloqueado em
+            </th>
+            <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
+              Bloqueado por
+            </th>
+            <th className="py-3 px-4 text-center text-sm font-medium text-gray-600">
+              Ações
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -57,7 +69,9 @@ export function BlockedUserTable({
               <td className="py-3 px-4">
                 <div className="flex items-center">
                   <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-medium mr-3">
-                    {user.username ? user.username.charAt(0).toUpperCase() : 'U'}
+                    {user.username
+                      ? user.username.charAt(0).toUpperCase()
+                      : 'U'}
                   </div>
                   <div>
                     <div className="font-medium text-gray-800">
@@ -75,7 +89,8 @@ export function BlockedUserTable({
                   )}
                   {user.documentId && (
                     <div className="text-gray-600">
-                      <span className="font-medium">Doc:</span> {user.documentId}
+                      <span className="font-medium">Doc:</span>{' '}
+                      {user.documentId}
                     </div>
                   )}
                   {!user.userId && !user.documentId && 'N/A'}

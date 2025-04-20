@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { dashboardRepository } from '../data/repositories/dashboard.repository';
 import type { DashboardStats } from '../data/types';
 
@@ -14,7 +14,7 @@ export function useDashboard() {
 
   const [error, setError] = useState<string | null>(null);
 
-  // Funções de formatação 
+  // Funções de formatação
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -40,13 +40,13 @@ export function useDashboard() {
     queryFn: async () => {
       try {
         const result = await dashboardRepository.getDashboardStats();
-        
+
         if (!result.isSuccess) {
           throw new Error(result.error?.code || 'Erro desconhecido');
         }
-        
+
         return result.value;
-      } catch (err) {
+      } catch {
         setError('Erro ao carregar estatísticas do dashboard');
         return null;
       }

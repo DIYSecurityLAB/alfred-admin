@@ -1,20 +1,20 @@
-import {
-  Tags,
-  CreditCard,
-  Settings,
-  UserX,
-} from "lucide-react";
-import { useState } from "react";
-import { Outlet } from "react-router-dom";
-import Header from "./Header/Header";
-import { Sidebar, SidebarItems } from "./Sidebar/Sidebar";
-import { ROUTES } from "../routes/Routes";
+import { CreditCard, Settings, Tags, UserX } from 'lucide-react';
+import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import { ROUTES } from '../routes/Routes';
+import Header from './Header/Header';
+import { Sidebar, SidebarItems } from './Sidebar/Sidebar';
 
 const menuItems: SidebarItems = [
-  { type: "link", icon: Tags, label: "Cupons", path: "/coupons" },
-  { type: "link", icon: CreditCard, label: "Vendas", path: "/sales" },
-  { type: "link", icon: UserX, label: "Usuários Bloqueados", path: ROUTES.users.blocked },
-  { type: "link", icon: Settings, label: "Configurações", path: "/settings" },
+  { type: 'link', icon: Tags, label: 'Cupons', path: '/coupons' },
+  { type: 'link', icon: CreditCard, label: 'Vendas', path: '/sales' },
+  {
+    type: 'link',
+    icon: UserX,
+    label: 'Usuários Bloqueados',
+    path: ROUTES.users.blocked,
+  },
+  { type: 'link', icon: Settings, label: 'Configurações', path: '/settings' },
 ];
 
 export function AdminLayout() {

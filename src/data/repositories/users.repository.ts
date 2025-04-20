@@ -1,6 +1,6 @@
+import { z } from 'zod';
 import { DefaultResultError, ResultOld } from '../../utils/ResultOld';
 import { remoteDataSourceOld } from '../datasource/RemoteOld.datasource';
-import { z } from 'zod';
 
 export const UserModel = z.object({
   id: z.string(),
@@ -18,14 +18,14 @@ export type UserModel = z.infer<typeof UserModel>;
 
 export const UsersListModel = z.object({
   users: z.array(UserModel),
-  total: z.number()
+  total: z.number(),
 });
 export type UsersListModel = z.infer<typeof UsersListModel>;
 
 export const UserFilterModel = z.object({
   username: z.string().optional(),
   status: z.enum(['all', 'active', 'inactive']).optional(),
-  level: z.number().optional()
+  level: z.number().optional(),
 });
 export type UserFilterModel = z.infer<typeof UserFilterModel>;
 
@@ -74,13 +74,14 @@ export class UsersRepositoryImpl implements UsersRepository {
   async getUsers({ page, limit, filters }: GetUsersReq): GetUsersRes {
     try {
       let url = `/users?page=${page}&limit=${limit}`;
-      
+
       if (filters) {
         if (filters.username) url += `&username=${filters.username}`;
-        if (filters.status && filters.status !== 'all') url += `&isActive=${filters.status === 'active'}`;
+        if (filters.status && filters.status !== 'all')
+          url += `&isActive=${filters.status === 'active'}`;
         if (filters.level !== undefined) url += `&level=${filters.level}`;
       }
-      
+
       const result = await this.api.get({
         url,
         model: UsersListModel,
@@ -115,7 +116,10 @@ export class UsersRepositoryImpl implements UsersRepository {
     }
   }
 
-  async updateUserStatus({ id, isActive }: UpdateUserStatusReq): UpdateUserStatusRes {
+  async updateUserStatus({
+    id,
+    isActive,
+  }: UpdateUserStatusReq): UpdateUserStatusRes {
     try {
       const result = await this.api.patch({
         url: `/users/${id}`,

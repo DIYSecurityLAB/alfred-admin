@@ -9,7 +9,7 @@
   "jsxBracketSameLine": false,
   "arrowParens": "always",
   "proseWrap": "preserve",
+  "endOfLine": "auto",
   "htmlWhitespaceSensitivity": "css",
-  "endOfLine": "lf",
   "plugins": ["prettier-plugin-organize-imports"]
 }

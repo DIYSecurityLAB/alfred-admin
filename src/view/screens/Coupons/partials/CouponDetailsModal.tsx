@@ -1,20 +1,20 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  X,
-  Copy,
-  CheckCircle,
-  XCircle,
   Calendar,
-  Tag,
+  CheckCircle,
+  Copy,
   DollarSign,
-  ShoppingBag,
-  Users,
   Edit,
-  Percent,
   Info,
-} from "lucide-react";
-import type { Coupon } from "../../../../data/types";
-import { useState } from "react";
+  Percent,
+  ShoppingBag,
+  Tag,
+  Users,
+  X,
+  XCircle,
+} from 'lucide-react';
+import { useState } from 'react';
+import type { Coupon } from '../../../../data/types';
 
 interface CouponDetailsModalProps {
   coupon: Coupon;
@@ -36,7 +36,7 @@ export function CouponDetailsModal({
   };
 
   const formatDate = (dateString: string | null | undefined) => {
-    if (!dateString) return "Sem data definida";
+    if (!dateString) return 'Sem data definida';
     return new Date(dateString).toLocaleDateString();
   };
 
@@ -51,7 +51,7 @@ export function CouponDetailsModal({
       opacity: 1,
       scale: 1,
       y: 0,
-      transition: { type: "spring", stiffness: 300, damping: 25 },
+      transition: { type: 'spring', stiffness: 300, damping: 25 },
     },
     exit: {
       opacity: 0,
@@ -66,7 +66,7 @@ export function CouponDetailsModal({
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: "spring", stiffness: 100 },
+      transition: { type: 'spring', stiffness: 100 },
     },
   };
 
@@ -95,7 +95,7 @@ export function CouponDetailsModal({
             </div>
             <motion.button
               onClick={onClose}
-              whileHover={{ scale: 1.1, backgroundColor: "#F9FAFB" }}
+              whileHover={{ scale: 1.1, backgroundColor: '#F9FAFB' }}
               whileTap={{ scale: 0.95 }}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               aria-label="Fechar"
@@ -155,10 +155,10 @@ export function CouponDetailsModal({
               )}
               <span
                 className={`text-lg font-medium ${
-                  coupon.isActive ? "text-green-600" : "text-red-600"
+                  coupon.isActive ? 'text-green-600' : 'text-red-600'
                 }`}
               >
-                {coupon.isActive ? "Cupom Ativo" : "Cupom Inativo"}
+                {coupon.isActive ? 'Cupom Ativo' : 'Cupom Inativo'}
               </span>
             </motion.div>
             <motion.div
@@ -171,7 +171,7 @@ export function CouponDetailsModal({
                   className="p-4 bg-gray-50 rounded-lg border border-gray-100 hover:border-blue-100 hover:bg-blue-50 transition-all duration-300 shadow-sm"
                 >
                   <div className="flex items-center mb-1">
-                    {coupon.discountType === "percentage" ? (
+                    {coupon.discountType === 'percentage' ? (
                       <Percent className="h-4 w-4 text-blue-500 mr-2" />
                     ) : (
                       <DollarSign className="h-4 w-4 text-blue-500 mr-2" />
@@ -179,7 +179,7 @@ export function CouponDetailsModal({
                     <h3 className="text-sm text-gray-600">Desconto</h3>
                   </div>
                   <p className="text-lg font-medium text-blue-600">
-                    {coupon.discountType === "percentage"
+                    {coupon.discountType === 'percentage'
                       ? `${coupon.discountValue}%`
                       : `R$ ${coupon.discountValue.toFixed(2)}`}
                   </p>
@@ -192,9 +192,9 @@ export function CouponDetailsModal({
                     Tipo de Desconto
                   </h3>
                   <p className="text-lg font-medium text-gray-800">
-                    {coupon.discountType === "percentage"
-                      ? "Porcentagem"
-                      : "Valor Fixo"}
+                    {coupon.discountType === 'percentage'
+                      ? 'Porcentagem'
+                      : 'Valor Fixo'}
                   </p>
                 </motion.div>
                 <motion.div
@@ -208,11 +208,11 @@ export function CouponDetailsModal({
                     </h3>
                   </div>
                   <p className="font-medium text-gray-800">
-                    <span className="text-sm text-gray-500">De:</span>{" "}
+                    <span className="text-sm text-gray-500">De:</span>{' '}
                     {formatDate(coupon.validFrom)}
                   </p>
                   <p className="font-medium text-gray-800">
-                    <span className="text-sm text-gray-500">Até:</span>{" "}
+                    <span className="text-sm text-gray-500">Até:</span>{' '}
                     {formatDate(coupon.validUntil)}
                   </p>
                 </motion.div>
@@ -232,10 +232,10 @@ export function CouponDetailsModal({
                   <p className="text-lg font-medium text-gray-800">
                     {(coupon.minPurchaseValue ?? 0) > 0
                       ? `R$ ${(coupon.minPurchaseValue ?? 0).toFixed(2)}`
-                      : "Sem valor mínimo"}
+                      : 'Sem valor mínimo'}
                   </p>
                 </motion.div>
-                {coupon.discountType === "percentage" && (
+                {coupon.discountType === 'percentage' && (
                   <motion.div
                     whileHover={{ scale: 1.01 }}
                     className="p-4 bg-gray-50 rounded-lg border border-gray-100 hover:border-blue-100 hover:bg-blue-50 transition-all duration-300 shadow-sm"
@@ -246,7 +246,7 @@ export function CouponDetailsModal({
                     <p className="text-lg font-medium text-gray-800">
                       {(coupon.maxDiscountValue ?? 0) > 0
                         ? `R$ ${(coupon.maxDiscountValue ?? 0).toFixed(2)}`
-                        : "Ilimitado"}
+                        : 'Ilimitado'}
                     </p>
                   </motion.div>
                 )}
@@ -270,7 +270,7 @@ export function CouponDetailsModal({
                           width: `${Math.min(
                             (coupon.usedCount / (coupon.usageLimit ?? 10000)) *
                               100,
-                            100
+                            100,
                           )}%`,
                         }}
                       ></div>

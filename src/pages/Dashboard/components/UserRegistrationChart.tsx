@@ -1,15 +1,14 @@
-import React from 'react';
+import { motion } from 'framer-motion';
 import {
-  LineChart,
+  CartesianGrid,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  TooltipProps,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  TooltipProps,
 } from 'recharts';
-import { motion } from 'framer-motion';
 
 interface UserRegistrationChartProps {
   data: {
@@ -31,7 +30,11 @@ export function UserRegistrationChart({
     );
   }
 
-  const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-background p-3 border border-surface rounded-md shadow-md">
@@ -46,7 +49,7 @@ export function UserRegistrationChart({
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
@@ -60,24 +63,26 @@ export function UserRegistrationChart({
             data={data}
             margin={{ top: 20, right: 10, left: 0, bottom: 30 }}
           >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-            <XAxis 
-              dataKey="month" 
-              axisLine={false}
-              tickLine={false}
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="#f0f0f0"
             />
-            <YAxis 
-              axisLine={false}
-              tickLine={false}
-            />
+            <XAxis dataKey="month" axisLine={false} tickLine={false} />
+            <YAxis axisLine={false} tickLine={false} />
             <Tooltip content={<CustomTooltip />} />
-            <Line 
-              type="monotone" 
-              dataKey="count" 
-              stroke="#3b82f6" 
-              strokeWidth={2} 
+            <Line
+              type="monotone"
+              dataKey="count"
+              stroke="#3b82f6"
+              strokeWidth={2}
               dot={{ stroke: '#3b82f6', strokeWidth: 2, r: 4, fill: 'white' }}
-              activeDot={{ r: 6, stroke: '#3b82f6', strokeWidth: 2, fill: '#3b82f6' }}
+              activeDot={{
+                r: 6,
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                fill: '#3b82f6',
+              }}
             />
           </LineChart>
         </ResponsiveContainer>

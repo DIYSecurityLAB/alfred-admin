@@ -1,16 +1,21 @@
-import { Search, Filter, X } from "lucide-react";
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
+import { Filter, Search, X } from 'lucide-react';
+import { useState } from 'react';
 
 interface BlockedUserFiltersProps {
   filters: {
     search: string;
     status: 'all' | 'recent' | 'old';
   };
-  onFilterChange: (filters: Partial<{ search: string; status: 'all' | 'recent' | 'old' }>) => void;
+  onFilterChange: (
+    filters: Partial<{ search: string; status: 'all' | 'recent' | 'old' }>,
+  ) => void;
 }
 
-export function BlockedUserFilters({ filters, onFilterChange }: BlockedUserFiltersProps) {
+export function BlockedUserFilters({
+  filters,
+  onFilterChange,
+}: BlockedUserFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,7 +55,7 @@ export function BlockedUserFilters({ filters, onFilterChange }: BlockedUserFilte
       {isExpanded && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
+          animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
           className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4"
         >
@@ -93,7 +98,7 @@ export function BlockedUserFilters({ filters, onFilterChange }: BlockedUserFilte
           </div>
         </motion.div>
       )}
-      
+
       <div className="flex flex-wrap gap-2 mt-2">
         {filters.search && (
           <div className="bg-blue-50 border border-blue-100 text-blue-600 px-3 py-1 rounded-md flex items-center gap-1 text-sm">
@@ -108,7 +113,9 @@ export function BlockedUserFilters({ filters, onFilterChange }: BlockedUserFilte
         )}
         {filters.status !== 'all' && (
           <div className="bg-blue-50 border border-blue-100 text-blue-600 px-3 py-1 rounded-md flex items-center gap-1 text-sm">
-            <span>Status: {filters.status === 'recent' ? 'Recentes' : 'Antigos'}</span>
+            <span>
+              Status: {filters.status === 'recent' ? 'Recentes' : 'Antigos'}
+            </span>
             <button
               onClick={() => onFilterChange({ status: 'all' })}
               className="ml-1 hover:text-blue-800 transition-colors"

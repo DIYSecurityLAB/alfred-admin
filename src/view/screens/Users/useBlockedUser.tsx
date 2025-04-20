@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
 export interface BlockedUserData {
   id: string;
@@ -35,11 +35,12 @@ export function useBlockedUsers() {
   const [perPage, setPerPage] = useState(10);
   const [filters, setFilters] = useState<BlockedUserFilters>({
     search: '',
-    status: 'all'
+    status: 'all',
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedBlockedUser, setSelectedBlockedUser] = useState<BlockedUserData | null>(null);
+  const [selectedBlockedUser, setSelectedBlockedUser] =
+    useState<BlockedUserData | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -56,7 +57,7 @@ export function useBlockedUsers() {
           reason: 'SOLICITAÇÃO DE MED',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          blockedBy: 'admin'
+          blockedBy: 'admin',
         },
         {
           id: '2',
@@ -65,7 +66,7 @@ export function useBlockedUsers() {
           reason: 'SPAM NOS COMENTÁRIOS',
           createdAt: new Date(Date.now() - 86400000).toISOString(),
           updatedAt: new Date(Date.now() - 86400000).toISOString(),
-          blockedBy: 'moderator'
+          blockedBy: 'moderator',
         },
         {
           id: '3',
@@ -74,44 +75,46 @@ export function useBlockedUsers() {
           reason: 'LINGUAGEM INAPROPRIADA',
           createdAt: new Date(Date.now() - 172800000).toISOString(),
           updatedAt: new Date(Date.now() - 172800000).toISOString(),
-          blockedBy: 'system'
-        }
+          blockedBy: 'system',
+        },
       ];
-      
+
       let filteredData = [...mockData];
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         filteredData = filteredData.filter(
-          user => 
-            (user.username && user.username.toLowerCase().includes(searchLower)) ||
+          (user) =>
+            (user.username &&
+              user.username.toLowerCase().includes(searchLower)) ||
             (user.documentId && user.documentId.includes(filters.search)) ||
             (user.userId && user.userId.toLowerCase().includes(searchLower)) ||
-            (user.reason && user.reason.toLowerCase().includes(searchLower))
+            (user.reason && user.reason.toLowerCase().includes(searchLower)),
         );
       }
-      
+
       if (filters.status === 'recent') {
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
         filteredData = filteredData.filter(
-          user => new Date(user.createdAt) >= sevenDaysAgo
+          (user) => new Date(user.createdAt) >= sevenDaysAgo,
         );
       } else if (filters.status === 'old') {
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
         filteredData = filteredData.filter(
-          user => new Date(user.createdAt) < sevenDaysAgo
+          (user) => new Date(user.createdAt) < sevenDaysAgo,
         );
       }
-      
+
       setTotalBlockedUsers(filteredData.length);
-      
+
       const start = (page - 1) * perPage;
       const end = start + perPage;
       const paginatedData = filteredData.slice(start, end);
-      
+
       setBlockedUsers(paginatedData);
-      
     } catch (err) {
-      setError('Erro ao carregar usuários bloqueados. Por favor, tente novamente.');
+      setError(
+        'Erro ao carregar usuários bloqueados. Por favor, tente novamente.',
+      );
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -127,7 +130,7 @@ export function useBlockedUsers() {
   };
 
   const handleFilterChange = (newFilters: Partial<BlockedUserFilters>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+    setFilters((prev) => ({ ...prev, ...newFilters }));
     setPage(1);
   };
 
@@ -155,11 +158,10 @@ export function useBlockedUsers() {
         updatedAt: new Date().toISOString(),
         blockedBy: 'current_user',
       };
-      
-      setBlockedUsers(prev => [newBlockedUser, ...prev]);
-      setTotalBlockedUsers(prev => prev + 1);
+
+      setBlockedUsers((prev) => [newBlockedUser, ...prev]);
+      setTotalBlockedUsers((prev) => prev + 1);
       setIsCreateModalOpen(false);
-      
     } catch (err) {
       setError('Erro ao bloquear usuário. Por favor, tente novamente.');
       console.error(err);
@@ -168,30 +170,30 @@ export function useBlockedUsers() {
 
   const updateBlockedUser = async ({ id, data }: UpdateBlockedUserData) => {
     try {
-      setBlockedUsers(prev => 
-        prev.map(user => 
-          user.id === id 
-            ? { 
-                ...user, 
-                ...data, 
-                updatedAt: new Date().toISOString() 
-              } 
-            : user
-        )
+      setBlockedUsers((prev) =>
+        prev.map((user) =>
+          user.id === id
+            ? {
+                ...user,
+                ...data,
+                updatedAt: new Date().toISOString(),
+              }
+            : user,
+        ),
       );
       setIsEditModalOpen(false);
-      
     } catch (err) {
-      setError('Erro ao atualizar usuário bloqueado. Por favor, tente novamente.');
+      setError(
+        'Erro ao atualizar usuário bloqueado. Por favor, tente novamente.',
+      );
       console.error(err);
     }
   };
 
   const unblockUser = async (id: string) => {
     try {
-      setBlockedUsers(prev => prev.filter(user => user.id !== id));
-      setTotalBlockedUsers(prev => prev - 1);
-      
+      setBlockedUsers((prev) => prev.filter((user) => user.id !== id));
+      setTotalBlockedUsers((prev) => prev - 1);
     } catch (err) {
       setError('Erro ao desbloquear usuário. Por favor, tente novamente.');
       console.error(err);

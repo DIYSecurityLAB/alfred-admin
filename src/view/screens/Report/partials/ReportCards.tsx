@@ -1,14 +1,14 @@
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 import {
-  Eye,
-  CreditCard,
-  Landmark,
   Bitcoin,
   Calendar,
-  User,
+  CreditCard,
   DollarSign,
+  Eye,
   FileText,
-} from "lucide-react";
+  Landmark,
+  User,
+} from 'lucide-react';
 
 interface ReportCardsProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,35 +20,35 @@ interface ReportCardsProps {
 export function ReportCards({ reports, onViewDetails }: ReportCardsProps) {
   const getStatusColor = (status: string) => {
     const statusLower = status.toLowerCase();
-    if (statusLower.includes("complet") || statusLower === "paid") {
-      return "bg-emerald-50 text-emerald-600 border border-emerald-200";
-    } else if (statusLower.includes("pend") || statusLower === "review") {
-      return "bg-amber-50 text-amber-600 border border-amber-200";
+    if (statusLower.includes('complet') || statusLower === 'paid') {
+      return 'bg-emerald-50 text-emerald-600 border border-emerald-200';
+    } else if (statusLower.includes('pend') || statusLower === 'review') {
+      return 'bg-amber-50 text-amber-600 border border-amber-200';
     } else if (
-      statusLower.includes("cancel") ||
-      statusLower.includes("fail") ||
-      statusLower === "expired" ||
-      statusLower === "refunded"
+      statusLower.includes('cancel') ||
+      statusLower.includes('fail') ||
+      statusLower === 'expired' ||
+      statusLower === 'refunded'
     ) {
-      return "bg-rose-50 text-rose-600 border border-rose-200";
+      return 'bg-rose-50 text-rose-600 border border-rose-200';
     } else {
-      return "bg-gray-50 text-gray-600 border border-gray-200";
+      return 'bg-gray-50 text-gray-600 border border-gray-200';
     }
   };
 
   const getStatusText = (status: string) => {
     const statusMap: Record<string, string> = {
-      COMPLETED: "Completado",
-      PENDING: "Pendente",
-      CANCELLED: "Cancelado",
-      FAILED: "Falhou",
-      pending: "Pendente",
-      paid: "Pago",
-      canceled: "Cancelado",
-      review: "Em Revisão",
-      expired: "Expirado",
-      refunded: "Reembolsado",
-      complete: "Completado",
+      COMPLETED: 'Completado',
+      PENDING: 'Pendente',
+      CANCELLED: 'Cancelado',
+      FAILED: 'Falhou',
+      pending: 'Pendente',
+      paid: 'Pago',
+      canceled: 'Cancelado',
+      review: 'Em Revisão',
+      expired: 'Expirado',
+      refunded: 'Reembolsado',
+      complete: 'Completado',
     };
 
     return statusMap[status] || status;
@@ -56,20 +56,20 @@ export function ReportCards({ reports, onViewDetails }: ReportCardsProps) {
 
   const getPaymentIcon = (method: string) => {
     const methodLower = method.toLowerCase();
-    if (methodLower.includes("pix")) {
+    if (methodLower.includes('pix')) {
       return <Landmark className="h-4 w-4 mr-1 text-emerald-500" />;
-    } else if (methodLower.includes("card") || methodLower.includes("credit")) {
+    } else if (methodLower.includes('card') || methodLower.includes('credit')) {
       return <CreditCard className="h-4 w-4 mr-1 text-blue-500" />;
     } else if (
-      methodLower.includes("crypto") ||
-      methodLower.includes("btc") ||
-      methodLower.includes("usdt")
+      methodLower.includes('crypto') ||
+      methodLower.includes('btc') ||
+      methodLower.includes('usdt')
     ) {
       return <Bitcoin className="h-4 w-4 mr-1 text-amber-500" />;
     } else if (
-      methodLower.includes("bank") ||
-      methodLower.includes("transfer") ||
-      methodLower.includes("swift")
+      methodLower.includes('bank') ||
+      methodLower.includes('transfer') ||
+      methodLower.includes('swift')
     ) {
       return <FileText className="h-4 w-4 mr-1 text-purple-500" />;
     } else {
@@ -84,7 +84,7 @@ export function ReportCards({ reports, onViewDetails }: ReportCardsProps) {
           key={report.id}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: index * 0.05, ease: "easeOut" }}
+          transition={{ duration: 0.3, delay: index * 0.05, ease: 'easeOut' }}
           className="p-5 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden"
           whileHover={{ y: -5 }}
         >
@@ -96,7 +96,7 @@ export function ReportCards({ reports, onViewDetails }: ReportCardsProps) {
             </h3>
             <span
               className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                report.status
+                report.status,
               )}`}
             >
               {getStatusText(report.status)}
@@ -110,7 +110,7 @@ export function ReportCards({ reports, onViewDetails }: ReportCardsProps) {
                 Usuário:
               </span>
               <span className="font-medium text-gray-700 truncate max-w-[180px]">
-                {report.username || "N/A"}
+                {report.username || 'N/A'}
               </span>
             </div>
 
@@ -130,16 +130,16 @@ export function ReportCards({ reports, onViewDetails }: ReportCardsProps) {
               <span className="text-gray-700">
                 {(() => {
                   const methodMap: Record<string, string> = {
-                    PIX: "PIX",
-                    CREDIT_CARD: "Cartão de Crédito",
-                    CRYPTO: "Criptomoeda",
-                    CARD: "Cartão",
-                    BANK_TRANSFER: "Transferência Bancária",
-                    WISE: "Wise",
-                    TICKET: "Boleto",
-                    USDT: "USDT",
-                    SWIFT: "Swift",
-                    PAYPAL: "PayPal",
+                    PIX: 'PIX',
+                    CREDIT_CARD: 'Cartão de Crédito',
+                    CRYPTO: 'Criptomoeda',
+                    CARD: 'Cartão',
+                    BANK_TRANSFER: 'Transferência Bancária',
+                    WISE: 'Wise',
+                    TICKET: 'Boleto',
+                    USDT: 'USDT',
+                    SWIFT: 'Swift',
+                    PAYPAL: 'PayPal',
                   };
                   return (
                     methodMap[report.paymentMethod] || report.paymentMethod

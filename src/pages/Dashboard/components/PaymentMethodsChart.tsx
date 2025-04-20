@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
 import {
-  BarChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  TooltipProps,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  TooltipProps,
 } from 'recharts';
-import { motion } from 'framer-motion';
 
 interface PaymentMethodsChartProps {
   data: {
@@ -28,7 +27,7 @@ export function PaymentMethodsChart({
   formatNumber,
 }: PaymentMethodsChartProps) {
   const [chartType, setChartType] = useState<'count' | 'value'>('count');
-  
+
   if (!data || data.length === 0) {
     return (
       <div className="bg-surface p-6 rounded-xl shadow-sm h-80 flex items-center justify-center">
@@ -52,15 +51,23 @@ export function PaymentMethodsChart({
     }
   };
 
-  const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-background p-3 border border-surface rounded-md shadow-md">
           <p className="font-medium">{getFullMethodName(label)}</p>
           {chartType === 'count' ? (
-            <p className="text-primary font-bold">{formatNumber(payload[0].value as number)} transações</p>
+            <p className="text-primary font-bold">
+              {formatNumber(payload[0].value as number)} transações
+            </p>
           ) : (
-            <p className="text-primary font-bold">{formatCurrency(payload[0].value as number)}</p>
+            <p className="text-primary font-bold">
+              {formatCurrency(payload[0].value as number)}
+            </p>
           )}
         </div>
       );
@@ -84,13 +91,13 @@ export function PaymentMethodsChart({
   };
 
   // Preparar os dados para o gráfico
-  const chartData = data.map(item => ({
+  const chartData = data.map((item) => ({
     method: formatMethodName(item.method),
     [chartType]: chartType === 'count' ? item.count : item.value,
   }));
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
@@ -128,25 +135,23 @@ export function PaymentMethodsChart({
             data={chartData}
             margin={{ top: 20, right: 10, left: 0, bottom: 30 }}
           >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-            <XAxis 
-              dataKey="method" 
-              axisLine={false}
-              tickLine={false}
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="#f0f0f0"
             />
-            <YAxis 
+            <XAxis dataKey="method" axisLine={false} tickLine={false} />
+            <YAxis
               axisLine={false}
               tickLine={false}
-              tickFormatter={(value) => 
-                chartType === 'value' 
-                  ? `R$${value/1000}k` 
-                  : value
+              tickFormatter={(value) =>
+                chartType === 'value' ? `R$${value / 1000}k` : value
               }
             />
             <Tooltip content={<CustomTooltip />} />
-            <Bar 
-              dataKey={chartType} 
-              fill="#3b82f6" 
+            <Bar
+              dataKey={chartType}
+              fill="#3b82f6"
               radius={[4, 4, 0, 0]}
               barSize={40}
             />

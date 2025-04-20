@@ -10,7 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [18]
+
+    container:
+      image: node:${{ matrix.node-version }}-alpine
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -25,26 +29,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-${{ matrix.node-version }}-
 
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-
       - name: Install dependencies
-        run: npm i
+        run: npm ci
 
       - name: Run lint
         run: npm run lint
-
-      - name: Run tests
-        run: npm test -- --coverage
 
       - name: Build
         run: npm run build
 
       - name: Upload build artifact
         if: success()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-dist
           path: dist

@@ -1,7 +1,7 @@
-import { motion } from "framer-motion";
-import { X, AlertTriangle, Trash2, Loader } from "lucide-react";
-import type { Coupon } from "../../../../data/types";
-import { useState } from "react";
+import { motion } from 'framer-motion';
+import { AlertTriangle, Loader, Trash2, X } from 'lucide-react';
+import { useState } from 'react';
+import type { Coupon } from '../../../../data/types';
 
 interface DeleteConfirmModalProps {
   coupon: Coupon;
@@ -22,7 +22,7 @@ export function DeleteConfirmModal({
     try {
       await onConfirm();
     } catch (error) {
-      console.error("Error deleting coupon:", error);
+      console.error('Error deleting coupon:', error);
       setIsDeleting(false);
     }
   };
@@ -33,7 +33,7 @@ export function DeleteConfirmModal({
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        transition={{ type: "spring", stiffness: 100 }}
+        transition={{ type: 'spring', stiffness: 100 }}
         className="bg-white rounded-lg shadow-md border border-gray-100 p-6 w-full max-w-md"
       >
         <div className="flex justify-between items-center mb-4">
