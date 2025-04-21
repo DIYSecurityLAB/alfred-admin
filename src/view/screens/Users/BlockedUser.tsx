@@ -1,4 +1,5 @@
 import { Pagination } from '@/components/Pagination';
+import { Loading } from '@/view/components/Loading';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertCircle,
@@ -39,7 +40,6 @@ export function BlockedUsers() {
     setIsEditModalOpen,
     setIsDetailsModalOpen,
     createBlockedUser,
-    updateBlockedUser,
     unblockUser,
     clearError,
   } = useBlockedUsers();
@@ -81,14 +81,7 @@ export function BlockedUsers() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-[500px]">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p className="text-gray-600">Carregando usuários bloqueados...</p>
-        </div>
-      </div>
-    );
+    return <Loading label="Carregando usuários bloqueados..." />;
   }
 
   return (
@@ -161,6 +154,7 @@ export function BlockedUsers() {
             <AlertCircle className="h-5 w-5 mr-2" />
             <span>{error}</span>
             <button
+              title="Fechar"
               onClick={clearError}
               className="ml-auto text-red-500 hover:text-red-700 transition-colors"
             >
@@ -229,6 +223,7 @@ export function BlockedUsers() {
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Mostrar</span>
                 <select
+                  title="Selecionar Itens Por Página"
                   value={perPage}
                   onChange={(e) => setPerPage(Number(e.target.value))}
                   className="border rounded-md px-2 py-1 text-sm bg-gray-50 hover:border-blue-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all"
@@ -268,7 +263,8 @@ export function BlockedUsers() {
             blockedUser={selectedBlockedUser}
             onClose={() => setIsEditModalOpen(false)}
             onSubmit={async (data) => {
-              await updateBlockedUser({ id: selectedBlockedUser.id, data });
+              console.log(data);
+              // await updateBlockedUser({ id: selectedBlockedUser.id, data });
             }}
           />
         )}
