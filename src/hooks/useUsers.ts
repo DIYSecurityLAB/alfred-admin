@@ -2,7 +2,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { UserFilterModel } from '../data/model/Old/Users.model';
-import { usersRepository } from '../data/repositories/users.repository';
+import { usersRepository } from '../data/repositories/old/users.repository';
 // import type { User, UserFilter } from '../data/types';
 
 // Mapeia filtros da UI para o modelo

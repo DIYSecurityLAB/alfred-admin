@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { debounce } from 'lodash';
 import { useCallback, useState } from 'react';
-import { couponRepository } from '../../../data/repositories/Coupon.repository';
+import { couponRepository } from '../../../data/repositories/old/Coupon.repository';
 import type {
   Coupon,
   CouponFilter,

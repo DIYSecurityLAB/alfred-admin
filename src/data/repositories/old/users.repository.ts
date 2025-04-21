@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { DefaultResultError, ResultOld } from '../../utils/ResultOld';
-import { remoteDataSourceOld } from '../datasource/RemoteOld.datasource';
+import { DefaultResultError, ResultOld } from '../../../utils/ResultOld';
+import { remoteDataSourceOld } from '../../datasource/RemoteOld.datasource';
 
 export const UserModel = z.object({
   id: z.string(),

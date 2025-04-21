@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { reportRepository } from '@/data/repositories/Report.repository';
+import { reportRepository } from '@/data/repositories/old/Report.repository';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { useState } from 'react';

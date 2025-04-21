@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { DefaultResultError, ResultOld } from '../../utils/ResultOld';
-import { remoteDataSourceOld } from '../datasource/RemoteOld.datasource';
+import { DefaultResultError, ResultOld } from '../../../utils/ResultOld';
+import { remoteDataSourceOld } from '../../datasource/RemoteOld.datasource';
 import {
   FilterCouponsModel,
   InsertCouponModel,
@@ -11,7 +11,7 @@ import {
   ToggleCouponStatusModel,
   ToggledCouponStatusModel,
   ValidateCouponResultModel,
-} from '../model/Old/Coupons.model';
+} from '../../model/Old/Coupons.model';
 
 export type InsertReq = InsertCouponModel;
 export type InsertRes = Promise<
