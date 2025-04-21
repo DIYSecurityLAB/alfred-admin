@@ -1,28 +1,20 @@
+import { Error } from '@/view/components/Error';
 import { Loading } from '@/view/components/Loading';
-import { AnimatePresence, motion } from 'framer-motion';
-import {
-  AlertCircle,
-  ChevronDown,
-  ChevronUp,
-  DollarSign,
-  Loader,
-  Power,
-  Save,
-  Settings as SettingsIcon,
-  X,
-} from 'lucide-react';
+import { PageHeader } from '@/view/layout/Page/PageHeader';
+import { ToggleHeaderButton } from '@/view/layout/Page/ToggleHeaderButton';
+import { motion } from 'framer-motion';
+import { DollarSign, Loader, Power, Save } from 'lucide-react';
 import { useSettings } from './useSettings';
 
 export function Settings() {
   const {
     form,
-    error,
-    variants,
+    errors,
     isLoading,
     isUpdating,
     collapsedHeader,
     onsubmit,
-    clearError,
+    clearErrors,
     toggleHeader,
   } = useSettings();
 
@@ -33,70 +25,33 @@ export function Settings() {
   return (
     <motion.div
       className="container mx-auto px-4 py-8"
-      variants={variants.container}
+      variants={{
+        hidden: { opacity: 0 },
+        visible: {
+          opacity: 1,
+          transition: {
+            when: 'beforeChildren',
+            staggerChildren: 0.1,
+          },
+        },
+      }}
       initial="hidden"
       animate="visible"
     >
-      <motion.div
-        className={`bg-white rounded-lg shadow-md border border-blue-50 p-6 mb-8 transition-all duration-500 ${
-          collapsedHeader ? 'cursor-pointer' : ''
-        }`}
-        variants={variants.item}
-        onClick={collapsedHeader ? toggleHeader : undefined}
-      >
-        <div className="flex justify-between items-center">
-          <div className="flex items-center">
-            <SettingsIcon className="h-6 w-6 text-blue-500 mr-3" />
-            <div>
-              <h1 className="text-3xl font-bold mb-2 text-gray-800">
-                Configurações
-              </h1>
-              {!collapsedHeader && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <p className="text-gray-600">
-                    Gerencie as configurações do sistema
-                  </p>
-                </motion.div>
-              )}
-            </div>
-          </div>
-          <button
-            onClick={toggleHeader}
-            className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
-          >
-            {collapsedHeader ? (
-              <ChevronDown className="h-5 w-5 text-blue-500" />
-            ) : (
-              <ChevronUp className="h-5 w-5 text-blue-500" />
-            )}
-          </button>
-        </div>
-      </motion.div>
+      <PageHeader
+        title="Configurações"
+        description=" Gerencie as configurações do sistema"
+        collapsed={collapsedHeader}
+        toggle={toggleHeader}
+        button={
+          <ToggleHeaderButton
+            toggle={toggleHeader}
+            collapsed={collapsedHeader}
+          />
+        }
+      />
 
-      <AnimatePresence>
-        {error && (
-          <motion.div
-            className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center text-red-600 shadow-sm"
-            variants={variants.error}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <AlertCircle className="h-5 w-5 mr-2" />
-            <span>{error}</span>
-            <button
-              onClick={clearError}
-              className="ml-auto text-red-500 hover:text-red-700 transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Error error={errors} clear={clearErrors} />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

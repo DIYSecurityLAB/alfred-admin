@@ -1,8 +1,11 @@
 import { Pagination } from '@/components/Pagination';
+import { Button } from '@/view/components/Button';
+import { Error } from '@/view/components/Error';
 import { Loading } from '@/view/components/Loading';
 import { PageHeader } from '@/view/layout/Page/PageHeader';
+import { ToggleHeaderButton } from '@/view/layout/Page/ToggleHeaderButton';
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertCircle, ChevronDown, ChevronUp, Plus, X } from 'lucide-react';
+import { AlertCircle, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { BlockedUserCards } from './partials/BlockedUserCards';
 import { BlockedUserDetailsModal } from './partials/BlockedUserDetailsModal';
@@ -44,27 +47,6 @@ export function BlockedUsers() {
     setCollapsedHeader(!collapsedHeader);
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        when: 'beforeChildren',
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const errorVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: 'spring', stiffness: 100 },
-    },
-    exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
-  };
-
   if (isLoading) {
     return <Loading label="Carregando usuários bloqueados..." />;
   }
@@ -72,58 +54,39 @@ export function BlockedUsers() {
   return (
     <motion.div
       className="container mx-auto px-4 py-8"
-      variants={containerVariants}
+      variants={{
+        hidden: { opacity: 0 },
+        visible: {
+          opacity: 1,
+          transition: {
+            when: 'beforeChildren',
+            staggerChildren: 0.1,
+          },
+        },
+      }}
       initial="hidden"
       animate="visible"
     >
       <PageHeader
         title="Usuários Bloqueados"
         description="Gerencie todos os usuários bloqueados no sistema"
+        collapsed={collapsedHeader}
+        toggle={toggleHeader}
         button={
           <div className="flex items-center gap-4">
-            <motion.button
-              onClick={openCreateModal}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Plus className="h-5 w-5" />
-              Bloquear Usuário
-            </motion.button>
-            <button
-              onClick={toggleHeader}
-              className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
-            >
-              {collapsedHeader ? (
-                <ChevronDown className="h-5 w-5 text-blue-500" />
-              ) : (
-                <ChevronUp className="h-5 w-5 text-blue-500" />
-              )}
-            </button>
+            <Button
+              open={openCreateModal}
+              icon={<Plus className="h-5 w-5" />}
+              label="Bloquear Usuário"
+            />
+            <ToggleHeaderButton
+              toggle={toggleHeader}
+              collapsed={collapsedHeader}
+            />
           </div>
         }
       />
-      <AnimatePresence>
-        {error && (
-          <motion.div
-            className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center text-red-600 shadow-sm"
-            variants={errorVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <AlertCircle className="h-5 w-5 mr-2" />
-            <span>{error}</span>
-            <button
-              title="Fechar"
-              onClick={clearError}
-              className="ml-auto text-red-500 hover:text-red-700 transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Error error={error} clear={clearError} />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
