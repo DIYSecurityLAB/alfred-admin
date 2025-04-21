@@ -1,3 +1,4 @@
+import { Container } from '@/view/components/Container';
 import { Error } from '@/view/components/Error';
 import { Loading } from '@/view/components/Loading';
 import { PageHeader } from '@/view/layout/Page/PageHeader';
@@ -23,21 +24,7 @@ export function Settings() {
   }
 
   return (
-    <motion.div
-      className="container mx-auto px-4 py-8"
-      variants={{
-        hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: {
-            when: 'beforeChildren',
-            staggerChildren: 0.1,
-          },
-        },
-      }}
-      initial="hidden"
-      animate="visible"
-    >
+    <Container>
       <PageHeader
         title="Configurações"
         description=" Gerencie as configurações do sistema"
@@ -246,6 +233,6 @@ export function Settings() {
           </div>
         </form>
       </motion.div>
-    </motion.div>
+    </Container>
   );
 }
