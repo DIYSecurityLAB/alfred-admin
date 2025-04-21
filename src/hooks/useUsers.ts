@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { UserFilterModel } from '../data/model/Users.model';
+import { UserFilterModel } from '../data/model/Old/Users.model';
 import { usersRepository } from '../data/repositories/users.repository';
 // import type { User, UserFilter } from '../data/types';
 

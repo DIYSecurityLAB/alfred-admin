@@ -11,7 +11,7 @@ import {
   ToggleCouponStatusModel,
   ToggledCouponStatusModel,
   ValidateCouponResultModel,
-} from '../model/Coupons.model';
+} from '../model/Old/Coupons.model';
 
 export type InsertReq = InsertCouponModel;
 export type InsertRes = Promise<

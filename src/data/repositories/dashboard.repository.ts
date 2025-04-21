@@ -1,6 +1,6 @@
 import { DefaultResultError, ResultOld } from '../../utils/ResultOld';
 import { remoteDataSourceOld } from '../datasource/RemoteOld.datasource';
-import { DashboardStatsModel } from '../model/Dashboard.model';
+import { DashboardStatsModel } from '../model/Old/Dashboard.model';
 
 export type GetDashboardStatsRes = Promise<
   ResultOld<DashboardStatsModel, { code: 'SERIALIZATION' } | DefaultResultError>
