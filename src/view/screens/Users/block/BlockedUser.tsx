@@ -1,13 +1,12 @@
 import { Pagination } from '@/components/Pagination';
+import { Button } from '@/view/components/Button';
+import { Container } from '@/view/components/Container';
+import { Error } from '@/view/components/Error';
+import { Loading } from '@/view/components/Loading';
+import { PageHeader } from '@/view/layout/Page/PageHeader';
+import { ToggleHeaderButton } from '@/view/layout/Page/ToggleHeaderButton';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  AlertCircle,
-  ChevronDown,
-  ChevronUp,
-  Plus,
-  ShieldX,
-  X,
-} from 'lucide-react';
+import { AlertCircle, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { BlockedUserCards } from './partials/BlockedUserCards';
 import { BlockedUserDetailsModal } from './partials/BlockedUserDetailsModal';
@@ -39,7 +38,6 @@ export function BlockedUsers() {
     setIsEditModalOpen,
     setIsDetailsModalOpen,
     createBlockedUser,
-    updateBlockedUser,
     unblockUser,
     clearError,
   } = useBlockedUsers();
@@ -50,125 +48,32 @@ export function BlockedUsers() {
     setCollapsedHeader(!collapsedHeader);
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        when: 'beforeChildren',
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { type: 'spring', stiffness: 100 },
-    },
-  };
-
-  const errorVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: 'spring', stiffness: 100 },
-    },
-    exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
-  };
-
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-[500px]">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-          <p className="text-gray-600">Carregando usuários bloqueados...</p>
-        </div>
-      </div>
-    );
+    return <Loading label="Carregando usuários bloqueados..." />;
   }
 
   return (
-    <motion.div
-      className="container mx-auto px-4 py-8"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <motion.div
-        className={`bg-white rounded-lg shadow-md border border-blue-50 p-6 mb-8 transition-all duration-500 ${
-          collapsedHeader ? 'cursor-pointer' : ''
-        }`}
-        variants={itemVariants}
-        onClick={collapsedHeader ? toggleHeader : undefined}
-      >
-        <div className="flex justify-between items-center">
-          <div className="flex items-center">
-            <ShieldX className="h-6 w-6 text-blue-500 mr-3" />
-            <div>
-              <h1 className="text-3xl font-bold mb-2 text-gray-800">
-                Usuários Bloqueados
-              </h1>
-              {!collapsedHeader && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <p className="text-gray-600">
-                    Gerencie todos os usuários bloqueados no sistema
-                  </p>
-                </motion.div>
-              )}
-            </div>
-          </div>
+    <Container>
+      <PageHeader
+        title="Usuários Bloqueados"
+        description="Gerencie todos os usuários bloqueados no sistema"
+        collapsed={collapsedHeader}
+        toggle={toggleHeader}
+        button={
           <div className="flex items-center gap-4">
-            <motion.button
-              onClick={openCreateModal}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Plus className="h-5 w-5" />
-              Bloquear Usuário
-            </motion.button>
-            <button
-              onClick={toggleHeader}
-              className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
-            >
-              {collapsedHeader ? (
-                <ChevronDown className="h-5 w-5 text-blue-500" />
-              ) : (
-                <ChevronUp className="h-5 w-5 text-blue-500" />
-              )}
-            </button>
+            <Button
+              open={openCreateModal}
+              icon={<Plus className="h-5 w-5" />}
+              label="Bloquear Usuário"
+            />
+            <ToggleHeaderButton
+              toggle={toggleHeader}
+              collapsed={collapsedHeader}
+            />
           </div>
-        </div>
-      </motion.div>
-
-      <AnimatePresence>
-        {error && (
-          <motion.div
-            className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center text-red-600 shadow-sm"
-            variants={errorVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            <AlertCircle className="h-5 w-5 mr-2" />
-            <span>{error}</span>
-            <button
-              onClick={clearError}
-              className="ml-auto text-red-500 hover:text-red-700 transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        }
+      />
+      <Error error={error} clear={clearError} />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -229,6 +134,7 @@ export function BlockedUsers() {
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Mostrar</span>
                 <select
+                  title="Selecionar Itens Por Página"
                   value={perPage}
                   onChange={(e) => setPerPage(Number(e.target.value))}
                   className="border rounded-md px-2 py-1 text-sm bg-gray-50 hover:border-blue-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all"
@@ -268,7 +174,8 @@ export function BlockedUsers() {
             blockedUser={selectedBlockedUser}
             onClose={() => setIsEditModalOpen(false)}
             onSubmit={async (data) => {
-              await updateBlockedUser({ id: selectedBlockedUser.id, data });
+              console.log(data);
+              // await updateBlockedUser({ id: selectedBlockedUser.id, data });
             }}
           />
         )}
@@ -284,6 +191,6 @@ export function BlockedUsers() {
           />
         )}
       </AnimatePresence>
-    </motion.div>
+    </Container>
   );
 }

@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { DefaultResultError, ResultOld } from '../../utils/ResultOld';
-import { remoteDataSourceOld } from '../datasource/RemoteOld.datasource';
-import { DepositListModel, DepositModel } from '../model/Reports.model';
+import { DefaultResultError, ResultOld } from '../../../utils/ResultOld';
+import { remoteDataSourceOld } from '../../datasource/RemoteOld.datasource';
+import { DepositListModel, DepositModel } from '../../model/Old/Reports.model';
 
 export type GetAllReportsRes = Promise<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
