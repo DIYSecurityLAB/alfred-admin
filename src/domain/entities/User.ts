@@ -11,5 +11,7 @@ export const BlockUser = z
     if (!data.documentId && !data.userId && !data.username) {
       return false;
     }
+
+    return true;
   });
 export type BlockUser = z.infer<typeof BlockUser>;

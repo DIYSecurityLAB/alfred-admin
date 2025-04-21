@@ -6,7 +6,14 @@ import { BlockUserModel } from '../model/Blacklist.model';
 
 type BlockReq = BlockUserModel;
 type BlockRes = Promise<
-  Result<object, { code: 'SERIALIZATION' | 'NOT_FOUND' } | DefaultResultError>
+  Result<
+    {
+      id: string;
+      userId: string;
+      reason: string;
+    },
+    { code: 'SERIALIZATION' | 'NOT_FOUND' } | DefaultResultError
+  >
 >;
 
 export interface UserRepository {
@@ -18,9 +25,13 @@ export class UserRepositoryImpl implements UserRepository {
 
   @ExceptionHandler()
   async block(req: BlockReq): BlockRes {
-    const result = await this.api.patch({
+    const result = await this.api.post({
       url: '/blacklist',
-      model: z.object({}),
+      model: z.object({
+        id: z.string(),
+        userId: z.string(),
+        reason: z.string(),
+      }),
       body: req,
     });
 

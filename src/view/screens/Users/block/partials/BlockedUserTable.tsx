@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion } from 'framer-motion';
 import { Edit, Eye, MoreVertical, Unlock } from 'lucide-react';
 import { useState } from 'react';
-import { BlockedUserData } from '../useBlockedUser';
 
 interface BlockedUserTableProps {
-  blockedUsers: BlockedUserData[];
-  onViewDetails: (blockedUser: BlockedUserData) => void;
-  onEdit: (blockedUser: BlockedUserData) => void;
+  blockedUsers: any[];
+  onViewDetails: (blockedUser: any) => void;
+  onEdit: (blockedUser: any) => void;
   onUnblock: (id: string) => void;
 }
 

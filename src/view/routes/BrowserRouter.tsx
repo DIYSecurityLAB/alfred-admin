@@ -6,7 +6,7 @@ import { DefaultLayout } from '../layout/DefaultLayout';
 import { Coupons } from '../screens/Coupons/Coupons';
 import { Reports } from '../screens/Report/Report';
 import { Settings } from '../screens/Settings/Settings';
-import { BlockedUsers } from '../screens/Users/BlockedUser';
+import { BlockedUsers } from '../screens/Users/block/BlockedUser';
 import { ROUTES } from './Routes';
 
 export function BrowserRouter() {
