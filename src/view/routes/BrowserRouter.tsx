@@ -7,6 +7,7 @@ import { Coupons } from '../screens/Coupons/Coupons';
 import { Reports } from '../screens/Report/Report';
 import { Settings } from '../screens/Settings/Settings';
 import { BlockedUsers } from '../screens/Users/block/BlockedUser';
+import { BlockedUserDetailsPage } from '../screens/Users/block/details/BlockedUserDetailsPage';
 import { ROUTES } from './Routes';
 
 export function BrowserRouter() {
@@ -22,7 +23,11 @@ export function BrowserRouter() {
           <Route path={ROUTES.coupons} element={<Coupons />} />
           <Route path={ROUTES.sales} element={<Reports />} />
           <Route path={ROUTES.users.home} element={<Users />} />
-          <Route path={ROUTES.users.blocked} element={<BlockedUsers />} />
+          <Route path={ROUTES.users.blocked.home} element={<BlockedUsers />} />
+          <Route
+            path={ROUTES.users.blocked.details.path}
+            element={<BlockedUserDetailsPage />}
+          />
           <Route path={ROUTES.settings} element={<Settings />} />
         </Route>
       </Routes>

@@ -284,7 +284,7 @@ export function BlockUserModal({ isOpen, onClose }: BlockUserModalProps) {
             <Button
               icon={<></>}
               label={isLoading ? 'Processando...' : 'Bloquear Usuário'}
-              open={handleBlockUser}
+              onClick={handleBlockUser}
               //   disabled={
               //     isLoading ||
               //     (blockType === 'userId' && !userId.trim()) ||
