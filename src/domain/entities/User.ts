@@ -17,7 +17,7 @@ export const BlockUser = z
   });
 export type BlockUser = z.infer<typeof BlockUser>;
 
-export type CryptoType = 'BTC' | 'USDT' | 'DEPIX';
+export type CryptoType = 'BITCOIN' | 'USDT' | 'DEPIX';
 
 export type PaymentStatus =
   | 'pending'
@@ -41,8 +41,8 @@ export class ListAllBlockedUser {
   id!: string;
   userId!: string;
   reason!: string | null;
-  createdAt!: Date;
-  updatedAt!: Date;
+  createdAt!: string;
+  updatedAt!: string;
   user!: {
     id: string;
     username: string;
@@ -53,7 +53,7 @@ export class ListAllBlockedUser {
       cupom?: string | null;
       cryptoType: CryptoType | null;
       status: PaymentStatus;
-      createdAt: Date;
+      createdAt: string;
     }[];
     documents: {
       id: string;

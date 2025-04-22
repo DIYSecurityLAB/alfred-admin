@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const CryptoTypeModel = z.union([
-  z.literal('BTC'),
+  z.literal('BITCOIN'),
   z.literal('USDT'),
   z.literal('DEPIX'),
 ]);
@@ -33,8 +33,8 @@ export const ListAllBlockedUserModel = z.object({
   id: z.string(),
   userId: z.string(),
   reason: z.string().nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
   user: z.object({
     id: z.string(),
     username: z.string(),
@@ -46,7 +46,7 @@ export const ListAllBlockedUserModel = z.object({
         cupom: z.string().nullable().optional(),
         cryptoType: CryptoTypeModel.nullable(),
         status: PaymentStatusModel,
-        createdAt: z.date(),
+        createdAt: z.string(),
       }),
     ),
     documents: z.array(

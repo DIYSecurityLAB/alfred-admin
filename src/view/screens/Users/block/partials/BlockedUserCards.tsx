@@ -1,3 +1,4 @@
+import { ListAllBlockedUser } from '@/domain/entities/User';
 import { motion } from 'framer-motion';
 import {
   Calendar,
@@ -8,18 +9,15 @@ import {
   Unlock,
   User,
 } from 'lucide-react';
-import { BlockedUserData } from '../useBlockedUser';
 
 interface BlockedUserCardsProps {
-  blockedUsers: BlockedUserData[];
-  onViewDetails: (blockedUser: BlockedUserData) => void;
-  onEdit: (blockedUser: BlockedUserData) => void;
+  blockedUsers: ListAllBlockedUser[];
+  onEdit: (blockedUser: ListAllBlockedUser) => void;
   onUnblock: (id: string) => void;
 }
 
 export function BlockedUserCards({
   blockedUsers,
-  onViewDetails,
   onEdit,
   onUnblock,
 }: BlockedUserCardsProps) {

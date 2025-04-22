@@ -17,7 +17,9 @@ export const UseCases = {
     update: new UpdateConfigUseCaseImpl(ConfigRepository),
   },
   user: {
-    block: new BlockUserUseCaseImpl(UserRepository),
-    list: new ListBlockedUserUseCaseImpl(UserRepository),
+    block: {
+      create: new BlockUserUseCaseImpl(UserRepository),
+      list: new ListBlockedUserUseCaseImpl(UserRepository),
+    },
   },
 };

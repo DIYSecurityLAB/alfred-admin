@@ -9,8 +9,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { BlockedUserCards } from './partials/BlockedUserCards';
-import { BlockedUserDetailsModal } from './partials/BlockedUserDetailsModal';
-import { BlockedUserFilters } from './partials/BlockedUserFilters';
 import { BlockedUserModal } from './partials/BlockedUserModal';
 import { BlockedUserTable } from './partials/BlockedUserTable';
 import { useBlockedUsers } from './useBlockedUser';
@@ -21,22 +19,17 @@ export function BlockedUsers() {
     totalBlockedUsers,
     page,
     perPage,
-    filters,
     isLoading,
     error,
     selectedBlockedUser,
     isCreateModalOpen,
     isEditModalOpen,
-    isDetailsModalOpen,
     handlePageChange,
-    handleFilterChange,
     setPerPage,
     openCreateModal,
     openEditModal,
-    openDetailsModal,
     setIsCreateModalOpen,
     setIsEditModalOpen,
-    setIsDetailsModalOpen,
     createBlockedUser,
     unblockUser,
     clearError,
@@ -80,12 +73,7 @@ export function BlockedUsers() {
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden p-6"
       >
-        <BlockedUserFilters
-          filters={filters}
-          onFilterChange={handleFilterChange}
-        />
-
-        {blockedUsers.length === 0 ? (
+        {blockedUsers.length === 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -97,11 +85,6 @@ export function BlockedUsers() {
             <h3 className="text-xl font-medium mb-2 text-gray-800">
               Nenhum usuário bloqueado encontrado
             </h3>
-            <p className="text-gray-600 text-center max-w-md mb-6">
-              {filters.search
-                ? 'Nenhum usuário bloqueado corresponde aos filtros selecionados. Tente ajustar seus filtros.'
-                : 'Não há usuários bloqueados no sistema. Você pode bloquear um usuário quando necessário.'}
-            </p>
             <motion.button
               onClick={openCreateModal}
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
@@ -112,12 +95,13 @@ export function BlockedUsers() {
               Bloquear Usuário
             </motion.button>
           </motion.div>
-        ) : (
+        )}
+
+        {blockedUsers.length >= 1 && (
           <>
             <div className="hidden lg:block mb-6">
               <BlockedUserTable
                 blockedUsers={blockedUsers}
-                onViewDetails={openDetailsModal}
                 onEdit={openEditModal}
                 onUnblock={unblockUser}
               />
@@ -125,7 +109,6 @@ export function BlockedUsers() {
             <div className="lg:hidden mb-6">
               <BlockedUserCards
                 blockedUsers={blockedUsers}
-                onViewDetails={openDetailsModal}
                 onEdit={openEditModal}
                 onUnblock={unblockUser}
               />
@@ -176,17 +159,6 @@ export function BlockedUsers() {
             onSubmit={async (data) => {
               console.log(data);
               // await updateBlockedUser({ id: selectedBlockedUser.id, data });
-            }}
-          />
-        )}
-        {isDetailsModalOpen && selectedBlockedUser && (
-          <BlockedUserDetailsModal
-            key="details-modal"
-            blockedUser={selectedBlockedUser}
-            onClose={() => setIsDetailsModalOpen(false)}
-            onEdit={() => {
-              setIsDetailsModalOpen(false);
-              setIsEditModalOpen(true);
             }}
           />
         )}
