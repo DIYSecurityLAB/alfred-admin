@@ -1,7 +1,9 @@
 import { ListAllBlockedUser } from '@/domain/entities/User';
+import { ROUTES } from '@/view/routes/Routes';
 import { motion } from 'framer-motion';
 import { Eye, MoreVertical } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type BlockedUserTableProps = {
   blockedUsers: ListAllBlockedUser[];
@@ -9,6 +11,7 @@ type BlockedUserTableProps = {
 
 export function BlockedUserTable({ blockedUsers }: BlockedUserTableProps) {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const toggleMenu = (id: string) => {
     setActiveMenu(activeMenu === id ? null : id);
@@ -105,6 +108,9 @@ export function BlockedUserTable({ blockedUsers }: BlockedUserTableProps) {
                         <button
                           onClick={() => {
                             setActiveMenu(null);
+                            navigate(
+                              ROUTES.users.blocked.details.call(user.userId),
+                            );
                           }}
                           className="w-full px-4 py-2 text-left text-sm flex items-center hover:bg-gray-50 transition-colors"
                         >
@@ -116,6 +122,11 @@ export function BlockedUserTable({ blockedUsers }: BlockedUserTableProps) {
                   </div>
                   <div className="hidden sm:flex gap-1 ml-2">
                     <motion.button
+                      onClick={() => {
+                        navigate(
+                          ROUTES.users.blocked.details.call(user.userId),
+                        );
+                      }}
                       className="p-1.5 hover:bg-blue-50 rounded-full text-blue-500 transition-colors"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}

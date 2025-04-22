@@ -7,17 +7,25 @@ import {
 
 interface PaginationProps {
   currentPage: number;
-  totalPages: number;
   onPageChange: (page: number) => void;
   siblingCount?: number;
+  totalPages?: number;
+  totalItems?: number;
+  perPage?: number;
 }
 
 export function Pagination({
   currentPage,
-  totalPages,
   onPageChange,
   siblingCount = 1,
+  totalPages: propsTotalPages,
+  totalItems,
+  perPage,
 }: PaginationProps) {
+  const totalPages =
+    propsTotalPages ||
+    (totalItems && perPage ? Math.ceil(totalItems / perPage) : 1);
+
   const range = (start: number, end: number) => {
     const length = end - start + 1;
     return Array.from({ length }, (_, idx) => idx + start);
@@ -50,6 +58,8 @@ export function Pagination({
       const middleRange = range(leftSiblingIndex, rightSiblingIndex);
       return [1, '...', ...middleRange, '...', totalPages];
     }
+
+    return range(1, totalPages);
   };
 
   const paginationItems = createPaginationItems();
@@ -59,7 +69,7 @@ export function Pagination({
       <button
         onClick={() => onPageChange(1)}
         disabled={currentPage === 1}
-        className="p-2 rounded-lg bg-gray-200 hover:bg-gray-200/10 disabled:opacity-50 disabled:hover:bg-gray-200 transition-colors"
+        className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:bg-blue-300 transition-colors"
         aria-label="Primeira página"
       >
         <ChevronsLeft className="h-5 w-5" />
@@ -68,7 +78,7 @@ export function Pagination({
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="p-2 rounded-lg bg-gray-200 hover:bg-gray-200/10 disabled:opacity-50 disabled:hover:bg-gray-200 transition-colors"
+        className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:bg-blue-300 transition-colors"
         aria-label="Página anterior"
       >
         <ChevronLeft className="h-5 w-5" />
@@ -77,10 +87,7 @@ export function Pagination({
       {paginationItems?.map((item, index) => {
         if (item === '...') {
           return (
-            <span
-              key={`dots-${index}`}
-              className="px-3 py-1 text-text-secondary"
-            >
+            <span key={`dots-${index}`} className="px-3 py-1 text-gray-600">
               ...
             </span>
           );
@@ -92,8 +99,8 @@ export function Pagination({
             onClick={() => onPageChange(+item)}
             className={`px-3 py-1 rounded-lg transition-colors ${
               currentPage === item
-                ? 'bg-gray-200 text-white'
-                : 'bg-gray-200 hover:bg-gray-200/10'
+                ? 'bg-blue-600 text-white'
+                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
             }`}
           >
             {item}
@@ -104,7 +111,7 @@ export function Pagination({
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="p-2 rounded-lg bg-gray-200 hover:bg-gray-200/10 disabled:opacity-50 disabled:hover:bg-gray-200 transition-colors"
+        className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:bg-blue-300 transition-colors"
         aria-label="Próxima página"
       >
         <ChevronRight className="h-5 w-5" />
@@ -113,7 +120,7 @@ export function Pagination({
       <button
         onClick={() => onPageChange(totalPages)}
         disabled={currentPage === totalPages}
-        className="p-2 rounded-lg bg-gray-200 hover:bg-gray-200/10 disabled:opacity-50 disabled:hover:bg-gray-200 transition-colors"
+        className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:bg-blue-300 transition-colors"
         aria-label="Última página"
       >
         <ChevronsRight className="h-5 w-5" />
