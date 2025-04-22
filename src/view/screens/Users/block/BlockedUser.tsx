@@ -5,9 +5,10 @@ import { Error } from '@/view/components/Error';
 import { Loading } from '@/view/components/Loading';
 import { PageHeader } from '@/view/layout/Page/PageHeader';
 import { ToggleHeaderButton } from '@/view/layout/Page/ToggleHeaderButton';
-import { motion } from 'framer-motion';
-import { AlertCircle, Plus } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle, LayoutDashboard, LayoutGrid, Plus } from 'lucide-react';
 import { useState } from 'react';
+import { BlockedUserCards } from './partials/BlockedUserCards';
 import { BlockUserModal } from './partials/BlockUserModel';
 import { BlockedUserTable } from './partials/table';
 import { useBlockUser } from './partials/useBlockUser';
@@ -29,6 +30,7 @@ export function BlockedUsers() {
   const { isModalOpen, openModal, closeModal } = useBlockUser();
 
   const [collapsedHeader, setCollapsedHeader] = useState(false);
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
 
   const toggleHeader = () => {
     setCollapsedHeader(!collapsedHeader);
@@ -66,7 +68,7 @@ export function BlockedUsers() {
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden p-6"
       >
-        {blockedUsers.length === 0 && (
+        {blockedUsers.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -88,13 +90,71 @@ export function BlockedUsers() {
               Bloquear Usuário
             </motion.button>
           </motion.div>
-        )}
-
-        {blockedUsers.length >= 1 && (
+        ) : (
           <>
-            <div className="hidden lg:block mb-6">
-              <BlockedUserTable blockedUsers={blockedUsers} />
-            </div>
+            <motion.div
+              className="mb-6 flex justify-between items-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-gray-700">
+                  Mostrando {blockedUsers.length} de {totalBlockedUsers}{' '}
+                  resultados
+                </span>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setViewMode('table')}
+                  className={`p-2 rounded-lg transition-all duration-300 ${
+                    viewMode === 'table'
+                      ? 'bg-blue-500 text-white shadow-md'
+                      : 'bg-gray-100 hover:bg-blue-100 text-gray-700 hover:shadow-sm'
+                  }`}
+                  title="Visualizar em tabela"
+                >
+                  <LayoutDashboard className="h-5 w-5" />
+                </button>
+
+                <button
+                  onClick={() => setViewMode('cards')}
+                  className={`p-2 rounded-lg transition-all duration-300 ${
+                    viewMode === 'cards'
+                      ? 'bg-blue-500 text-white shadow-md'
+                      : 'bg-gray-100 hover:bg-blue-100 text-gray-700 hover:shadow-sm'
+                  }`}
+                  title="Visualizar em cards"
+                >
+                  <LayoutGrid className="h-5 w-5" />
+                </button>
+              </div>
+            </motion.div>
+
+            <AnimatePresence mode="wait">
+              {viewMode === 'table' ? (
+                <motion.div
+                  key="table"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="mb-6"
+                >
+                  <BlockedUserTable blockedUsers={blockedUsers} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="cards"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="mb-6"
+                >
+                  <BlockedUserCards blockedUsers={blockedUsers} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-gray-100">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Mostrar</span>
