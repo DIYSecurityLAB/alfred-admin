@@ -1,36 +1,27 @@
+import { ListAllBlockedUser } from '@/domain/entities/User';
 import { motion } from 'framer-motion';
-import { Edit, Eye, MoreVertical, Unlock } from 'lucide-react';
+import { Eye, MoreVertical } from 'lucide-react';
 import { useState } from 'react';
-import { BlockedUserData } from '../useBlockedUser';
 
-interface BlockedUserTableProps {
-  blockedUsers: BlockedUserData[];
-  onViewDetails: (blockedUser: BlockedUserData) => void;
-  onEdit: (blockedUser: BlockedUserData) => void;
-  onUnblock: (id: string) => void;
-}
+type BlockedUserTableProps = {
+  blockedUsers: ListAllBlockedUser[];
+};
 
-export function BlockedUserTable({
-  blockedUsers,
-  onViewDetails,
-  onEdit,
-  onUnblock,
-}: BlockedUserTableProps) {
+export function BlockedUserTable({ blockedUsers }: BlockedUserTableProps) {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
   const toggleMenu = (id: string) => {
     setActiveMenu(activeMenu === id ? null : id);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('pt-BR', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    }).format(date);
+    }).format(new Date(date));
   };
 
   return (
@@ -39,19 +30,19 @@ export function BlockedUserTable({
         <thead>
           <tr className="bg-gray-50 border-b border-gray-200">
             <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
+              ID
+            </th>
+            <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
               Usuário
             </th>
             <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
-              ID/Documento
+              User ID
             </th>
             <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
               Razão
             </th>
             <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
               Bloqueado em
-            </th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
-              Bloqueado por
             </th>
             <th className="py-3 px-4 text-center text-sm font-medium text-gray-600">
               Ações
@@ -66,46 +57,35 @@ export function BlockedUserTable({
               animate={{ opacity: 1 }}
               className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
             >
+              <td className="py-3 px-4 text-gray-600 text-sm">{user.id}</td>
               <td className="py-3 px-4">
                 <div className="flex items-center">
                   <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-medium mr-3">
-                    {user.username
-                      ? user.username.charAt(0).toUpperCase()
+                    {user.user.username
+                      ? user.user.username.charAt(0).toUpperCase()
                       : 'U'}
                   </div>
                   <div>
                     <div className="font-medium text-gray-800">
-                      {user.username || 'N/A'}
+                      {user.user.username || 'N/A'}
                     </div>
                   </div>
                 </div>
               </td>
+              <td className="py-3 px-4 text-gray-600 text-sm">{user.userId}</td>
               <td className="py-3 px-4">
-                <div className="text-sm">
-                  {user.userId && (
-                    <div className="text-gray-600 mb-1">
-                      <span className="font-medium">ID:</span> {user.userId}
-                    </div>
-                  )}
-                  {user.documentId && (
-                    <div className="text-gray-600">
-                      <span className="font-medium">Doc:</span>{' '}
-                      {user.documentId}
-                    </div>
-                  )}
-                  {!user.userId && !user.documentId && 'N/A'}
-                </div>
-              </td>
-              <td className="py-3 px-4">
-                <div className="px-2.5 py-1 rounded-full bg-red-50 text-red-700 text-sm inline-block">
-                  {user.reason}
-                </div>
+                {user.reason ? (
+                  <div className="px-2.5 py-1 rounded-full bg-red-50 text-red-700 text-sm inline-block">
+                    {user.reason}
+                  </div>
+                ) : (
+                  <span className="text-gray-500 text-sm">
+                    Não especificado
+                  </span>
+                )}
               </td>
               <td className="py-3 px-4 text-gray-600 text-sm">
-                {formatDate(user.createdAt)}
-              </td>
-              <td className="py-3 px-4 text-gray-600 text-sm">
-                {user.blockedBy}
+                {formatDate(new Date(user.createdAt))}
               </td>
               <td className="py-3 px-4">
                 <div className="flex items-center justify-center">
@@ -124,7 +104,6 @@ export function BlockedUserTable({
                       >
                         <button
                           onClick={() => {
-                            onViewDetails(user);
                             setActiveMenu(null);
                           }}
                           className="w-full px-4 py-2 text-left text-sm flex items-center hover:bg-gray-50 transition-colors"
@@ -132,53 +111,16 @@ export function BlockedUserTable({
                           <Eye className="h-4 w-4 mr-2 text-gray-500" />
                           Ver detalhes
                         </button>
-                        <button
-                          onClick={() => {
-                            onEdit(user);
-                            setActiveMenu(null);
-                          }}
-                          className="w-full px-4 py-2 text-left text-sm flex items-center hover:bg-gray-50 transition-colors"
-                        >
-                          <Edit className="h-4 w-4 mr-2 text-gray-500" />
-                          Editar
-                        </button>
-                        <button
-                          onClick={() => {
-                            onUnblock(user.id);
-                            setActiveMenu(null);
-                          }}
-                          className="w-full px-4 py-2 text-left text-sm flex items-center hover:bg-gray-50 text-red-600 transition-colors"
-                        >
-                          <Unlock className="h-4 w-4 mr-2" />
-                          Desbloquear
-                        </button>
                       </motion.div>
                     )}
                   </div>
                   <div className="hidden sm:flex gap-1 ml-2">
                     <motion.button
-                      onClick={() => onViewDetails(user)}
                       className="p-1.5 hover:bg-blue-50 rounded-full text-blue-500 transition-colors"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                     >
                       <Eye className="h-5 w-5" />
-                    </motion.button>
-                    <motion.button
-                      onClick={() => onEdit(user)}
-                      className="p-1.5 hover:bg-blue-50 rounded-full text-blue-500 transition-colors"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Edit className="h-5 w-5" />
-                    </motion.button>
-                    <motion.button
-                      onClick={() => onUnblock(user.id)}
-                      className="p-1.5 hover:bg-red-50 rounded-full text-red-500 transition-colors"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Unlock className="h-5 w-5" />
                     </motion.button>
                   </div>
                 </div>

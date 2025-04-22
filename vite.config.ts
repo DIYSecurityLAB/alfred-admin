@@ -21,15 +21,6 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 500,
   },
-  server: {
-    host: '0.0.0.0',
-    watch: {
-      usePolling: true,
-    },
-    hmr: {
-      port: 5172,
-    },
-  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),

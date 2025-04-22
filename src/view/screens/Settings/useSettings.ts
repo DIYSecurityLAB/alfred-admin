@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 
 export function useSettings() {
   const [collapsedHeader, setCollapsedHeader] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const { data: config, isLoading } = useQuery({
@@ -22,7 +22,7 @@ export function useSettings() {
 
         return result.data;
       } catch {
-        setError('Erro ao carregar configurações');
+        setErrors('Erro ao carregar configurações');
         return null;
       }
     },
@@ -66,11 +66,11 @@ export function useSettings() {
       queryClient.invalidateQueries({ queryKey: ['config'] });
     },
     onError: (error: Error) => {
-      setError(`Erro ao atualizar configurações: ${error.message}`);
+      setErrors(`Erro ao atualizar configurações: ${error.message}`);
     },
   });
 
-  const clearError = () => setError(null);
+  const clearErrors = () => setErrors(null);
 
   const onSubmit = async (data: UpdateConfig) => {
     updateMutation.mutateAsync(data);
@@ -80,42 +80,11 @@ export function useSettings() {
     setCollapsedHeader(!collapsedHeader);
   };
 
-  const variants = {
-    container: {
-      hidden: { opacity: 0 },
-      visible: {
-        opacity: 1,
-        transition: {
-          when: 'beforeChildren',
-          staggerChildren: 0.1,
-        },
-      },
-    },
-    item: {
-      hidden: { y: 20, opacity: 0 },
-      visible: {
-        y: 0,
-        opacity: 1,
-        transition: { type: 'spring', stiffness: 100 },
-      },
-    },
-    error: {
-      hidden: { opacity: 0, y: -20 },
-      visible: {
-        opacity: 1,
-        y: 0,
-        transition: { type: 'spring', stiffness: 100 },
-      },
-      exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
-    },
-  };
-
   return {
-    error,
-    variants,
+    errors,
     isLoading,
     collapsedHeader,
-    clearError,
+    clearErrors,
     toggleHeader,
     onsubmit: handleSubmit(onSubmit),
     isUpdating: updateMutation.isPending,
