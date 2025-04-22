@@ -50,7 +50,7 @@ export function BlockedUsers() {
         button={
           <div className="flex items-center gap-4">
             <Button
-              open={openModal}
+              onClick={openModal}
               icon={<Plus className="h-5 w-5" />}
               label="Bloquear Usuário"
             />
