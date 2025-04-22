@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 import { Eye, MoreVertical } from 'lucide-react';
 import { useState } from 'react';
 
-interface BlockedUserTableProps {
+type BlockedUserTableProps = {
   blockedUsers: ListAllBlockedUser[];
-}
+};
 
 export function BlockedUserTable({ blockedUsers }: BlockedUserTableProps) {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);

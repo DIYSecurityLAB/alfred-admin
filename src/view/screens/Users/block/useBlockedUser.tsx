@@ -1,6 +1,6 @@
-import { BlockUser, ListAllBlockedUser } from '@/domain/entities/User';
+import { ListAllBlockedUser } from '@/domain/entities/User';
 import { UseCases } from '@/domain/usecases/UseCases';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 
 interface BlockedUsersResponse {
@@ -13,11 +13,6 @@ export function useBlockedUsers() {
   const [perPage, setPerPage] = useState(10);
 
   const [error, setError] = useState<string | null>(null);
-  const [selectedBlockedUser, setSelectedBlockedUser] =
-    useState<null | ListAllBlockedUser>(null);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const queryClient = useQueryClient();
 
   const fetchBlockedUsers =
     useCallback(async (): Promise<BlockedUsersResponse> => {
@@ -64,35 +59,7 @@ export function useBlockedUsers() {
   const blockedUsers = data?.blockedUsers || [];
   const totalBlockedUsers = data?.total ?? 0;
 
-  const createMutation = useMutation({
-    mutationFn: async (userData: BlockUser) => {
-      const { result } = await UseCases.user.block.create.execute(userData);
-      if (result.type === 'ERROR') {
-        throw new Error(result.error?.code || 'Erro desconhecido');
-      }
-      return result.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blockedUsers'] });
-      setIsCreateModalOpen(false);
-    },
-    onError: (error: Error) => {
-      setError(`Erro ao bloquear usuário: ${error.message}`);
-    },
-  });
-
   const handlePageChange = (newPage: number) => setPage(newPage);
-  const openCreateModal = () => {
-    setSelectedBlockedUser(null);
-    setIsCreateModalOpen(true);
-  };
-  const openEditModal = (blockedUser: ListAllBlockedUser) => {
-    setSelectedBlockedUser(blockedUser);
-    setIsEditModalOpen(true);
-  };
-  const createBlockedUser = async (data: BlockUser) => {
-    await createMutation.mutateAsync(data);
-  };
   const clearError = () => setError(null);
 
   return {
@@ -102,16 +69,8 @@ export function useBlockedUsers() {
     perPage,
     isLoading,
     error,
-    selectedBlockedUser,
-    isCreateModalOpen,
-    isEditModalOpen,
     handlePageChange,
     setPerPage,
-    openCreateModal,
-    openEditModal,
-    setIsCreateModalOpen,
-    setIsEditModalOpen,
-    createBlockedUser,
     clearError,
   };
 }

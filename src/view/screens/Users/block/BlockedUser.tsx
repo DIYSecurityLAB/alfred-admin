@@ -5,12 +5,10 @@ import { Error } from '@/view/components/Error';
 import { Loading } from '@/view/components/Loading';
 import { PageHeader } from '@/view/layout/Page/PageHeader';
 import { ToggleHeaderButton } from '@/view/layout/Page/ToggleHeaderButton';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { AlertCircle, Plus } from 'lucide-react';
 import { useState } from 'react';
-import { BlockedUserCards } from './partials/BlockedUserCards';
-import { BlockedUserModal } from './partials/BlockedUserModal';
-import { BlockedUserTable } from './partials/BlockedUserTable';
+import { BlockedUserTable } from './partials/table';
 import { useBlockedUsers } from './useBlockedUser';
 
 export function BlockedUsers() {
@@ -21,17 +19,8 @@ export function BlockedUsers() {
     perPage,
     isLoading,
     error,
-    selectedBlockedUser,
-    isCreateModalOpen,
-    isEditModalOpen,
     handlePageChange,
     setPerPage,
-    openCreateModal,
-    openEditModal,
-    setIsCreateModalOpen,
-    setIsEditModalOpen,
-    createBlockedUser,
-    unblockUser,
     clearError,
   } = useBlockedUsers();
 
@@ -55,7 +44,7 @@ export function BlockedUsers() {
         button={
           <div className="flex items-center gap-4">
             <Button
-              open={openCreateModal}
+              open={() => {}}
               icon={<Plus className="h-5 w-5" />}
               label="Bloquear Usuário"
             />
@@ -86,7 +75,7 @@ export function BlockedUsers() {
               Nenhum usuário bloqueado encontrado
             </h3>
             <motion.button
-              onClick={openCreateModal}
+              onClick={() => {}}
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
@@ -100,18 +89,7 @@ export function BlockedUsers() {
         {blockedUsers.length >= 1 && (
           <>
             <div className="hidden lg:block mb-6">
-              <BlockedUserTable
-                blockedUsers={blockedUsers}
-                onEdit={openEditModal}
-                onUnblock={unblockUser}
-              />
-            </div>
-            <div className="lg:hidden mb-6">
-              <BlockedUserCards
-                blockedUsers={blockedUsers}
-                onEdit={openEditModal}
-                onUnblock={unblockUser}
-              />
+              <BlockedUserTable blockedUsers={blockedUsers} />
             </div>
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-gray-100">
               <div className="flex items-center gap-2">
@@ -140,29 +118,6 @@ export function BlockedUsers() {
           </>
         )}
       </motion.div>
-
-      <AnimatePresence mode="wait">
-        {isCreateModalOpen && (
-          <BlockedUserModal
-            key="create-modal"
-            onClose={() => setIsCreateModalOpen(false)}
-            onSubmit={async (data) => {
-              await createBlockedUser(data);
-            }}
-          />
-        )}
-        {isEditModalOpen && selectedBlockedUser && (
-          <BlockedUserModal
-            key="edit-modal"
-            blockedUser={selectedBlockedUser}
-            onClose={() => setIsEditModalOpen(false)}
-            onSubmit={async (data) => {
-              console.log(data);
-              // await updateBlockedUser({ id: selectedBlockedUser.id, data });
-            }}
-          />
-        )}
-      </AnimatePresence>
     </Container>
   );
 }
