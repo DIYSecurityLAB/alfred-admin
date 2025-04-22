@@ -81,14 +81,14 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
     <aside
       ref={sidebar}
       className={classNames(
-        'absolute left-0 top-0 z-9999 flex h-screen flex-col overflow-y-hidden',
-        'w-72 bg-gradient-to-b from-blue-900 to-blue-800 text-white shadow-lg',
+        'absolute left-0 top-0 z-[900] flex h-screen w-72 flex-col',
+        'bg-gradient-to-b from-blue-900 to-blue-800 text-white shadow-lg',
         'transition-all duration-300 ease-in-out',
         'lg:static lg:translate-x-0',
         sidebarOpen ? 'translate-x-0' : '-translate-x-full',
       )}
     >
-      <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-blue-700 lg:pt-8">
+      <div className="flex-shrink-0 flex items-center justify-between px-6 pt-6 pb-4 border-b border-blue-700 lg:pt-8">
         <NavLink
           to={ROUTES.home}
           className="text-white text-xl font-bold flex items-center gap-3"
@@ -110,8 +110,8 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
         </button>
       </div>
 
-      <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear py-4">
-        <nav className="px-4 lg:px-6">
+      <div className="flex-grow overflow-y-auto">
+        <nav className="px-4 lg:px-6 py-4">
           <div>
             <h3 className="text-xs font-semibold text-blue-300 uppercase tracking-wider ml-2 mb-4">
               MENU
@@ -259,7 +259,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
         </nav>
       </div>
 
-      <div className="mt-auto border-t border-blue-700 px-6 py-4">
+      <div className="flex-shrink-0 border-t border-blue-700 px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-full bg-blue-700 flex items-center justify-center text-xs font-bold">
             DS

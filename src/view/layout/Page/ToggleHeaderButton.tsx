@@ -11,13 +11,17 @@ export function ToggleHeaderButton({
 }: ToggleHeaderButtonProps) {
   return (
     <button
-      onClick={toggle}
-      className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+      onClick={(e) => {
+        e.stopPropagation();
+        toggle();
+      }}
+      className="p-1 sm:p-2 hover:bg-blue-50 rounded-lg transition-colors"
+      aria-label={collapsed ? 'Expandir cabeçalho' : 'Recolher cabeçalho'}
     >
       {collapsed ? (
-        <ChevronDown className="h-5 w-5 text-blue-500" />
+        <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
       ) : (
-        <ChevronUp className="h-5 w-5 text-blue-500" />
+        <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
       )}
     </button>
   );
