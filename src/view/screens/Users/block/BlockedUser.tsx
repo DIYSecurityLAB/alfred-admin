@@ -8,7 +8,9 @@ import { ToggleHeaderButton } from '@/view/layout/Page/ToggleHeaderButton';
 import { motion } from 'framer-motion';
 import { AlertCircle, Plus } from 'lucide-react';
 import { useState } from 'react';
+import { BlockUserModal } from './partials/BlockUserModel';
 import { BlockedUserTable } from './partials/table';
+import { useBlockUser } from './partials/useBlockUser';
 import { useBlockedUsers } from './useBlockedUser';
 
 export function BlockedUsers() {
@@ -23,6 +25,8 @@ export function BlockedUsers() {
     setPerPage,
     clearError,
   } = useBlockedUsers();
+
+  const { isModalOpen, openModal, closeModal } = useBlockUser();
 
   const [collapsedHeader, setCollapsedHeader] = useState(false);
 
@@ -44,7 +48,7 @@ export function BlockedUsers() {
         button={
           <div className="flex items-center gap-4">
             <Button
-              open={() => {}}
+              open={openModal}
               icon={<Plus className="h-5 w-5" />}
               label="Bloquear Usuário"
             />
@@ -75,7 +79,7 @@ export function BlockedUsers() {
               Nenhum usuário bloqueado encontrado
             </h3>
             <motion.button
-              onClick={() => {}}
+              onClick={openModal}
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
@@ -118,6 +122,8 @@ export function BlockedUsers() {
           </>
         )}
       </motion.div>
+
+      <BlockUserModal isOpen={isModalOpen} onClose={closeModal} />
     </Container>
   );
 }
