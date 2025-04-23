@@ -6,15 +6,20 @@ import Header from './Header/Header';
 import { Sidebar, SidebarItems } from './Sidebar/Sidebar';
 
 const menuItems: SidebarItems = [
-  { type: 'link', icon: Tags, label: 'Cupons', path: '/coupons' },
-  { type: 'link', icon: CreditCard, label: 'Vendas', path: '/sales' },
+  { type: 'link', icon: Tags, label: 'Cupons', path: ROUTES.coupons },
+  { type: 'link', icon: CreditCard, label: 'Vendas', path: ROUTES.sales.home },
   {
     type: 'link',
     icon: UserX,
     label: 'Usuários Bloqueados',
-    path: ROUTES.users.blocked,
+    path: ROUTES.users.blocked.home,
   },
-  { type: 'link', icon: Settings, label: 'Configurações', path: '/settings' },
+  {
+    type: 'link',
+    icon: Settings,
+    label: 'Configurações',
+    path: ROUTES.settings,
+  },
 ];
 
 export function AdminLayout() {
