@@ -69,6 +69,8 @@ export class RemoteDataSource {
       timeout: 300000,
     });
 
+    console.log(data);
+
     const serialized = model.safeParse(data);
 
     if (!serialized.success) return null;

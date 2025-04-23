@@ -2,7 +2,13 @@ export const ROUTES = {
   home: '/',
   coupons: '/coupons',
   dashboard: '/dashboard',
-  sales: '/sales',
+  sales: {
+    home: '/sales',
+    details: {
+      path: '/sales/:depositId',
+      call: (id: string) => `/sales/${id}`,
+    },
+  },
   users: {
     home: '/users',
     blocked: {
