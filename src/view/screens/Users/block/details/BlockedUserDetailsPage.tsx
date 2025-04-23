@@ -3,6 +3,7 @@ import { UseCases } from '@/domain/usecases/UseCases';
 import { Container } from '@/view/components/Container';
 import { Loading } from '@/view/components/Loading';
 import { PageHeader } from '@/view/layout/Page/PageHeader';
+import { ROUTES } from '@/view/routes/Routes';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
@@ -44,7 +45,6 @@ export function BlockedUserDetailsPage() {
     return result.data[0];
   }, [id]);
 
-  // Consulta para obter os dados
   const {
     data: blockedUser,
     isLoading,
@@ -54,7 +54,6 @@ export function BlockedUserDetailsPage() {
     queryFn: fetchBlockedUserDetails,
   });
 
-  // Funções auxiliares
   const formatDate = (date: string) => {
     return new Intl.DateTimeFormat('pt-BR', {
       day: '2-digit',
@@ -173,7 +172,6 @@ export function BlockedUserDetailsPage() {
           </div>
         </div>
 
-        {/* Seção de informações do usuário */}
         <div className="border-b border-gray-100 pb-6">
           <h2 className="text-xl font-semibold mb-4 flex items-center text-gray-800">
             <User className="h-5 w-5 text-blue-500 mr-2" />
@@ -196,7 +194,6 @@ export function BlockedUserDetailsPage() {
             </div>
           </div>
 
-          {/* Documentos do usuário */}
           <h3 className="text-lg font-medium mb-3 flex items-center text-gray-800">
             <File className="h-5 w-5 text-gray-500 mr-2" />
             Documentos
@@ -241,7 +238,6 @@ export function BlockedUserDetailsPage() {
           )}
         </div>
 
-        {/* Seção de histórico de depósitos */}
         <div>
           <h2 className="text-xl font-semibold mb-4 flex items-center text-gray-800">
             <CreditCard className="h-5 w-5 text-green-500 mr-2" />
@@ -301,6 +297,9 @@ export function BlockedUserDetailsPage() {
                         <button
                           className="text-blue-500 hover:text-blue-700"
                           title="Ver detalhes"
+                          onClick={() =>
+                            navigate(ROUTES.sales.details.call(deposito.id))
+                          }
                         >
                           <ExternalLink className="h-4 w-4" />
                         </button>
