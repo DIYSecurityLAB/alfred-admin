@@ -9,8 +9,8 @@ import {
 } from '../model/report.model';
 
 export type ReportDepositPaginatedReq = {
-  page: number;
-  pageSize: number;
+  page?: number;
+  pageSize?: number;
   status?: 'paid' | 'expired' | 'pending' | 'canceled' | 'complete';
   startAt?: string;
   endAt?: string;
@@ -81,9 +81,14 @@ export class ReportRepositoryImpl implements ReportRepository {
     req: ReportDepositPaginatedReq,
   ): ReportDepositPaginatedRes {
     const params = new URLSearchParams();
-    params.append('page', String(req.page));
-    params.append('pageSize', String(req.pageSize));
 
+    if (req.page) {
+      params.append('page', String(req.page));
+    }
+
+    if (req.pageSize) {
+      params.append('pageSize', String(req.pageSize));
+    }
     if (req.status) {
       params.append('status', req.status);
     }

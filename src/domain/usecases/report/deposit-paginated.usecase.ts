@@ -4,8 +4,8 @@ import { DefaultResultError, Result } from '@/utils/Result';
 import { UseCase } from '@/utils/UseCase';
 
 export type ListReq = {
-  page: number;
-  pageSize: number;
+  page?: number;
+  pageSize?: number;
   status?: 'paid' | 'expired' | 'pending' | 'canceled';
   startAt?: string;
   endAt?: string;

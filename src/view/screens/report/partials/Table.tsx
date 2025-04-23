@@ -44,7 +44,7 @@ export function ReportTable({ reports, onViewDetails }: ReportTableProps) {
   };
 
   return (
-    <div className="overflow-x-auto rounded-lg shadow-md border border-gray-200">
+    <div className="overflow-x-auto rounded-lg shadow-md border border-gray-200 hover:overflow-hidden">
       <motion.table
         className="min-w-full text-left bg-white"
         variants={tableVariants}

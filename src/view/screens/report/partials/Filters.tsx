@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion } from 'framer-motion';
 import { Calendar, Filter, FilterX, Loader } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ReportFiltersProps {
   filters: any;
@@ -16,41 +16,101 @@ export function ReportFilters({
   filters,
   onFilterChange,
   onClearFilters,
-  //   onExportToExcel,
   isExporting = false,
   exportProgress = '',
 }: ReportFiltersProps) {
-  const [startDate, setStartDate] = useState<string>(filters.startAt || '');
-  const [endDate, setEndDate] = useState<string>(filters.endAt || '');
+  const [localFilters, setLocalFilters] = useState({
+    status: filters.status || '',
+    startAt: filters.startAt || '',
+    endAt: filters.endAt || '',
+  });
+
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+
+  useEffect(() => {
+    setLocalFilters({
+      status: filters.status || '',
+      startAt: filters.startAt || '',
+      endAt: filters.endAt || '',
+    });
+
+    setStartDate(convertDateForInput(filters.startAt));
+    setEndDate(convertDateForInput(filters.endAt));
+  }, [filters]);
+
+  const convertDateForInput = (dateStr: string): string => {
+    if (!dateStr) return '';
+
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return '';
+
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  };
+
+  const convertDateForAPI = (dateStr: string): string => {
+    if (!dateStr) return '';
+
+    const [year, month, day] = dateStr.split('-');
+    return `${day}-${month}-${year}`;
+  };
 
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setStartDate(value);
-    // Converter para o formato dd-MM-yyyy para a API
+
     if (value) {
-      const [year, month, day] = value.split('-');
-      onFilterChange({ startAt: `${day}-${month}-${year}` });
+      setLocalFilters((prev) => ({
+        ...prev,
+        startAt: convertDateForAPI(value),
+      }));
     } else {
-      onFilterChange({ startAt: undefined });
+      setLocalFilters((prev) => ({ ...prev, startAt: '' }));
     }
   };
 
   const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setEndDate(value);
-    // Converter para o formato dd-MM-yyyy para a API
+
     if (value) {
-      const [year, month, day] = value.split('-');
-      onFilterChange({ endAt: `${day}-${month}-${year}` });
+      setLocalFilters((prev) => ({
+        ...prev,
+        endAt: convertDateForAPI(value),
+      }));
     } else {
-      onFilterChange({ endAt: undefined });
+      setLocalFilters((prev) => ({ ...prev, endAt: '' }));
     }
+  };
+
+  const handleFieldChange = (field: string, value: string) => {
+    setLocalFilters((prev) => ({
+      ...prev,
+      [field]: value || '',
+    }));
   };
 
   const handleClearFilters = () => {
     setStartDate('');
     setEndDate('');
+    setLocalFilters({
+      status: '',
+      startAt: '',
+      endAt: '',
+    });
+
     onClearFilters();
+  };
+
+  const applyFilters = () => {
+    const filtersToApply = Object.fromEntries(
+      Object.entries(localFilters).map(([key, value]) => [
+        key,
+        value || undefined,
+      ]),
+    );
+
+    onFilterChange(filtersToApply);
   };
 
   return (
@@ -66,12 +126,8 @@ export function ReportFilters({
               Status
             </label>
             <select
-              value={filters.status || ''}
-              onChange={(e) =>
-                onFilterChange({
-                  status: e.target.value || undefined,
-                })
-              }
+              value={localFilters.status}
+              onChange={(e) => handleFieldChange('status', e.target.value)}
               className="w-full px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-300 appearance-none cursor-pointer"
               style={{
                 backgroundImage:
@@ -143,7 +199,7 @@ export function ReportFilters({
           </motion.button>
 
           <motion.button
-            onClick={() => onFilterChange(filters)}
+            onClick={applyFilters}
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-sm"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
