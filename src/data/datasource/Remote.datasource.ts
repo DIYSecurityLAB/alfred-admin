@@ -71,7 +71,11 @@ export class RemoteDataSource {
 
     const serialized = model.safeParse(data);
 
-    if (!serialized.success) return null;
+    if (!serialized.success) {
+      console.log(serialized.error?.errors);
+
+      return null;
+    }
 
     return serialized.data;
   }

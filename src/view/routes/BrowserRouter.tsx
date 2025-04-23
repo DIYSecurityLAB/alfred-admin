@@ -4,7 +4,8 @@ import { Users } from '../../pages/Users';
 import { AdminLayout } from '../layout/AdminLayout';
 import { DefaultLayout } from '../layout/DefaultLayout';
 import { Coupons } from '../screens/Coupons/Coupons';
-import { Reports } from '../screens/Report/Report';
+import { DepositDetail } from '../screens/report/DepositDetail';
+import { Reports } from '../screens/report/report';
 import { Settings } from '../screens/Settings/Settings';
 import { BlockedUsers } from '../screens/Users/block/BlockedUser';
 import { BlockedUserDetailsPage } from '../screens/Users/block/details/BlockedUserDetailsPage';
@@ -21,7 +22,8 @@ export function BrowserRouter() {
           />
           <Route path={ROUTES.dashboard} element={<Dashboard />} />
           <Route path={ROUTES.coupons} element={<Coupons />} />
-          <Route path={ROUTES.sales} element={<Reports />} />
+          <Route path={ROUTES.sales.home} element={<Reports />} />
+          <Route path={ROUTES.sales.details.path} element={<DepositDetail />} />
           <Route path={ROUTES.users.home} element={<Users />} />
           <Route path={ROUTES.users.blocked.home} element={<BlockedUsers />} />
           <Route
