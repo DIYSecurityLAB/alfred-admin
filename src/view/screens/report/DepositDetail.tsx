@@ -174,21 +174,6 @@ export function DepositDetail() {
     fetchDeposit();
   }, [fetchDeposit]);
 
-  const formatDate = (dateStr: string) => {
-    try {
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    } catch {
-      return dateStr;
-    }
-  };
-
   const handleBack = () => {
     navigate(ROUTES.sales.home || '/sales');
   };
@@ -266,13 +251,12 @@ export function DepositDetail() {
               </div>
               <p className="text-gray-500 flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                {formatDate(deposit.transactionDate)}
+                {deposit.transactionDate}
               </p>
             </div>
             <StatusBadge status={deposit.status} />
           </div>
 
-          {/* Cards de informação principal */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <InfoCard
               icon={CreditCard}

@@ -26,19 +26,6 @@ export function ReportCards({ reports, onViewDetails }: ReportCardsProps) {
     }
   };
 
-  const formatDate = (date: string) => {
-    if (!date) return 'N/A';
-    try {
-      return new Date(date).toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      });
-    } catch {
-      return date;
-    }
-  };
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {reports.map((report, index) => (
@@ -52,7 +39,6 @@ export function ReportCards({ reports, onViewDetails }: ReportCardsProps) {
         >
           <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
 
-          {/* Header com ID da transação e status */}
           <div className="flex justify-between items-start mb-4">
             <div className="font-mono text-sm text-gray-600 break-all">
               {report.transactionId.substring(0, 12)}...
@@ -64,7 +50,6 @@ export function ReportCards({ reports, onViewDetails }: ReportCardsProps) {
             </span>
           </div>
 
-          {/* Informações principais */}
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-gray-500 flex items-center">
@@ -105,13 +90,10 @@ export function ReportCards({ reports, onViewDetails }: ReportCardsProps) {
                 <Calendar className="h-4 w-4 mr-1 text-gray-400" />
                 Data:
               </span>
-              <span className="text-gray-700">
-                {formatDate(report.transactionDate)}
-              </span>
+              <span className="text-gray-700">{report.transactionDate}</span>
             </div>
           </div>
 
-          {/* Footer com botão de ação */}
           <div className="mt-4 pt-3 border-t border-gray-100">
             <motion.button
               onClick={() => onViewDetails(report)}

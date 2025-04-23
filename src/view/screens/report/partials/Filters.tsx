@@ -61,7 +61,6 @@ export function ReportFilters({
     >
       <div className="flex flex-col space-y-4">
         <div className="flex flex-wrap gap-4">
-          {/* Filtro de Status */}
           <div className="w-full md:w-48">
             <label className="block mb-1.5 text-sm font-medium text-gray-600">
               Status
@@ -93,7 +92,6 @@ export function ReportFilters({
             </select>
           </div>
 
-          {/* Filtro de Data Inicial */}
           <div className="w-full md:w-48">
             <label className="block mb-1.5 text-sm font-medium text-gray-600">
               Data Inicial
@@ -112,7 +110,6 @@ export function ReportFilters({
             </div>
           </div>
 
-          {/* Filtro de Data Final */}
           <div className="w-full md:w-48">
             <label className="block mb-1.5 text-sm font-medium text-gray-600">
               Data Final

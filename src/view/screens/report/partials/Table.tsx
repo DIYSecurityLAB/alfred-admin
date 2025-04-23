@@ -28,19 +28,6 @@ export function ReportTable({ reports, onViewDetails }: ReportTableProps) {
     }
   };
 
-  const formatDate = (date: string) => {
-    if (!date) return 'N/A';
-    try {
-      return new Date(date).toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      });
-    } catch {
-      return date; // Return original if parsing fails
-    }
-  };
-
   const tableVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -85,9 +72,6 @@ export function ReportTable({ reports, onViewDetails }: ReportTableProps) {
               Valor (BRL)
             </th>
             <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
-              Valor Crypto
-            </th>
-            <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
               Status
             </th>
             <th className="py-3 px-4 text-right text-sm font-medium text-gray-600">
@@ -110,7 +94,7 @@ export function ReportTable({ reports, onViewDetails }: ReportTableProps) {
                 {report.username || 'N/A'}
               </td>
               <td className="py-3 px-4 text-gray-800">
-                {formatDate(report.transactionDate)}
+                {report.transactionDate}
               </td>
               <td className="py-3 px-4 text-gray-800">
                 {report.paymentMethod}
@@ -118,9 +102,6 @@ export function ReportTable({ reports, onViewDetails }: ReportTableProps) {
               <td className="py-3 px-4 text-gray-800">{report.cryptoType}</td>
               <td className="py-3 px-4 font-medium text-gray-900">
                 R$ {report.valueBRL.toFixed(2)}
-              </td>
-              <td className="py-3 px-4 text-gray-800">
-                {report.assetValue.toFixed(8)}
               </td>
               <td className="py-3 px-4">
                 <span
