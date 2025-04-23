@@ -89,7 +89,7 @@ export class ReportedDeposit {
 
     entity.status = model.status;
 
-    entity.username = model.username;
+    entity.username = model.username ?? 'unknown';
 
     entity.discountType = model.discountType ?? 'percentege';
 

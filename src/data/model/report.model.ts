@@ -14,7 +14,7 @@ export const ReportedDepositModel = z.object({
   assetValue: z.number(),
   status: PaymentStatusModel,
   cryptoType: CryptoTypeModel,
-  username: z.string(),
+  username: z.string().optional(),
   discountType: z.string().optional(),
   discountValue: z.number().optional(),
   valueCollected: z.number().optional(),

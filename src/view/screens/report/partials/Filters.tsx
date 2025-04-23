@@ -140,6 +140,7 @@ export function ReportFilters({
             >
               <option value="">Todos os status</option>
               <option value="complete">Completo</option>
+              <option value="paid">Pago</option>
               <option value="pending">Pendente</option>
               <option value="canceled">Cancelado</option>
               <option value="review">Em revisão</option>

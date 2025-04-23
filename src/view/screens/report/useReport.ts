@@ -28,24 +28,18 @@ export function useReport() {
     }
   };
 
-  // Preparar filtros para a API
   const prepareApiFilters = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const apiFilters: any = {};
 
     if (filters.status) apiFilters.status = filters.status;
-    if (filters.paymentMethod) apiFilters.paymentMethod = filters.paymentMethod;
-    if (filters.username) apiFilters.username = filters.username;
-    if (filters.cryptoType) apiFilters.cryptoType = filters.cryptoType;
 
-    // Converter formatos de data
     if (filters.startAt) apiFilters.startAt = formatDateForApi(filters.startAt);
     if (filters.endAt) apiFilters.endAt = formatDateForApi(filters.endAt);
 
     return apiFilters;
   };
 
-  // Buscar dados dos relatórios
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['reports', page, perPage, filters],
     queryFn: async () => {
@@ -77,17 +71,15 @@ export function useReport() {
       }
     },
     refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000, // 5 minutos
+    staleTime: 5 * 60 * 1000,
   });
 
-  // Funções para manipulação de estado
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFilterChange = (newFilters: any) => {
-    // Resetar página ao mudar filtros
     if (Object.keys(newFilters).length > 0) {
       setPage(1);
     }
@@ -110,7 +102,6 @@ export function useReport() {
     try {
       onProgress?.('Buscando dados do servidor...');
 
-      // Decide qual usecase chamar com base na existência de filtros
       const hasFilters = Object.keys(prepareApiFilters()).length > 0;
       let result;
 
@@ -124,7 +115,6 @@ export function useReport() {
         });
         result = response.result;
       } else {
-        // Se não tem filtros, usa a usecase all
         onProgress?.('Processando todos os dados para exportação...');
         const response = await UseCases.report.deposit.all.execute();
         result = response.result;
@@ -186,13 +176,11 @@ export function useReport() {
   };
 
   const formatDepositForExcel = (deposit: ReportedDeposit) => {
-    const formattedDate = formatDateForDisplay(deposit.transactionDate);
-
     return {
       ID: deposit.id,
       'ID Transação': deposit.transactionId,
       Usuário: deposit.username || 'N/A',
-      Data: formattedDate,
+      Data: deposit.transactionDate,
       'Método de Pagamento': deposit.paymentMethod,
       'Tipo de Crypto': deposit.cryptoType,
       'Valor (R$)': formatBRLValue(deposit.valueBRL),
@@ -211,22 +199,6 @@ export function useReport() {
         ? formatBRLValue(deposit.valueCollected)
         : 'N/A',
     };
-  };
-
-  // Funções de formatação auxiliares
-  const formatDateForDisplay = (dateStr: string): string => {
-    try {
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    } catch {
-      return dateStr;
-    }
   };
 
   const formatBRLValue = (value: number): string => {
