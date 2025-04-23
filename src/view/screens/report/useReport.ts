@@ -1,156 +1,133 @@
 import { ReportedDeposit } from '@/domain/entities/report.entity';
 import { UseCases } from '@/domain/usecases/UseCases';
-import { useCallback, useEffect, useState } from 'react';
-import * as XLSX from 'xlsx';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
 export function useReport() {
-  const [deposits, setDeposits] = useState<ReportedDeposit[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [startDate, setStartDate] = useState<string | undefined>();
-  const [endDate, setEndDate] = useState<string | undefined>();
-  const [statusFilter, setStatusFilter] = useState<
-    'paid' | 'expired' | 'pending' | 'canceled' | undefined
-  >(undefined);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const itemsPerPage = 10;
-  const [totalPages, setTotalPages] = useState<number>(1);
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [filters, setFilters] = useState<any>({});
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [startDate, endDate, statusFilter, searchQuery]);
+  const formatDateForApi = (dateStr: string) => {
+    if (!dateStr) return undefined;
 
-  const fetchDeposits = useCallback(async () => {
-    setLoading(true);
+    if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+      return dateStr;
+    }
+
     try {
-      const params = {
-        page: currentPage,
-        pageSize: itemsPerPage,
-        status: statusFilter,
-        startAt: startDate,
-        endAt: endDate,
-        search: searchQuery || undefined,
-      };
+      const [year, month, day] = dateStr.split('-');
+      return `${day}-${month}-${year}`;
+    } catch {
+      return dateStr;
+    }
+  };
 
-      const { result } =
-        await UseCases.report.deposit.paginated.execute(params);
+  // Preparar filtros para a API
+  const prepareApiFilters = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const apiFilters: any = {};
 
-      if (result.type === 'ERROR') {
-        handleError(result.error);
-        return;
+    if (filters.status) apiFilters.status = filters.status;
+    if (filters.paymentMethod) apiFilters.paymentMethod = filters.paymentMethod;
+    if (filters.username) apiFilters.username = filters.username;
+    if (filters.cryptoType) apiFilters.cryptoType = filters.cryptoType;
+
+    // Converter formatos de data
+    if (filters.startAt) apiFilters.startAt = formatDateForApi(filters.startAt);
+    if (filters.endAt) apiFilters.endAt = formatDateForApi(filters.endAt);
+
+    return apiFilters;
+  };
+
+  // Buscar dados dos relatórios
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ['reports', page, perPage, filters],
+    queryFn: async () => {
+      try {
+        const filters = prepareApiFilters();
+
+        const { result } = await UseCases.report.deposit.paginated.execute({
+          page: page - 1,
+          pageSize: perPage,
+          status: filters.status,
+          startAt: filters.startAt,
+          endAt: filters.endAt,
+        });
+
+        if (result.type === 'ERROR') {
+          throw new Error(result.error?.code || 'Erro ao carregar relatórios');
+        }
+
+        return {
+          reports: result.data?.data || [],
+          total: (result.data?.totalPages || 0) * (result.data?.pageSize || 0),
+          totalPages: result.data?.totalPages || 0,
+        };
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Erro desconhecido';
+        setError(errorMessage);
+        return { reports: [], total: 0, totalPages: 0 };
       }
+    },
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutos
+  });
 
-      setDeposits(result.data.data);
-      setTotalPages(result.data.totalPages || 1);
-    } catch (error) {
-      console.error('Erro ao buscar depósitos:', error);
-    } finally {
-      setLoading(false);
+  // Funções para manipulação de estado
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFilterChange = (newFilters: any) => {
+    // Resetar página ao mudar filtros
+    if (Object.keys(newFilters).length > 0) {
+      setPage(1);
     }
-  }, [currentPage, startDate, endDate, statusFilter, searchQuery]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setFilters((prev: any) => ({ ...prev, ...newFilters }));
+  };
 
-  useEffect(() => {
-    fetchDeposits();
-  }, [fetchDeposits]);
+  const clearFilters = () => {
+    setFilters({});
+    setPage(1);
+  };
 
-  const handleError = (error: { code: string; message?: string }) => {
-    switch (error.code) {
-      case 'NOT_FOUND':
-        setDeposits([]);
-        break;
-      default:
-        alert(error.message || 'Erro ao buscar depósitos');
-        break;
-    }
+  const clearError = () => {
+    setError(null);
   };
 
   const exportToExcel = async () => {
-    setLoading(true);
     try {
-      if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-        alert('A data final deve ser posterior à data inicial.');
-        return;
-      }
-
-      let allDeposits: ReportedDeposit[] = [];
-      let page = 1;
-      let hasMore = true;
-
-      while (hasMore) {
-        const params = {
-          page,
-          pageSize: itemsPerPage,
-          status: statusFilter,
-          startAt: startDate,
-          endAt: endDate,
-          search: searchQuery || undefined,
-        };
-
-        const { result } =
-          await UseCases.report.deposit.paginated.execute(params);
-
-        if (result.type === 'ERROR') {
-          alert('Erro ao exportar depósitos: ' + result.error.code);
-          return;
-        }
-
-        allDeposits = [...allDeposits, ...result.data.data];
-        hasMore = page < (result.data.totalPages || 1);
-        page++;
-      }
-
-      generateExcelFile(allDeposits);
-    } catch (error) {
-      console.error('Erro ao exportar para Excel:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const generateExcelFile = (data: ReportedDeposit[]) => {
-    const worksheet = XLSX.utils.json_to_sheet(
-      data.map((deposit) => ({
-        'ID da Transação': deposit.transactionId,
-        Telefone: deposit.phone,
-        Carteira: deposit.coldWallet,
-        'Rede Selecionada': deposit.network,
-        'Método de Pagamento': deposit.paymentMethod,
-        'CPF/CNPJ': deposit.documentId,
-        'Data da Transação': deposit.transactionDate,
-        Cupom: deposit.coupon,
-        'Valor em BTC': deposit.assetValue,
-        'Valor em BRL': deposit.valueBRL,
-        Status: deposit.status,
-        Desconto: `${deposit.discountValue}%`,
-        'Valor Recolhido': deposit.valueCollected,
-      })),
-    );
-
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Depósitos');
-    XLSX.writeFile(workbook, 'depositos.xlsx');
-  };
-
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      return true;
+    } catch {
+      setError('Erro ao exportar para Excel');
+      return false;
     }
   };
 
   return {
-    loading,
-    exportToExcel,
-    deposits,
+    reports: (data?.reports as ReportedDeposit[]) || [],
+    totalReports: data?.total || 0,
+    page,
+    perPage,
+    filters,
+    isLoading,
+    error,
+    viewMode,
     handlePageChange,
-    currentPage,
-    totalPages,
-    startDate,
-    endDate,
-    statusFilter,
-    searchQuery,
-    setStartDate,
-    setEndDate,
-    setStatusFilter,
-    setSearchQuery,
+    handleFilterChange,
+    setPerPage,
+    setViewMode,
+    clearFilters,
+    clearError,
+    exportToExcel,
+    refetch,
   };
 }

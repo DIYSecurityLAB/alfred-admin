@@ -1,325 +1,272 @@
-import { StatusBadge } from '@/view/components/StatusBadge';
+import { Pagination } from '@/components/Pagination';
+import { ReportedDeposit } from '@/domain/entities/report.entity';
+import { Container } from '@/view/components/Container';
+import { Error } from '@/view/components/Error';
+import { Loading } from '@/view/components/Loading';
+import { PageHeader } from '@/view/layout/Page/PageHeader';
+import { ToggleHeaderButton } from '@/view/layout/Page/ToggleHeaderButton';
 import { ROUTES } from '@/view/routes/Routes';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  Filter,
-  Search,
-  X,
+  AlertCircle,
+  FileText,
+  LayoutDashboard,
+  LayoutGrid,
+  Loader,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { ReportCards } from './partials/Cards';
+import { ReportFilters } from './partials/Filters';
+import { ReportTable } from './partials/Table';
 import { useReport } from './useReport';
 
-type FilterFormValues = {
-  startDate?: string;
-  endDate?: string;
-  status?: string;
-  search?: string;
-};
+export function Reports() {
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportProgress, setExportProgress] = useState<string>('');
+  const [collapsedHeader, setCollapsedHeader] = useState(false);
+  const navigate = useNavigate();
 
-export function Report() {
   const {
-    loading,
-    exportToExcel,
-    deposits,
+    reports,
+    totalReports,
+    page,
+    perPage,
+    filters,
+    isLoading,
+    error,
+    viewMode,
     handlePageChange,
-    currentPage,
-    totalPages,
-    setStartDate,
-    setEndDate,
-    setStatusFilter,
-    setSearchQuery,
+    handleFilterChange,
+    setPerPage,
+    setViewMode,
+    clearFilters,
+    clearError,
+    exportToExcel,
+    refetch,
   } = useReport();
 
-  const form = useForm<FilterFormValues>();
-  const [showFilters, setShowFilters] = useState(false);
-
-  const startDateValue = useWatch({ control: form.control, name: 'startDate' });
-  const endDateValue = useWatch({ control: form.control, name: 'endDate' });
-  const statusValue = useWatch({ control: form.control, name: 'status' });
-  const searchValue = useWatch({ control: form.control, name: 'search' });
-
   useEffect(() => {
-    const start = startDateValue === '' ? undefined : startDateValue;
-    const end = endDateValue === '' ? undefined : endDateValue;
-    const status = statusValue === '' ? undefined : statusValue;
+    const timeoutId = setTimeout(() => {
+      refetch();
+    }, 100);
 
-    setStartDate(start);
-    setEndDate(end);
-    setStatusFilter(
-      status as 'paid' | 'expired' | 'pending' | 'canceled' | undefined,
-    );
-  }, [
-    startDateValue,
-    endDateValue,
-    statusValue,
-    setStartDate,
-    setEndDate,
-    setStatusFilter,
-  ]);
+    return () => clearTimeout(timeoutId);
+  }, [refetch]);
 
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      setSearchQuery(searchValue || '');
-    }, 300);
-
-    return () => clearTimeout(debounceTimer);
-  }, [searchValue, setSearchQuery]);
-
-  const hasActiveFilters = !!startDateValue || !!endDateValue || !!statusValue;
-
-  const clearFilters = () => {
-    form.reset({
-      startDate: undefined,
-      endDate: undefined,
-      status: undefined,
-    });
+  const openDepositDetails = (report: ReportedDeposit) => {
+    navigate(ROUTES.sales.details.call(report.id));
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
+  const handleExportToExcel = async () => {
+    setIsExporting(true);
+    setExportProgress('Iniciando exportação...');
+    try {
+      setTimeout(() => {
+        if (isExporting) setExportProgress('Buscando dados do servidor...');
+      }, 1000);
+
+      setTimeout(() => {
+        if (isExporting)
+          setExportProgress('Processando dados para exportação...');
+      }, 5000);
+
+      setTimeout(() => {
+        if (isExporting) setExportProgress('Gerando arquivo Excel...');
+      }, 10000);
+
+      return await exportToExcel();
+    } finally {
+      setIsExporting(false);
+      setExportProgress('');
+    }
   };
+
+  const toggleHeader = () => {
+    setCollapsedHeader(!collapsedHeader);
+  };
+
+  if (isLoading && reports.length === 0) {
+    return <Loading label="Carregando relatórios de depósitos..." />;
+  }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      {loading && <>LOADING</>}
-
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <h2 className="text-2xl font-semibold text-gray-800">
-          Reporte de Depósitos
-        </h2>
-
-        <FormProvider {...form}>
+    <Container>
+      <PageHeader
+        title="Relatórios de Depósitos"
+        description="Visualize e exporte relatórios de todos os depósitos realizados."
+        collapsed={collapsedHeader}
+        toggle={toggleHeader}
+        button={
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Pesquisar transações..."
-                className="pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                {...form.register('search')}
-              />
-              <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-            </div>
-
             <button
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                showFilters
-                  ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-                  : 'bg-gray-100 hover:bg-gray-200'
-              }`}
-              onClick={() => setShowFilters(!showFilters)}
-              type="button"
+              onClick={handleExportToExcel}
+              disabled={isExporting}
+              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 text-white rounded-lg transition-colors shadow-sm hover:shadow"
             >
-              <Filter className="h-5 w-5" />
-              <span>Filtros</span>
-              {hasActiveFilters && (
-                <span className="ml-1 px-2 py-0.5 text-xs bg-blue-500 text-white rounded-full">
-                  {
-                    [startDateValue, endDateValue, statusValue].filter(Boolean)
-                      .length
-                  }
-                </span>
+              {isExporting ? (
+                <>
+                  <Loader className="h-5 w-5 animate-spin" />
+                  <span>Exportando...</span>
+                </>
+              ) : (
+                <>
+                  <FileText className="h-5 w-5" />
+                  <span>Exportar Excel</span>
+                </>
               )}
             </button>
-
-            <button
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-              onClick={exportToExcel}
-              type="button"
-            >
-              <Download className="h-5 w-5" />
-              <span>Exportar Excel</span>
-            </button>
+            <ToggleHeaderButton
+              toggle={toggleHeader}
+              collapsed={collapsedHeader}
+            />
           </div>
-        </FormProvider>
-      </div>
-      {showFilters && (
-        <div className="mb-6 bg-gray-50 rounded-lg border border-gray-200 w-full">
-          <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-            <h3 className="text-lg font-medium text-gray-700">
-              Filtros Avançados
+        }
+      />
+
+      <Error error={error} clear={clearError} />
+
+      <ReportFilters
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onClearFilters={clearFilters}
+        onExportToExcel={handleExportToExcel}
+        isExporting={isExporting}
+        exportProgress={exportProgress}
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden p-6"
+      >
+        {isLoading && reports.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16">
+            <Loader className="h-12 w-12 text-blue-500 animate-spin mb-4" />
+            <p className="text-gray-600 font-medium">Carregando dados...</p>
+          </div>
+        ) : reports.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center py-16"
+          >
+            <div className="bg-blue-50 p-3 rounded-full mb-4">
+              <AlertCircle className="h-8 w-8 text-blue-500" />
+            </div>
+            <h3 className="text-xl font-medium mb-2 text-gray-800">
+              Nenhum depósito encontrado
             </h3>
-            {hasActiveFilters && (
+            <p className="text-gray-600 text-center max-w-md mb-6">
+              {Object.keys(filters).length > 0
+                ? 'Nenhum depósito corresponde aos filtros selecionados. Tente ajustar seus filtros.'
+                : 'Não há depósitos registrados no sistema.'}
+            </p>
+            {Object.keys(filters).length > 0 && (
               <button
                 onClick={clearFilters}
-                className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
-                type="button"
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
               >
-                <X className="h-4 w-4" />
                 Limpar filtros
               </button>
             )}
-          </div>
-          <div className="p-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Data Inicial
-                </label>
-                <div className="relative">
-                  <input
-                    type="date"
-                    className="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    {...form.register('startDate')}
+          </motion.div>
+        ) : (
+          <>
+            <motion.div
+              className="mb-6 flex justify-between items-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-gray-700">
+                  Mostrando {reports.length} de {totalReports} resultados
+                </span>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setViewMode('table')}
+                  className={`p-2 rounded-lg transition-all duration-300 ${
+                    viewMode === 'table'
+                      ? 'bg-blue-500 text-white shadow-md'
+                      : 'bg-gray-100 hover:bg-blue-100 text-gray-700 hover:shadow-sm'
+                  }`}
+                  title="Visualizar em tabela"
+                >
+                  <LayoutDashboard className="h-5 w-5" />
+                </button>
+
+                <button
+                  onClick={() => setViewMode('cards')}
+                  className={`p-2 rounded-lg transition-all duration-300 ${
+                    viewMode === 'cards'
+                      ? 'bg-blue-500 text-white shadow-md'
+                      : 'bg-gray-100 hover:bg-blue-100 text-gray-700 hover:shadow-sm'
+                  }`}
+                  title="Visualizar em cards"
+                >
+                  <LayoutGrid className="h-5 w-5" />
+                </button>
+              </div>
+            </motion.div>
+
+            <AnimatePresence mode="wait">
+              {viewMode === 'table' ? (
+                <motion.div
+                  key="table"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="mb-6"
+                >
+                  <ReportTable
+                    reports={reports}
+                    onViewDetails={openDepositDetails}
                   />
-                  <Calendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Data Final
-                </label>
-                <div className="relative">
-                  <input
-                    type="date"
-                    className="w-full pl-10 pr-4 py-2 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    {...form.register('endDate')}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="cards"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="mb-6"
+                >
+                  <ReportCards
+                    reports={reports}
+                    onViewDetails={openDepositDetails}
                   />
-                  <Calendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-gray-100">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Mostrar</span>
+                <select
+                  value={perPage}
+                  onChange={(e) => setPerPage(Number(e.target.value))}
+                  className="border rounded-md px-2 py-1 text-sm bg-gray-50 hover:border-blue-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                </select>
+                <span className="text-sm text-gray-600">itens por página</span>
               </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Status
-                </label>
-                <div className="relative">
-                  <select
-                    className="w-full pl-3 pr-10 py-2 rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                    {...form.register('status')}
-                  >
-                    <option value="">Todos</option>
-                    <option value="paid">Pago</option>
-                    <option value="pending">Pendente</option>
-                    <option value="canceled">Cancelado</option>
-                    <option value="expired">Expirado</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-                    <svg
-                      className="h-5 w-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
+
+              <Pagination
+                currentPage={page}
+                totalItems={totalReports}
+                perPage={perPage}
+                onPageChange={handlePageChange}
+              />
             </div>
-          </div>
-        </div>
-      )}
-
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ID da Transação
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Telefone
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Data
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Valor BRL
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Valor BTC
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Ações
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {deposits.map((deposit) => (
-              <tr key={deposit.transactionId} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {deposit.transactionId}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {deposit.phone}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(deposit.transactionDate).toLocaleDateString()}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {formatCurrency(deposit.valueBRL)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {deposit.assetValue.toFixed(8)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <StatusBadge
-                    status={
-                      deposit.status as
-                        | 'paid'
-                        | 'expired'
-                        | 'pending'
-                        | 'canceled'
-                    }
-                  />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <Link
-                    to={ROUTES.sales.details.call(deposit.id)}
-                    state={{ deposit }}
-                    className="text-blue-500 hover:underline"
-                  >
-                    Detalhes
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex items-center justify-between mt-6">
-        <div className="text-sm text-gray-500">
-          Página {currentPage} de {totalPages}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-
-          <span className="px-4 py-2 rounded-lg bg-gray-100">
-            {currentPage}
-          </span>
-
-          <button
-            className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        </div>
-      </div>
-    </div>
+          </>
+        )}
+      </motion.div>
+    </Container>
   );
 }

@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 export class ReportedDepositPagination {
   data!: ReportedDeposit[];
+  pageSize!: number;
   totalPages?: number;
 
   public static fromModel(
@@ -14,6 +15,8 @@ export class ReportedDepositPagination {
     const entity = new ReportedDepositPagination();
 
     entity.data = model.data.map((item) => ReportedDeposit.fromModel(item));
+
+    entity.pageSize = model.pageSize ?? 0;
 
     entity.totalPages = model.totalPages;
 
@@ -52,6 +55,7 @@ export class ReportedDeposit {
   assetValue!: number;
   status!: PaymentStatus;
   cryptoType!: CryptoType;
+  username!: string;
   discountType!: string;
   discountValue!: number;
   valueCollected!: number;
@@ -77,11 +81,15 @@ export class ReportedDeposit {
       entity.coupon = model.cupom;
     }
 
+    entity.cryptoType = model.cryptoType;
+
     entity.valueBRL = model.valueBRL;
 
     entity.assetValue = model.assetValue;
 
     entity.status = model.status;
+
+    entity.username = model.username;
 
     entity.discountType = model.discountType ?? 'percentege';
 
