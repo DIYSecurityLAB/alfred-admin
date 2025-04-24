@@ -60,3 +60,53 @@ export const ListAllBlockedUserModel = z.object({
   }),
 });
 export type ListAllBlockedUserModel = z.infer<typeof ListAllBlockedUserModel>;
+
+export const ListedUserModel = z.object({
+  id: z.string(),
+  providerId: z.string().nullable(),
+  isActive: z.boolean(),
+  username: z.string().nullable(),
+  level: z.number(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  documents: z.array(
+    z.object({
+      id: z.string(),
+      userId: z.string(),
+      countryCode: z.string(),
+      documentType: DocumentTypeModel,
+      documentNumber: z.string(),
+      expirationDate: z.string().nullable(),
+      isVerified: z.boolean(),
+      createdAt: z.string(),
+      updatedAt: z.string(),
+    }),
+  ),
+  depositos: z.array(
+    z.object({
+      id: z.string(),
+      transactionId: z.string(),
+      phone: z.string(),
+      coldWallet: z.string(),
+      network: z.string(),
+      paymentMethod: z.string(),
+      transactionDate: z.string(),
+      cupom: z.string(),
+      valueBRL: z.number(),
+      assetValue: z.number(),
+      cryptoType: CryptoTypeModel,
+      status: PaymentStatusModel,
+      username: z.string(),
+      userId: z.string(),
+    }),
+  ),
+});
+export type ListedUserModel = z.infer<typeof ListedUserModel>;
+
+export const ListAllUserModel = z.object({
+  data: z.array(ListedUserModel),
+  page: z.number(),
+  itemsPerPage: z.number(),
+  totalPages: z.number(),
+});
+export type ListAllUserModel = z.infer<typeof ListAllUserModel>;
