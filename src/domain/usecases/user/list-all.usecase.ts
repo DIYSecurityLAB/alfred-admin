@@ -7,6 +7,7 @@ export type ListAllReq = {
   page: number;
   itemsPerPage: number;
   userId: string | undefined;
+  username: string | undefined;
 };
 export type ListAllRes = Promise<
   Result<
