@@ -9,6 +9,7 @@ import { ReportDepositOneUseCaseImpl } from './report/deposit-one.usecase';
 import { ReportDepositPaginatedUseCaseImpl } from './report/deposit-paginated.usecase';
 import { BlockUserUseCaseImpl } from './user/blocked/block.usecase';
 import { ListBlockedUserUseCaseImpl } from './user/blocked/list-all.usecase';
+import { ListAllUserCaseImpl } from './user/list-all.usecase';
 
 const API = new RemoteDataSource(String(import.meta.env.VITE_API_URL));
 
@@ -26,6 +27,7 @@ export const UseCases = {
       create: new BlockUserUseCaseImpl(UserRepository),
       list: new ListBlockedUserUseCaseImpl(UserRepository),
     },
+    list: new ListAllUserCaseImpl(UserRepository),
   },
   report: {
     deposit: {
