@@ -36,6 +36,7 @@ type ListReq = {
   page: number;
   itemsPerPage: number;
   userId: string | undefined;
+  username: string | undefined;
 };
 type ListRes = Promise<
   Result<
@@ -55,13 +56,14 @@ export class UserRepositoryImpl implements UserRepository {
 
   @ExceptionHandler()
   async list(req: ListReq): ListRes {
-    const { page, itemsPerPage, userId } = req;
+    const { page, itemsPerPage, userId, username } = req;
 
     const result = await this.api.post({
       url: `/user/list?offet=${page}&limit=${itemsPerPage}`,
       model: ListAllUserModel,
       body: {
         id: userId,
+        username: username,
       },
     });
 

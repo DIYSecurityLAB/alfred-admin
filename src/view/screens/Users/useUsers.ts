@@ -6,9 +6,8 @@ import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export interface UserFilter {
-  username: string;
-  status: 'all' | 'active' | 'inactive';
-  level?: number;
+  username: string | undefined;
+  userId: string | undefined;
 }
 
 export function useUsers() {
@@ -16,13 +15,11 @@ export function useUsers() {
   const [perPage, setPerPage] = useState(10);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<UserFilter>({
-    username: '',
-    status: 'all',
+    username: undefined,
+    userId: undefined,
   });
   const [selectedUser, setSelectedUser] = useState<ListedUser | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isStatusConfirmOpen, setIsStatusConfirmOpen] = useState(false);
   const navigate = useNavigate();
 
   const fetchUsers = useCallback(async (): Promise<ListAllUser> => {
@@ -30,7 +27,8 @@ export function useUsers() {
       const { result } = await UseCases.user.list.execute({
         page: page - 1,
         itemsPerPage: perPage,
-        userId: undefined,
+        userId: filters.userId,
+        username: filters.username,
       });
 
       if (result.type === 'ERROR') {
@@ -48,10 +46,10 @@ export function useUsers() {
         totalPages: 0,
       } as ListAllUser;
     }
-  }, [page, perPage]);
+  }, [page, perPage, filters.userId, filters.username]);
 
   const { data: response, isLoading } = useQuery<ListAllUser, Error>({
-    queryKey: ['users', page, perPage],
+    queryKey: ['users', page, perPage, filters],
     queryFn: fetchUsers,
   });
 
@@ -66,14 +64,17 @@ export function useUsers() {
   const handlePageChange = (newPage: number) => setPage(newPage);
   const clearError = () => setError(null);
 
+  const clearFilters = () => {
+    setFilters({
+      username: undefined,
+      userId: undefined,
+    });
+    setPage(1);
+  };
+
   const openDetailsModal = (user: ListedUser) => {
     setSelectedUser(user);
     navigate(ROUTES.users.details.call(user.id));
-  };
-
-  const openEditModal = (user: ListedUser) => {
-    setSelectedUser(user);
-    setIsEditModalOpen(true);
   };
 
   return {
@@ -88,14 +89,10 @@ export function useUsers() {
     handleFilterChange,
     setPerPage,
     openDetailsModal,
-    openEditModal,
     clearError,
+    clearFilters,
     selectedUser,
     isDetailsModalOpen,
-    isEditModalOpen,
-    isStatusConfirmOpen,
     setIsDetailsModalOpen,
-    setIsEditModalOpen,
-    setIsStatusConfirmOpen,
   };
 }

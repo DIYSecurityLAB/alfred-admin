@@ -82,7 +82,7 @@ export class ReportRepositoryImpl implements ReportRepository {
   ): ReportDepositPaginatedRes {
     const params = new URLSearchParams();
 
-    if (req.page) {
+    if (req.page !== undefined) {
       params.append('page', String(req.page));
     }
 
