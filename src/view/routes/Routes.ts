@@ -11,6 +11,10 @@ export const ROUTES = {
   },
   users: {
     home: '/users',
+    details: {
+      path: '/users/:id',
+      call: (id: string) => `/users/${id}`,
+    },
     blocked: {
       home: '/blocked-users',
       details: {

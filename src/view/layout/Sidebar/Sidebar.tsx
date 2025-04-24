@@ -1,9 +1,18 @@
 import { ROUTES } from '@/view/routes/Routes';
 import classNames from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, ChevronDown, LucideIcon } from 'lucide-react';
+import {
+  ArrowLeft,
+  ChevronDown,
+  CreditCard,
+  LayoutDashboard,
+  LucideIcon,
+  Settings,
+  Tags,
+  UserX,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { SidebarLinkGroup } from './SidebarLinkGroup';
 
 type Item = {
@@ -31,10 +40,9 @@ export type SidebarItems = (Item | DropdownItem)[];
 type SidebarProps = {
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
-  items: SidebarItems;
 };
 
-export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
+export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
   const trigger = useRef<HTMLButtonElement | null>(null);
   const sidebar = useRef<HTMLElement | null>(null);
 
@@ -42,6 +50,40 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
   const [sidebarExpanded, setSidebarExpanded] = useState(
     storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true',
   );
+
+  const { pathname } = useLocation();
+
+  const menuItems: SidebarItems = [
+    {
+      type: 'link',
+      icon: LayoutDashboard,
+      label: 'Dashboard',
+      path: '/dashboard',
+    },
+    { type: 'link', icon: Tags, label: 'Cupons', path: ROUTES.coupons },
+    {
+      type: 'link',
+      icon: CreditCard,
+      label: 'Vendas',
+      path: ROUTES.sales.home,
+    },
+    {
+      type: 'dropdown',
+      icon: UserX,
+      label: 'Usuários',
+      activeCondition: pathname.includes('user'),
+      dropItems: [
+        { path: ROUTES.users.home, label: 'Listar Usuários' },
+        { path: ROUTES.users.blocked.home, label: 'Usuários Bloqueados' },
+      ],
+    },
+    {
+      type: 'link',
+      icon: Settings,
+      label: 'Configurações',
+      path: ROUTES.settings,
+    },
+  ];
 
   useEffect(() => {
     const clickHandler = ({ target }: MouseEvent) => {
@@ -118,7 +160,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, items }: SidebarProps) {
             </h3>
 
             <ul className="flex flex-col gap-2">
-              {items.map((item) => {
+              {menuItems.map((item) => {
                 if (item.type === 'link') {
                   const Icon = item.icon;
                   return (
