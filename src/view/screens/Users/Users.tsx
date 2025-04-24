@@ -1,20 +1,15 @@
 import { Pagination } from '@/components/Pagination';
 import { ListedUser } from '@/domain/entities/User';
-import { Button } from '@/view/components/Button';
 import { Container } from '@/view/components/Container';
 import { Error } from '@/view/components/Error';
 import { Loading } from '@/view/components/Loading';
 import { PageHeader } from '@/view/layout/Page/PageHeader';
 import { ToggleHeaderButton } from '@/view/layout/Page/ToggleHeaderButton';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  AlertCircle,
-  LayoutDashboard,
-  LayoutGrid,
-  UserPlus,
-} from 'lucide-react';
+import { AlertCircle, LayoutDashboard, LayoutGrid } from 'lucide-react';
 import { useState } from 'react';
 import { UserCards } from './partials/Cards';
+import { UserFilters } from './partials/Filter';
 import { UserTable } from './partials/table';
 import { useUsers } from './useUsers';
 
@@ -29,6 +24,7 @@ export function Users() {
     error,
     handlePageChange,
     handleFilterChange,
+    clearFilters,
     setPerPage,
     openDetailsModal,
     clearError,
@@ -54,15 +50,6 @@ export function Users() {
         toggle={toggleHeader}
         button={
           <div className="flex items-center gap-4">
-            <Button
-              onClick={() =>
-                alert(
-                  'Funcionalidade de adicionar usuário ainda não implementada',
-                )
-              }
-              icon={<UserPlus className="h-5 w-5" />}
-              label="Adicionar Usuário"
-            />
             <ToggleHeaderButton
               toggle={toggleHeader}
               collapsed={collapsedHeader}
@@ -70,7 +57,14 @@ export function Users() {
           </div>
         }
       />
+
       <Error error={error} clear={clearError} />
+
+      <UserFilters
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onClearFilters={clearFilters}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -90,26 +84,20 @@ export function Users() {
               Nenhum usuário encontrado
             </h3>
             <p className="text-gray-600 text-center max-w-md mb-6">
-              {filters.username ||
-              filters.status !== 'all' ||
-              filters.level !== undefined
+              {filters.username || filters.userId
                 ? 'Nenhum usuário corresponde aos filtros selecionados. Tente ajustar seus filtros.'
                 : 'Não há usuários registrados no sistema.'}
             </p>
-            <motion.button
-              onClick={() =>
-                handleFilterChange({
-                  status: 'all',
-                  username: '',
-                  level: undefined,
-                })
-              }
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Limpar filtros
-            </motion.button>
+            {(filters.username || filters.userId) && (
+              <motion.button
+                onClick={clearFilters}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Limpar filtros
+              </motion.button>
+            )}
           </motion.div>
         ) : (
           <>

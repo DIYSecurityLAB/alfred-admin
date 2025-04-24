@@ -47,7 +47,7 @@ export function useReport() {
         const filters = prepareApiFilters();
 
         const { result } = await UseCases.report.deposit.paginated.execute({
-          page: page - 1,
+          page: Math.max(0, page - 1),
           pageSize: perPage,
           status: filters.status,
           startAt: filters.startAt,
