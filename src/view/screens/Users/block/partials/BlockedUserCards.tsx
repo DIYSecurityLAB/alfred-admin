@@ -7,16 +7,6 @@ interface BlockedUserCardsProps {
 }
 
 export function BlockedUserCards({ blockedUsers }: BlockedUserCardsProps) {
-  const formatDate = (date: string) => {
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(new Date(date));
-  };
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {blockedUsers.map((user) => (
@@ -59,7 +49,7 @@ export function BlockedUserCards({ blockedUsers }: BlockedUserCardsProps) {
 
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <Calendar className="h-4 w-4" />
-                <span>{formatDate(user.createdAt)}</span>
+                <span>{user.createdAt}</span>
               </div>
 
               {user.user.documents && user.user.documents.length > 0 && (

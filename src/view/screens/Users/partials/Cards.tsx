@@ -8,14 +8,6 @@ interface UserCardsProps {
 }
 
 export function UserCards({ users, onViewDetails }: UserCardsProps) {
-  const formatDate = (date: string) => {
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    }).format(new Date(date));
-  };
-
   const getLevelName = (level: number): string => {
     switch (level) {
       case 1:
@@ -94,7 +86,7 @@ export function UserCards({ users, onViewDetails }: UserCardsProps) {
 
             <div className="flex items-center text-sm text-gray-500 mb-4">
               <Calendar className="h-4 w-4 mr-1" />
-              <span>Criado em {formatDate(user.createdAt)}</span>
+              <span>Criado em {user.createdAt}</span>
             </div>
 
             {user.deposits.length > 0 && (

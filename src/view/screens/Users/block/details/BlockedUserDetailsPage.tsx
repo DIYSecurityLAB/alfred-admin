@@ -54,16 +54,6 @@ export function BlockedUserDetailsPage() {
     queryFn: fetchBlockedUserDetails,
   });
 
-  const formatDate = (date: string) => {
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(new Date(date));
-  };
-
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -163,7 +153,7 @@ export function BlockedUserDetailsPage() {
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Data do Bloqueio</p>
                   <p className="font-medium text-gray-800">
-                    {formatDate(blockedUser.createdAt)}
+                    {blockedUser.createdAt}
                   </p>
                 </div>
                 <Calendar className="h-5 w-5 text-gray-400" />
@@ -275,7 +265,7 @@ export function BlockedUserDetailsPage() {
                   {blockedUser.user.depositos.map((deposito) => (
                     <tr key={deposito.id} className="hover:bg-gray-50">
                       <td className="py-3 px-4 text-sm text-gray-800">
-                        {formatDate(deposito.createdAt)}
+                        {deposito.createdAt}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-800 font-medium">
                         {formatCurrency(deposito.valorBRL)}
