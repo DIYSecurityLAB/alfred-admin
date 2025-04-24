@@ -17,16 +17,6 @@ export function BlockedUserTable({ blockedUsers }: BlockedUserTableProps) {
     setActiveMenu(activeMenu === id ? null : id);
   };
 
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(new Date(date));
-  };
-
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full border-collapse">
@@ -88,7 +78,7 @@ export function BlockedUserTable({ blockedUsers }: BlockedUserTableProps) {
                 )}
               </td>
               <td className="py-3 px-4 text-gray-600 text-sm">
-                {formatDate(new Date(user.createdAt))}
+                {user.createdAt}
               </td>
               <td className="py-3 px-4">
                 <div className="flex items-center justify-center">
