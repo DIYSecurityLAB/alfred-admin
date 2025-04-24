@@ -48,6 +48,7 @@ export function UserDetailsPage() {
       page: 0,
       itemsPerPage: 1,
       userId: id,
+      username: undefined,
     });
 
     if (result.type === 'ERROR') {
