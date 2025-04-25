@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Edit, Eye, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Edit, Eye, Lock, ToggleLeft, ToggleRight } from 'lucide-react';
 import type { Coupon } from '../../../../data/types';
 
 interface CouponTableProps {
@@ -8,6 +8,7 @@ interface CouponTableProps {
   onEdit: (coupon: Coupon) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onToggleStatus: (id: string) => Promise<any>;
+  canEdit?: boolean;
 }
 
 export function CouponTable({
@@ -15,6 +16,7 @@ export function CouponTable({
   onViewDetails,
   onEdit,
   onToggleStatus,
+  canEdit = false,
 }: CouponTableProps) {
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return '-';
@@ -120,32 +122,44 @@ export function CouponTable({
                     >
                       <Eye className="h-5 w-5" />
                     </motion.button>
-                    <motion.button
-                      onClick={() => onEdit(coupon)}
-                      className="p-2 hover:bg-amber-50 rounded-full transition-colors text-amber-500 hover:text-amber-600"
-                      title="Editar"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Edit className="h-5 w-5" />
-                    </motion.button>
-                    <motion.button
-                      onClick={() => onToggleStatus(coupon.id)}
-                      className={`p-2 rounded-full transition-colors ${
-                        coupon.isActive
-                          ? 'hover:bg-red-50 text-green-500 hover:text-red-500'
-                          : 'hover:bg-green-50 text-red-500 hover:text-green-500'
-                      }`}
-                      title={coupon.isActive ? 'Desativar' : 'Ativar'}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      {coupon.isActive ? (
-                        <ToggleRight className="h-5 w-5" />
-                      ) : (
-                        <ToggleLeft className="h-5 w-5" />
-                      )}
-                    </motion.button>
+
+                    {canEdit ? (
+                      <>
+                        <motion.button
+                          onClick={() => onEdit(coupon)}
+                          className="p-2 hover:bg-amber-50 rounded-full transition-colors text-amber-500 hover:text-amber-600"
+                          title="Editar"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                        >
+                          <Edit className="h-5 w-5" />
+                        </motion.button>
+                        <motion.button
+                          onClick={() => onToggleStatus(coupon.id)}
+                          className={`p-2 rounded-full transition-colors ${
+                            coupon.isActive
+                              ? 'hover:bg-red-50 text-green-500 hover:text-red-500'
+                              : 'hover:bg-green-50 text-red-500 hover:text-green-500'
+                          }`}
+                          title={coupon.isActive ? 'Desativar' : 'Ativar'}
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                        >
+                          {coupon.isActive ? (
+                            <ToggleRight className="h-5 w-5" />
+                          ) : (
+                            <ToggleLeft className="h-5 w-5" />
+                          )}
+                        </motion.button>
+                      </>
+                    ) : (
+                      <span
+                        className="p-2 text-gray-400"
+                        title="Acesso restrito"
+                      >
+                        <Lock className="h-5 w-5" />
+                      </span>
+                    )}
                   </div>
                 </td>
               </motion.tr>

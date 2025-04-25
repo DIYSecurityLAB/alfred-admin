@@ -1,7 +1,10 @@
 export const ROUTES = {
   home: '/',
+  login: '/login',
+  setPassword: '/set-password',
   coupons: '/coupons',
   dashboard: '/dashboard',
+  userManagement: '/user-management',
   sales: {
     home: '/sales',
     details: {

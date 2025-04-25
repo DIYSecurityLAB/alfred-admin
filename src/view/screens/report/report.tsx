@@ -1,5 +1,7 @@
 import { Pagination } from '@/components/Pagination';
 import { ReportedDeposit } from '@/domain/entities/report.entity';
+import { useAuth } from '@/hooks/useAuth';
+import { Permission } from '@/models/permissions';
 import { Container } from '@/view/components/Container';
 import { Error } from '@/view/components/Error';
 import { Loading } from '@/view/components/Loading';
@@ -22,6 +24,11 @@ import { ReportTable } from './partials/Table';
 import { useReport } from './useReport';
 
 export function Reports() {
+  const { hasPermission } = useAuth();
+  const canExport = hasPermission(Permission.REPORTS_EXPORT);
+  const canViewDetails = true; // Todos que podem acessar Reports podem ver detalhes
+  const canManageSales = hasPermission(Permission.SALES_MANAGE);
+
   const [isExporting, setIsExporting] = useState(false);
   const [exportProgress, setExportProgress] = useState<string>('');
   const [collapsedHeader, setCollapsedHeader] = useState(false);
@@ -59,6 +66,8 @@ export function Reports() {
   };
 
   const handleExportToExcel = async () => {
+    if (!canExport) return;
+
     setIsExporting(true);
     setExportProgress('Iniciando exportação...');
     try {
@@ -99,23 +108,25 @@ export function Reports() {
         toggle={toggleHeader}
         button={
           <div className="flex items-center gap-4">
-            <button
-              onClick={handleExportToExcel}
-              disabled={isExporting}
-              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 text-white rounded-lg transition-colors shadow-sm hover:shadow"
-            >
-              {isExporting ? (
-                <>
-                  <Loader className="h-5 w-5 animate-spin" />
-                  <span>Exportando...</span>
-                </>
-              ) : (
-                <>
-                  <FileText className="h-5 w-5" />
-                  <span>Exportar Excel</span>
-                </>
-              )}
-            </button>
+            {canExport && (
+              <button
+                onClick={handleExportToExcel}
+                disabled={isExporting}
+                className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 text-white rounded-lg transition-colors shadow-sm hover:shadow"
+              >
+                {isExporting ? (
+                  <>
+                    <Loader className="h-5 w-5 animate-spin" />
+                    <span>Exportando...</span>
+                  </>
+                ) : (
+                  <>
+                    <FileText className="h-5 w-5" />
+                    <span>Exportar Excel</span>
+                  </>
+                )}
+              </button>
+            )}
             <ToggleHeaderButton
               toggle={toggleHeader}
               collapsed={collapsedHeader}
@@ -133,6 +144,7 @@ export function Reports() {
         onExportToExcel={handleExportToExcel}
         isExporting={isExporting}
         exportProgress={exportProgress}
+        canExport={canExport}
       />
 
       <motion.div
@@ -223,6 +235,8 @@ export function Reports() {
                   <ReportTable
                     reports={reports}
                     onViewDetails={openDepositDetails}
+                    canViewDetails={canViewDetails}
+                    canManageSales={canManageSales}
                   />
                 </motion.div>
               ) : (
@@ -236,6 +250,8 @@ export function Reports() {
                   <ReportCards
                     reports={reports}
                     onViewDetails={openDepositDetails}
+                    canViewDetails={canViewDetails}
+                    canManageSales={canManageSales}
                   />
                 </motion.div>
               )}

@@ -1,4 +1,6 @@
 import { Pagination } from '@/components/Pagination';
+import { useAuth } from '@/hooks/useAuth';
+import { Permission } from '@/models/permissions';
 import { Loading } from '@/view/components/Loading';
 import { useCoupons } from '@/view/screens/Coupons/useCoupons';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -18,6 +20,10 @@ import { CouponModal } from './partials/CouponModal';
 import { CouponTable } from './partials/CouponTable';
 
 export function Coupons() {
+  const { hasPermission } = useAuth();
+  const canCreateCoupons = hasPermission(Permission.COUPONS_CREATE);
+  const canEditCoupons = hasPermission(Permission.COUPONS_EDIT);
+
   const {
     coupons,
     totalCoupons,
@@ -119,15 +125,17 @@ export function Coupons() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <motion.button
-              onClick={openCreateModal}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Plus className="h-5 w-5" />
-              Novo Cupom
-            </motion.button>
+            {canCreateCoupons && (
+              <motion.button
+                onClick={openCreateModal}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Plus className="h-5 w-5" />
+                Novo Cupom
+              </motion.button>
+            )}
             <button
               onClick={toggleHeader}
               className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
@@ -187,15 +195,17 @@ export function Coupons() {
                 ? 'Nenhum cupom corresponde aos filtros selecionados. Tente ajustar seus filtros.'
                 : 'Você ainda não criou nenhum cupom. Comece criando seu primeiro cupom de desconto!'}
             </p>
-            <motion.button
-              onClick={openCreateModal}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Plus className="h-5 w-5" />
-              Criar Cupom
-            </motion.button>
+            {canCreateCoupons && (
+              <motion.button
+                onClick={openCreateModal}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Plus className="h-5 w-5" />
+                Criar Cupom
+              </motion.button>
+            )}
           </motion.div>
         ) : (
           <>
@@ -205,6 +215,7 @@ export function Coupons() {
                 onViewDetails={openDetailsModal}
                 onEdit={openEditModal}
                 onToggleStatus={toggleCouponStatus}
+                canEdit={canEditCoupons}
               />
             </div>
             <div className="lg:hidden mb-6">
@@ -213,6 +224,7 @@ export function Coupons() {
                 onViewDetails={openDetailsModal}
                 onEdit={openEditModal}
                 onToggleStatus={toggleCouponStatus}
+                canEdit={canEditCoupons}
               />
             </div>
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-gray-100">
@@ -243,7 +255,7 @@ export function Coupons() {
       </motion.div>
 
       <AnimatePresence mode="wait">
-        {isCreateModalOpen && (
+        {isCreateModalOpen && canCreateCoupons && (
           <CouponModal
             key="create-modal"
             onClose={() => setIsCreateModalOpen(false)}
@@ -252,7 +264,7 @@ export function Coupons() {
             }}
           />
         )}
-        {isEditModalOpen && selectedCoupon && (
+        {isEditModalOpen && selectedCoupon && canEditCoupons && (
           <CouponModal
             key="edit-modal"
             coupon={selectedCoupon}
@@ -267,10 +279,14 @@ export function Coupons() {
             key="details-modal"
             coupon={selectedCoupon}
             onClose={() => setIsDetailsModalOpen(false)}
-            onEdit={() => {
-              setIsDetailsModalOpen(false);
-              setIsEditModalOpen(true);
-            }}
+            onEdit={
+              canEditCoupons
+                ? () => {
+                    setIsDetailsModalOpen(false);
+                    setIsEditModalOpen(true);
+                  }
+                : undefined
+            }
           />
         )}
       </AnimatePresence>

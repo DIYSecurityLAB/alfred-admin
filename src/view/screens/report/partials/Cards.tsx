@@ -1,13 +1,26 @@
 import { ReportedDeposit } from '@/domain/entities/report.entity';
 import { motion } from 'framer-motion';
-import { Bitcoin, Calendar, CreditCard, ExternalLink } from 'lucide-react';
+import {
+  Bitcoin,
+  Calendar,
+  CreditCard,
+  ExternalLink,
+  Lock,
+} from 'lucide-react';
 
 interface ReportCardsProps {
   reports: ReportedDeposit[];
   onViewDetails: (report: ReportedDeposit) => void;
+  canViewDetails?: boolean;
+  canManageSales?: boolean;
 }
 
-export function ReportCards({ reports, onViewDetails }: ReportCardsProps) {
+export function ReportCards({
+  reports,
+  onViewDetails,
+  canViewDetails = true,
+  canManageSales = false,
+}: ReportCardsProps) {
   const getStatusClass = (status: string) => {
     switch (status.toLowerCase()) {
       case 'complete':
@@ -94,17 +107,30 @@ export function ReportCards({ reports, onViewDetails }: ReportCardsProps) {
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-gray-100">
-            <motion.button
-              onClick={() => onViewDetails(report)}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg transition-colors"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <ExternalLink className="h-4 w-4" />
-              <span className="text-sm font-medium">Ver detalhes</span>
-            </motion.button>
-          </div>
+          {canViewDetails && (
+            <div className="mt-4 pt-3 border-t border-gray-100">
+              <motion.button
+                onClick={() => onViewDetails(report)}
+                className={`w-full flex items-center justify-center gap-2 px-4 py-2 
+                  ${
+                    canManageSales
+                      ? 'bg-gray-50 hover:bg-gray-100 text-gray-700'
+                      : 'bg-gray-50 text-gray-500 cursor-default'
+                  } rounded-lg transition-colors`}
+                whileHover={canManageSales ? { scale: 1.02 } : {}}
+                whileTap={canManageSales ? { scale: 0.98 } : {}}
+              >
+                {canManageSales ? (
+                  <ExternalLink className="h-4 w-4" />
+                ) : (
+                  <Lock className="h-4 w-4" />
+                )}
+                <span className="text-sm font-medium">
+                  {canManageSales ? 'Ver detalhes' : 'Visualização limitada'}
+                </span>
+              </motion.button>
+            </div>
+          )}
         </motion.div>
       ))}
     </div>

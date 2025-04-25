@@ -1,3 +1,5 @@
+import { useAuth } from '@/hooks/useAuth';
+import { Permission } from '@/models/permissions';
 import { ROUTES } from '@/view/routes/Routes';
 import classNames from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -6,9 +8,11 @@ import {
   ChevronDown,
   CreditCard,
   LayoutDashboard,
+  Lock,
   LucideIcon,
   Settings,
   Tags,
+  UserCog,
   UserX,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -20,11 +24,13 @@ type Item = {
   icon: LucideIcon;
   label: string;
   path: string;
+  requiredPermission?: Permission | Permission[];
 };
 
 type DropItem = {
   path: string;
   label: string;
+  requiredPermission?: Permission | Permission[];
 };
 
 type DropdownItem = {
@@ -32,6 +38,7 @@ type DropdownItem = {
   icon: LucideIcon;
   label: string;
   activeCondition: boolean;
+  requiredPermission?: Permission | Permission[];
   dropItems: DropItem[];
 };
 
@@ -43,6 +50,7 @@ type SidebarProps = {
 };
 
 export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
+  const { hasPermission } = useAuth();
   const trigger = useRef<HTMLButtonElement | null>(null);
   const sidebar = useRef<HTMLElement | null>(null);
 
@@ -59,22 +67,40 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
       icon: LayoutDashboard,
       label: 'Dashboard',
       path: '/dashboard',
+      requiredPermission: Permission.DASHBOARD_VIEW,
     },
-    { type: 'link', icon: Tags, label: 'Cupons', path: ROUTES.coupons },
+    {
+      type: 'link',
+      icon: Tags,
+      label: 'Cupons',
+      path: ROUTES.coupons,
+      requiredPermission: Permission.COUPONS_VIEW,
+    },
     {
       type: 'link',
       icon: CreditCard,
       label: 'Vendas',
       path: ROUTES.sales.home,
+      requiredPermission: Permission.SALES_VIEW,
     },
     {
       type: 'dropdown',
       icon: UserX,
       label: 'Usuários',
-      activeCondition: pathname.includes('user'),
+      activeCondition:
+        pathname.includes('user') || pathname.includes('blocked'),
+      requiredPermission: Permission.USERS_VIEW,
       dropItems: [
-        { path: ROUTES.users.home, label: 'Listar Usuários' },
-        { path: ROUTES.users.blocked.home, label: 'Usuários Bloqueados' },
+        {
+          path: ROUTES.users.home,
+          label: 'Listar Usuários',
+          requiredPermission: Permission.USERS_VIEW,
+        },
+        {
+          path: ROUTES.users.blocked.home,
+          label: 'Usuários Bloqueados',
+          requiredPermission: Permission.USERS_BLOCK_VIEW, // Usando a nova permissão específica
+        },
       ],
     },
     {
@@ -82,6 +108,14 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
       icon: Settings,
       label: 'Configurações',
       path: ROUTES.settings,
+      requiredPermission: Permission.SETTINGS_VIEW,
+    },
+    {
+      type: 'link',
+      icon: UserCog,
+      label: 'Gerenciamento de Usuários',
+      path: ROUTES.userManagement,
+      requiredPermission: Permission.USER_MANAGEMENT_VIEW, // Usando a permissão correta
     },
   ];
 
@@ -118,6 +152,19 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
       document.querySelector('body')?.classList.remove('sidebar-expanded');
     }
   }, [sidebarExpanded]);
+
+  // Verificar se o usuário tem acesso ao item do menu
+  const checkAccess = (requiredPermission?: Permission | Permission[]) => {
+    if (!requiredPermission) return true; // Se não requer permissão específica, todos têm acesso
+
+    // Verificar se tem todas as permissões necessárias
+    if (Array.isArray(requiredPermission)) {
+      return requiredPermission.some((permission) => hasPermission(permission));
+    }
+
+    // Verificar uma permissão única
+    return hasPermission(requiredPermission);
+  };
 
   return (
     <aside
@@ -163,17 +210,26 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
               {menuItems.map((item) => {
                 if (item.type === 'link') {
                   const Icon = item.icon;
+                  const hasAccess = checkAccess(item.requiredPermission);
+
                   return (
-                    <li key={item.label}>
+                    <li
+                      key={item.label}
+                      className={!hasAccess ? 'opacity-70' : ''}
+                    >
                       <NavLink
-                        to={item.path}
+                        to={hasAccess ? item.path : '#'}
+                        onClick={(e) => {
+                          if (!hasAccess) e.preventDefault();
+                        }}
                         className={({ isActive }) =>
                           classNames(
                             'group relative flex items-center gap-3 rounded-lg py-2.5 px-4 font-medium',
                             'transition-all duration-200 ease-in-out',
-                            isActive
+                            isActive && hasAccess
                               ? 'bg-white/10 text-white backdrop-blur-sm shadow-md'
                               : 'text-blue-100 hover:bg-white/5 hover:text-white',
+                            !hasAccess && 'cursor-not-allowed',
                           )
                         }
                       >
@@ -182,17 +238,22 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
                             <span
                               className={classNames(
                                 'flex items-center justify-center p-1.5 rounded-md',
-                                isActive
+                                isActive && hasAccess
                                   ? 'bg-blue-500 text-white'
                                   : 'text-blue-200 group-hover:text-white',
                               )}
                             >
                               <Icon size={18} />
                             </span>
-                            <span className="font-medium text-sm">
+                            <span className="font-medium text-sm flex-1">
                               {item.label}
                             </span>
-                            {isActive && (
+
+                            {!hasAccess && (
+                              <Lock size={16} className="text-blue-300" />
+                            )}
+
+                            {isActive && hasAccess && (
                               <motion.div
                                 layoutId="activeIndicator"
                                 className="absolute left-0 w-1 h-8 bg-white rounded-r-full"
@@ -211,6 +272,8 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
 
                 if (item.type === 'dropdown') {
                   const Icon = item.icon;
+                  const hasAccess = checkAccess(item.requiredPermission);
+
                   return (
                     <SidebarLinkGroup
                       activeCondition={item.activeCondition}
@@ -221,73 +284,113 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
                           <button
                             onClick={(e) => {
                               e.preventDefault();
-                              if (sidebarExpanded) handleClick();
-                              else setSidebarExpanded(true);
+                              if (hasAccess) {
+                                if (sidebarExpanded) handleClick();
+                                else setSidebarExpanded(true);
+                              }
                             }}
                             className={classNames(
                               'w-full text-left flex items-center gap-3 rounded-lg px-4 py-2.5 font-medium',
                               'transition-all duration-200 ease-in-out',
-                              item.activeCondition
+                              item.activeCondition && hasAccess
                                 ? 'bg-white/10 text-white backdrop-blur-sm shadow-md'
                                 : 'text-blue-100 hover:bg-white/5 hover:text-white',
+                              !hasAccess && 'cursor-not-allowed opacity-70',
                             )}
                           >
                             <span
                               className={classNames(
                                 'flex items-center justify-center p-1.5 rounded-md',
-                                item.activeCondition
+                                item.activeCondition && hasAccess
                                   ? 'bg-blue-500 text-white'
                                   : 'text-blue-200 group-hover:text-white',
                               )}
                             >
                               <Icon size={18} />
                             </span>
-                            <span className="font-medium text-sm">
+                            <span className="font-medium text-sm flex-1">
                               {item.label}
                             </span>
-                            <ChevronDown
-                              size={16}
-                              className={classNames(
-                                'ml-auto transition-transform duration-300',
-                                open ? 'rotate-180' : 'rotate-0',
-                              )}
-                            />
-                          </button>
-                          <AnimatePresence initial={false}>
-                            {open && (
-                              <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{
-                                  duration: 0.3,
-                                  ease: 'easeInOut',
-                                }}
-                                className="overflow-hidden"
-                              >
-                                <ul className="mt-2 flex flex-col gap-1 ml-10 mr-2">
-                                  {item.dropItems.map((dropitem) => (
-                                    <li key={dropitem.label}>
-                                      <NavLink
-                                        to={dropitem.path}
-                                        className={({ isActive }) =>
-                                          classNames(
-                                            'block rounded-md px-4 py-2 text-xs font-medium',
-                                            'transition-all duration-200 ease-in-out',
-                                            isActive
-                                              ? 'bg-blue-600/50 text-white shadow-sm'
-                                              : 'text-blue-200 hover:bg-white/5 hover:text-white',
-                                          )
-                                        }
-                                      >
-                                        {dropitem.label}
-                                      </NavLink>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </motion.div>
+
+                            {!hasAccess ? (
+                              <Lock size={16} className="text-blue-300" />
+                            ) : (
+                              <ChevronDown
+                                size={16}
+                                className={classNames(
+                                  'transition-transform duration-300',
+                                  open ? 'rotate-180' : 'rotate-0',
+                                )}
+                              />
                             )}
-                          </AnimatePresence>
+                          </button>
+
+                          {hasAccess && (
+                            <AnimatePresence initial={false}>
+                              {open && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: 'auto' }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{
+                                    duration: 0.3,
+                                    ease: 'easeInOut',
+                                  }}
+                                  className="overflow-hidden"
+                                >
+                                  <ul className="mt-2 flex flex-col gap-1 ml-10 mr-2">
+                                    {item.dropItems.map((dropitem) => {
+                                      const dropItemAccess = checkAccess(
+                                        dropitem.requiredPermission,
+                                      );
+
+                                      return (
+                                        <li
+                                          key={dropitem.label}
+                                          className={
+                                            !dropItemAccess ? 'opacity-70' : ''
+                                          }
+                                        >
+                                          <NavLink
+                                            to={
+                                              dropItemAccess
+                                                ? dropitem.path
+                                                : '#'
+                                            }
+                                            onClick={(e) => {
+                                              if (!dropItemAccess)
+                                                e.preventDefault();
+                                            }}
+                                            className={({ isActive }) =>
+                                              classNames(
+                                                'block rounded-md px-4 py-2 text-xs font-medium',
+                                                'transition-all duration-200 ease-in-out',
+                                                isActive && dropItemAccess
+                                                  ? 'bg-blue-600/50 text-white shadow-sm'
+                                                  : 'text-blue-200 hover:bg-white/5 hover:text-white',
+                                                !dropItemAccess &&
+                                                  'cursor-not-allowed',
+                                              )
+                                            }
+                                          >
+                                            <div className="flex items-center justify-between">
+                                              <span>{dropitem.label}</span>
+                                              {!dropItemAccess && (
+                                                <Lock
+                                                  size={12}
+                                                  className="text-blue-300"
+                                                />
+                                              )}
+                                            </div>
+                                          </NavLink>
+                                        </li>
+                                      );
+                                    })}
+                                  </ul>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          )}
                         </>
                       )}
                     </SidebarLinkGroup>

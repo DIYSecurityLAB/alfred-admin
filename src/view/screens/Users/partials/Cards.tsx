@@ -5,9 +5,16 @@ import { Calendar, Eye } from 'lucide-react';
 interface UserCardsProps {
   users: ListedUser[];
   onViewDetails: (user: ListedUser) => void;
+  canViewDetails?: boolean;
+  canEditUsers?: boolean;
 }
 
-export function UserCards({ users, onViewDetails }: UserCardsProps) {
+export function UserCards({
+  users,
+  onViewDetails,
+  canViewDetails = true,
+  canEditUsers = false,
+}: UserCardsProps) {
   const getLevelName = (level: number): string => {
     switch (level) {
       case 1:
@@ -96,15 +103,23 @@ export function UserCards({ users, onViewDetails }: UserCardsProps) {
             )}
           </div>
 
-          <div className="border-t border-gray-100 p-4 flex justify-end items-center gap-1">
-            <button
-              onClick={() => onViewDetails(user)}
-              className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
-              title="Ver detalhes"
-            >
-              <Eye className="h-5 w-5 text-blue-500" />
-            </button>
-          </div>
+          {canViewDetails && (
+            <div className="border-t border-gray-100 p-4 flex justify-end items-center gap-1">
+              <button
+                onClick={() => onViewDetails(user)}
+                className={`p-2 rounded-lg transition-colors ${
+                  // Permitir sempre ver detalhes, mas destacar visualmente diferenças
+                  // entre apenas visualizar e poder editar
+                  canEditUsers
+                    ? 'hover:bg-blue-50 text-blue-500'
+                    : 'hover:bg-gray-50 text-blue-600'
+                }`}
+                title="Ver detalhes"
+              >
+                <Eye className="h-5 w-5" />
+              </button>
+            </div>
+          )}
         </motion.div>
       ))}
     </div>
