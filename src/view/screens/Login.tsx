@@ -1,8 +1,8 @@
+import { auth } from '@/configs/firebase';
+import { useAuth } from '@/hooks/useAuth';
 import { isSignInWithEmailLink } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { auth } from '../configs/firebase';
-import { useAuth } from '../hooks/useAuth';
 
 export function Login() {
   const [email, setEmail] = useState('');
