@@ -1,5 +1,7 @@
 import { Pagination } from '@/components/Pagination';
 import { ListedUser } from '@/domain/entities/User';
+import { useAuth } from '@/hooks/useAuth';
+import { Permission } from '@/models/permissions';
 import { Container } from '@/view/components/Container';
 import { Error } from '@/view/components/Error';
 import { Loading } from '@/view/components/Loading';
@@ -29,6 +31,12 @@ export function Users() {
     openDetailsModal,
     clearError,
   } = useUsers();
+
+  const { hasPermission } = useAuth();
+  // Todos que podem visualizar usuários também podem ver seus detalhes
+  const canViewDetails = true;
+  // Apenas usuários com permissão específica podem editar
+  const canEditUsers = hasPermission(Permission.USERS_EDIT);
 
   const [collapsedHeader, setCollapsedHeader] = useState(false);
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
@@ -151,6 +159,8 @@ export function Users() {
                   <UserTable
                     users={users as ListedUser[]}
                     onViewDetails={openDetailsModal}
+                    canViewDetails={canViewDetails}
+                    canEditUsers={canEditUsers}
                   />
                 </motion.div>
               ) : (
@@ -164,6 +174,8 @@ export function Users() {
                   <UserCards
                     users={users as ListedUser[]}
                     onViewDetails={openDetailsModal}
+                    canViewDetails={canViewDetails}
+                    canEditUsers={canEditUsers}
                   />
                 </motion.div>
               )}

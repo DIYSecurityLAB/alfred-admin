@@ -4,6 +4,7 @@ import {
   DollarSign,
   Edit,
   Eye,
+  Lock,
   Percent,
   ShoppingBag,
   Tag,
@@ -18,6 +19,7 @@ interface CouponCardsProps {
   onEdit: (coupon: Coupon) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onToggleStatus: (id: string) => Promise<any>;
+  canEdit?: boolean;
 }
 
 export function CouponCards({
@@ -25,6 +27,7 @@ export function CouponCards({
   onViewDetails,
   onEdit,
   onToggleStatus,
+  canEdit = false,
 }: CouponCardsProps) {
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return '-';
@@ -151,33 +154,44 @@ export function CouponCards({
               <Eye className="h-5 w-5" />
             </motion.button>
 
-            <motion.button
-              onClick={() => onEdit(coupon)}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="p-2 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors text-amber-500 hover:text-amber-600 shadow-sm"
-              title="Editar"
-            >
-              <Edit className="h-5 w-5" />
-            </motion.button>
+            {canEdit ? (
+              <>
+                <motion.button
+                  onClick={() => onEdit(coupon)}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="p-2 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors text-amber-500 hover:text-amber-600 shadow-sm"
+                  title="Editar"
+                >
+                  <Edit className="h-5 w-5" />
+                </motion.button>
 
-            <motion.button
-              onClick={() => onToggleStatus(coupon.id)}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className={`p-2 rounded-lg transition-colors shadow-sm ${
-                coupon.isActive
-                  ? 'bg-green-50 hover:bg-red-50 text-green-500 hover:text-red-500'
-                  : 'bg-red-50 hover:bg-green-50 text-red-500 hover:text-green-500'
-              }`}
-              title={coupon.isActive ? 'Desativar' : 'Ativar'}
-            >
-              {coupon.isActive ? (
-                <ToggleRight className="h-5 w-5" />
-              ) : (
-                <ToggleLeft className="h-5 w-5" />
-              )}
-            </motion.button>
+                <motion.button
+                  onClick={() => onToggleStatus(coupon.id)}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`p-2 rounded-lg transition-colors shadow-sm ${
+                    coupon.isActive
+                      ? 'bg-green-50 hover:bg-red-50 text-green-500 hover:text-red-500'
+                      : 'bg-red-50 hover:bg-green-50 text-red-500 hover:text-green-500'
+                  }`}
+                  title={coupon.isActive ? 'Desativar' : 'Ativar'}
+                >
+                  {coupon.isActive ? (
+                    <ToggleRight className="h-5 w-5" />
+                  ) : (
+                    <ToggleLeft className="h-5 w-5" />
+                  )}
+                </motion.button>
+              </>
+            ) : (
+              <motion.div
+                className="p-2 bg-gray-50 rounded-lg text-gray-400"
+                title="Acesso restrito"
+              >
+                <Lock className="h-5 w-5" />
+              </motion.div>
+            )}
           </div>
         </motion.div>
       ))}

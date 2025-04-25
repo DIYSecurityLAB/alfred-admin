@@ -284,8 +284,8 @@ export function CouponDetailsModal({
               </div>
             </motion.div>
             <motion.div
-              variants={itemVariants}
               className="flex justify-end gap-4 pt-4 border-t border-gray-200"
+              variants={itemVariants}
             >
               <motion.button
                 onClick={onClose}
