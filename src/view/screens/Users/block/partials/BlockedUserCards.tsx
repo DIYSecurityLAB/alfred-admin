@@ -1,12 +1,20 @@
 import { ListAllBlockedUser } from '@/domain/entities/User';
+import { ROUTES } from '@/view/routes/Routes';
 import { motion } from 'framer-motion';
 import { Calendar, Eye, Shield, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface BlockedUserCardsProps {
   blockedUsers: ListAllBlockedUser[];
+  canViewDetails?: boolean;
 }
 
-export function BlockedUserCards({ blockedUsers }: BlockedUserCardsProps) {
+export function BlockedUserCards({
+  blockedUsers,
+  canViewDetails = true,
+}: BlockedUserCardsProps) {
+  const navigate = useNavigate();
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {blockedUsers.map((user) => (
@@ -69,16 +77,21 @@ export function BlockedUserCards({ blockedUsers }: BlockedUserCardsProps) {
             </div>
           </div>
 
-          <div className="border-t border-gray-100 p-4">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg transition-colors"
-            >
-              <Eye className="h-4 w-4" />
-              <span className="text-sm font-medium">Ver detalhes</span>
-            </motion.button>
-          </div>
+          {canViewDetails && (
+            <div className="border-t border-gray-100 p-4">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg transition-colors"
+                onClick={() =>
+                  navigate(ROUTES.users.blocked.details.call(user.userId))
+                }
+              >
+                <Eye className="h-4 w-4" />
+                <span className="text-sm font-medium">Ver detalhes</span>
+              </motion.button>
+            </div>
+          )}
         </motion.div>
       ))}
     </div>

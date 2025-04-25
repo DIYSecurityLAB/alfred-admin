@@ -1,5 +1,7 @@
 import { ReportedDeposit } from '@/domain/entities/report.entity';
 import { UseCases } from '@/domain/usecases/UseCases';
+import { useAuth } from '@/hooks/useAuth';
+import { Permission } from '@/models/permissions';
 import { Container } from '@/view/components/Container';
 import { Error } from '@/view/components/Error';
 import { Loading } from '@/view/components/Loading';
@@ -139,6 +141,9 @@ const CopyableField = ({ label, value }: { label: string; value: string }) => {
 };
 
 export function DepositDetail() {
+  const { hasPermission } = useAuth();
+  const canManageSales = hasPermission(Permission.SALES_MANAGE);
+
   const { depositId } = useParams<{ depositId: string }>();
   const [deposit, setDeposit] = useState<ReportedDeposit>();
   const [loading, setLoading] = useState<boolean>(true);
@@ -228,8 +233,16 @@ export function DepositDetail() {
     <Container>
       <PageHeader
         title="Detalhes do Depósito"
-        description={`Informações completas sobre o depósito: ${deposit.transactionId}`}
-        button={<></>}
+        description={`Informações ${canManageSales ? 'completas' : 'básicas'} sobre o depósito: ${deposit?.transactionId.substring(0, 8) || ''}`}
+        button={
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+          >
+            <ArrowLeft className="h-5 w-5" />
+            Voltar
+          </button>
+        }
         collapsed={false}
         toggle={() => {}}
       />
@@ -281,148 +294,178 @@ export function DepositDetail() {
             />
           </div>
 
-          {/* Seção de detalhes da transação */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-gray-50 rounded-lg p-6 mb-6"
-          >
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-blue-500" />
-              Detalhes do Pagamento
-            </h3>
+          {!canManageSales && (
+            <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100 flex items-start">
+              <Lock className="w-5 h-5 text-blue-600 mr-3 mt-0.5 flex-shrink-0" />
+              <div>
+                <h3 className="text-blue-800 font-medium">
+                  Visualização Limitada
+                </h3>
+                <p className="text-blue-600 text-sm">
+                  Você está visualizando detalhes limitados. Para acesso
+                  completo, contacte um administrador.
+                </p>
+              </div>
+            </div>
+          )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <CopyableField
-                  label="ID da Transação"
-                  value={deposit.transactionId}
-                />
-                <CopyableField label="ID do Depósito" value={deposit.id} />
-                <div>
-                  <p className="text-sm text-gray-500">Método de Pagamento</p>
-                  <p className="text-gray-900 font-medium">
-                    {deposit.paymentMethod}
-                  </p>
-                </div>
-                {deposit.valueCollected > 0 && (
-                  <div>
-                    <p className="text-sm text-gray-500">
-                      Valor Coletado (Taxa)
-                    </p>
-                    <p className="text-gray-900 font-medium">
-                      R$ {deposit.valueCollected.toFixed(2)}
-                    </p>
-                  </div>
-                )}
-                {deposit.coupon && (
-                  <div>
-                    <p className="text-sm text-gray-500">Cupom Aplicado</p>
-                    <div className="flex items-center">
-                      <Tag className="w-4 h-4 text-blue-500 mr-2" />
+          {/* Exibir detalhes avançados somente para quem pode gerenciar */}
+          {canManageSales && (
+            <>
+              {/* Seção de detalhes da transação */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="bg-gray-50 rounded-lg p-6 mb-6"
+              >
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <CreditCard className="w-5 h-5 text-blue-500" />
+                  Detalhes do Pagamento
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <CopyableField
+                      label="ID da Transação"
+                      value={deposit.transactionId}
+                    />
+                    <CopyableField label="ID do Depósito" value={deposit.id} />
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Método de Pagamento
+                      </p>
                       <p className="text-gray-900 font-medium">
-                        {deposit.coupon}
+                        {deposit.paymentMethod}
                       </p>
                     </div>
+                    {deposit.valueCollected > 0 && (
+                      <div>
+                        <p className="text-sm text-gray-500">
+                          Valor Coletado (Taxa)
+                        </p>
+                        <p className="text-gray-900 font-medium">
+                          R$ {deposit.valueCollected.toFixed(2)}
+                        </p>
+                      </div>
+                    )}
+                    {deposit.coupon && (
+                      <div>
+                        <p className="text-sm text-gray-500">Cupom Aplicado</p>
+                        <div className="flex items-center">
+                          <Tag className="w-4 h-4 text-blue-500 mr-2" />
+                          <p className="text-gray-900 font-medium">
+                            {deposit.coupon}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {deposit.discountValue > 0 && (
+                      <div>
+                        <p className="text-sm text-gray-500">
+                          Desconto Aplicado
+                        </p>
+                        <p className="text-gray-900 font-medium">
+                          {deposit.discountType === 'fixed'
+                            ? `R$ ${deposit.discountValue.toFixed(2)}`
+                            : `${deposit.discountValue}%`}
+                        </p>
+                      </div>
+                    )}
                   </div>
-                )}
-                {deposit.discountValue > 0 && (
-                  <div>
-                    <p className="text-sm text-gray-500">Desconto Aplicado</p>
-                    <p className="text-gray-900 font-medium">
-                      {deposit.discountType === 'fixed'
-                        ? `R$ ${deposit.discountValue.toFixed(2)}`
-                        : `${deposit.discountValue}%`}
-                    </p>
-                  </div>
-                )}
-              </div>
 
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-gray-500">Telefone</p>
-                  <div className="flex items-center">
-                    <Smartphone className="w-4 h-4 text-gray-400 mr-2" />
-                    <p className="text-gray-900 font-medium">{deposit.phone}</p>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Usuário</p>
-                  <div className="flex items-center">
-                    <User className="w-4 h-4 text-gray-400 mr-2" />
-                    <p className="text-gray-900 font-medium">
-                      {deposit.username || 'N/A'}
-                    </p>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Status do Pagamento</p>
-                  <StatusBadge status={deposit.status} />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Seção de detalhes de criptomoeda */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-gray-50 rounded-lg p-6"
-          >
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Bitcoin className="w-5 h-5 text-amber-500" />
-              Detalhes da Criptomoeda
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-gray-500">Tipo de Criptomoeda</p>
-                  <p className="text-gray-900 font-medium">
-                    {deposit.cryptoType}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Valor em Crypto</p>
-                  <p className="text-gray-900 font-medium">
-                    {deposit.assetValue.toFixed(8)} {deposit.cryptoType}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Rede</p>
-                  <div className="flex items-center">
-                    <Globe className="w-4 h-4 text-gray-400 mr-2" />
-                    <p className="text-gray-900 font-medium">
-                      {deposit.network}
-                    </p>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Telefone</p>
+                      <div className="flex items-center">
+                        <Smartphone className="w-4 h-4 text-gray-400 mr-2" />
+                        <p className="text-gray-900 font-medium">
+                          {deposit.phone}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Usuário</p>
+                      <div className="flex items-center">
+                        <User className="w-4 h-4 text-gray-400 mr-2" />
+                        <p className="text-gray-900 font-medium">
+                          {deposit.username || 'N/A'}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Status do Pagamento
+                      </p>
+                      <StatusBadge status={deposit.status} />
+                    </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="space-y-4">
-                <CopyableField label="Wallet" value={deposit.coldWallet} />
+              {/* Seção de detalhes de criptomoeda */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="bg-gray-50 rounded-lg p-6"
+              >
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Bitcoin className="w-5 h-5 text-amber-500" />
+                  Detalhes da Criptomoeda
+                </h3>
 
-                <div>
-                  <button
-                    onClick={() =>
-                      window.open(
-                        `https://www.blockchain.com/explorer/addresses/btc/${deposit.coldWallet}`,
-                        '_blank',
-                      )
-                    }
-                    className="mt-2 inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors"
-                  >
-                    <ExternalLink className="w-4 h-4 mr-1" />
-                    Ver na Blockchain
-                  </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Tipo de Criptomoeda
+                      </p>
+                      <p className="text-gray-900 font-medium">
+                        {deposit.cryptoType}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Valor em Crypto</p>
+                      <p className="text-gray-900 font-medium">
+                        {deposit.assetValue.toFixed(8)} {deposit.cryptoType}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Rede</p>
+                      <div className="flex items-center">
+                        <Globe className="w-4 h-4 text-gray-400 mr-2" />
+                        <p className="text-gray-900 font-medium">
+                          {deposit.network}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <CopyableField label="Wallet" value={deposit.coldWallet} />
+
+                    <div>
+                      <button
+                        onClick={() =>
+                          window.open(
+                            `https://www.blockchain.com/explorer/addresses/btc/${deposit.coldWallet}`,
+                            '_blank',
+                          )
+                        }
+                        className="mt-2 inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+                      >
+                        <ExternalLink className="w-4 h-4 mr-1" />
+                        Ver na Blockchain
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </motion.div>
+              </motion.div>
+            </>
+          )}
 
-          {/* Mensagens de status */}
+          {/* Mensagens de status são visíveis para todos */}
           <AnimatePresence>
             {deposit.status === 'expired' && (
               <motion.div

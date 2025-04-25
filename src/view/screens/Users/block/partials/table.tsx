@@ -7,9 +7,13 @@ import { useNavigate } from 'react-router-dom';
 
 type BlockedUserTableProps = {
   blockedUsers: ListAllBlockedUser[];
+  canViewDetails?: boolean;
 };
 
-export function BlockedUserTable({ blockedUsers }: BlockedUserTableProps) {
+export function BlockedUserTable({
+  blockedUsers,
+  canViewDetails = true,
+}: BlockedUserTableProps) {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -82,48 +86,58 @@ export function BlockedUserTable({ blockedUsers }: BlockedUserTableProps) {
               </td>
               <td className="py-3 px-4">
                 <div className="flex items-center justify-center">
-                  <div className="relative">
-                    <button
-                      onClick={() => toggleMenu(user.id)}
-                      className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
-                    >
-                      <MoreVertical className="h-5 w-5 text-gray-500" />
-                    </button>
-                    {activeMenu === user.id && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="absolute right-0 z-10 mt-2 bg-white rounded-lg shadow-lg border border-gray-100 py-1 w-40"
-                      >
+                  {canViewDetails ? (
+                    <>
+                      <div className="relative">
                         <button
+                          onClick={() => toggleMenu(user.id)}
+                          className="p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+                        >
+                          <MoreVertical className="h-5 w-5 text-gray-500" />
+                        </button>
+                        {activeMenu === user.id && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="absolute right-0 z-10 mt-2 bg-white rounded-lg shadow-lg border border-gray-100 py-1 w-40"
+                          >
+                            <button
+                              onClick={() => {
+                                setActiveMenu(null);
+                                navigate(
+                                  ROUTES.users.blocked.details.call(
+                                    user.userId,
+                                  ),
+                                );
+                              }}
+                              className="w-full px-4 py-2 text-left text-sm flex items-center hover:bg-gray-50 transition-colors"
+                            >
+                              <Eye className="h-4 w-4 mr-2 text-gray-500" />
+                              Ver detalhes
+                            </button>
+                          </motion.div>
+                        )}
+                      </div>
+                      <div className="hidden sm:flex gap-1 ml-2">
+                        <motion.button
                           onClick={() => {
-                            setActiveMenu(null);
                             navigate(
                               ROUTES.users.blocked.details.call(user.userId),
                             );
                           }}
-                          className="w-full px-4 py-2 text-left text-sm flex items-center hover:bg-gray-50 transition-colors"
+                          className="p-1.5 hover:bg-blue-50 rounded-full text-blue-500 transition-colors"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
                         >
-                          <Eye className="h-4 w-4 mr-2 text-gray-500" />
-                          Ver detalhes
-                        </button>
-                      </motion.div>
-                    )}
-                  </div>
-                  <div className="hidden sm:flex gap-1 ml-2">
-                    <motion.button
-                      onClick={() => {
-                        navigate(
-                          ROUTES.users.blocked.details.call(user.userId),
-                        );
-                      }}
-                      className="p-1.5 hover:bg-blue-50 rounded-full text-blue-500 transition-colors"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Eye className="h-5 w-5" />
-                    </motion.button>
-                  </div>
+                          <Eye className="h-5 w-5" />
+                        </motion.button>
+                      </div>
+                    </>
+                  ) : (
+                    <span className="text-gray-400 text-sm">
+                      Acesso restrito
+                    </span>
+                  )}
                 </div>
               </td>
             </motion.tr>

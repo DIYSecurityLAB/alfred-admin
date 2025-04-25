@@ -1,4 +1,6 @@
 import { Pagination } from '@/components/Pagination';
+import { useAuth } from '@/hooks/useAuth';
+import { Permission } from '@/models/permissions'; // Atualizado para usar o arquivo correto
 import { Button } from '@/view/components/Button';
 import { Container } from '@/view/components/Container';
 import { Error } from '@/view/components/Error';
@@ -28,6 +30,12 @@ export function BlockedUsers() {
   } = useBlockedUsers();
 
   const { isModalOpen, openModal, closeModal } = useBlockUser();
+  const { hasPermission } = useAuth();
+
+  // Usar a permissão correta para gerenciar bloqueios
+  const canBlockUsers = hasPermission(Permission.USERS_BLOCK_MANAGE);
+  // Todos usuários com permissão de visualizar bloqueados podem ver detalhes
+  const canViewDetails = true;
 
   const [collapsedHeader, setCollapsedHeader] = useState(false);
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
@@ -49,11 +57,13 @@ export function BlockedUsers() {
         toggle={toggleHeader}
         button={
           <div className="flex items-center gap-4">
-            <Button
-              onClick={openModal}
-              icon={<Plus className="h-5 w-5" />}
-              label="Bloquear Usuário"
-            />
+            {canBlockUsers && (
+              <Button
+                onClick={openModal}
+                icon={<Plus className="h-5 w-5" />}
+                label="Bloquear Usuário"
+              />
+            )}
             <ToggleHeaderButton
               toggle={toggleHeader}
               collapsed={collapsedHeader}
@@ -80,15 +90,17 @@ export function BlockedUsers() {
             <h3 className="text-xl font-medium mb-2 text-gray-800">
               Nenhum usuário bloqueado encontrado
             </h3>
-            <motion.button
-              onClick={openModal}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Plus className="h-5 w-5" />
-              Bloquear Usuário
-            </motion.button>
+            {canBlockUsers && (
+              <motion.button
+                onClick={openModal}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Plus className="h-5 w-5" />
+                Bloquear Usuário
+              </motion.button>
+            )}
           </motion.div>
         ) : (
           <>
@@ -140,7 +152,10 @@ export function BlockedUsers() {
                   exit={{ opacity: 0 }}
                   className="mb-6"
                 >
-                  <BlockedUserTable blockedUsers={blockedUsers} />
+                  <BlockedUserTable
+                    blockedUsers={blockedUsers}
+                    canViewDetails={canViewDetails}
+                  />
                 </motion.div>
               ) : (
                 <motion.div
@@ -150,7 +165,10 @@ export function BlockedUsers() {
                   exit={{ opacity: 0 }}
                   className="mb-6"
                 >
-                  <BlockedUserCards blockedUsers={blockedUsers} />
+                  <BlockedUserCards
+                    blockedUsers={blockedUsers}
+                    canViewDetails={canViewDetails}
+                  />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -183,7 +201,9 @@ export function BlockedUsers() {
         )}
       </motion.div>
 
-      <BlockUserModal isOpen={isModalOpen} onClose={closeModal} />
+      {canBlockUsers && (
+        <BlockUserModal isOpen={isModalOpen} onClose={closeModal} />
+      )}
     </Container>
   );
 }

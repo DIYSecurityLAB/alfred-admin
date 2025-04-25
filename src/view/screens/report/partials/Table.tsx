@@ -1,13 +1,20 @@
 import { ReportedDeposit } from '@/domain/entities/report.entity';
 import { motion } from 'framer-motion';
-import { Eye } from 'lucide-react';
+import { Eye, Lock } from 'lucide-react';
 
 interface ReportTableProps {
   reports: ReportedDeposit[];
   onViewDetails: (report: ReportedDeposit) => void;
+  canViewDetails?: boolean;
+  canManageSales?: boolean;
 }
 
-export function ReportTable({ reports, onViewDetails }: ReportTableProps) {
+export function ReportTable({
+  reports,
+  onViewDetails,
+  canViewDetails = true,
+  canManageSales = false,
+}: ReportTableProps) {
   const getStatusClass = (status: string) => {
     switch (status.toLowerCase()) {
       case 'complete':
@@ -111,14 +118,27 @@ export function ReportTable({ reports, onViewDetails }: ReportTableProps) {
                 </span>
               </td>
               <td className="py-3 px-4 text-right">
-                <motion.button
-                  onClick={() => onViewDetails(report)}
-                  className="p-1.5 hover:bg-blue-50 rounded-full text-blue-500 transition-colors"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <Eye className="h-5 w-5" />
-                </motion.button>
+                {canViewDetails ? (
+                  <motion.button
+                    onClick={() => onViewDetails(report)}
+                    className={`p-1.5 rounded-full transition-colors ${
+                      canManageSales
+                        ? 'text-blue-500 hover:bg-blue-50'
+                        : 'text-blue-400'
+                    }`}
+                    whileHover={canManageSales ? { scale: 1.1 } : {}}
+                    whileTap={canManageSales ? { scale: 0.9 } : {}}
+                    title={
+                      canManageSales ? 'Ver detalhes' : 'Visualizar somente'
+                    }
+                  >
+                    <Eye className="h-5 w-5" />
+                  </motion.button>
+                ) : (
+                  <span className="text-gray-400 flex items-center justify-center">
+                    <Lock className="h-4 w-4" />
+                  </span>
+                )}
               </td>
             </motion.tr>
           ))}

@@ -5,6 +5,8 @@ import { Calendar, Eye } from 'lucide-react';
 type UserTableProps = {
   users: ListedUser[];
   onViewDetails: (user: ListedUser) => void;
+  canViewDetails?: boolean;
+  canEditUsers?: boolean;
 };
 
 const getLevelName = (level: number): string => {
@@ -26,7 +28,12 @@ const getLevelName = (level: number): string => {
   }
 };
 
-export function UserTable({ users, onViewDetails }: UserTableProps) {
+export function UserTable({
+  users,
+  onViewDetails,
+  canViewDetails = true,
+  canEditUsers = false,
+}: UserTableProps) {
   return (
     <div className="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
       <table className="min-w-full divide-y divide-gray-100">
@@ -112,15 +119,22 @@ export function UserTable({ users, onViewDetails }: UserTableProps) {
               </td>
               <td className="py-4 px-4">
                 <div className="flex items-center justify-center gap-1">
-                  <motion.button
-                    onClick={() => onViewDetails(user)}
-                    className="p-1.5 hover:bg-blue-50 rounded-full text-blue-500 transition-colors"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    title="Ver detalhes"
-                  >
-                    <Eye className="h-5 w-5" />
-                  </motion.button>
+                  {canViewDetails && (
+                    <motion.button
+                      onClick={() => onViewDetails(user)}
+                      className={`p-1.5 rounded-full transition-colors ${
+                        // Sempre permitir visualização, mas com estilos diferentes
+                        canEditUsers
+                          ? 'hover:bg-blue-50 text-blue-500'
+                          : 'hover:bg-gray-50 text-blue-600'
+                      }`}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      title="Ver detalhes"
+                    >
+                      <Eye className="h-5 w-5" />
+                    </motion.button>
+                  )}
                 </div>
               </td>
             </motion.tr>

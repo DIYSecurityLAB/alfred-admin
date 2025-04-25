@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion } from 'framer-motion';
-import { Calendar, Filter, FilterX, Loader } from 'lucide-react';
+import {
+  Calendar,
+  Download,
+  Filter,
+  FilterX,
+  Loader,
+  Lock,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface ReportFiltersProps {
@@ -10,14 +17,17 @@ interface ReportFiltersProps {
   onExportToExcel: () => Promise<boolean>;
   isExporting?: boolean;
   exportProgress?: string;
+  canExport?: boolean;
 }
 
 export function ReportFilters({
   filters,
   onFilterChange,
   onClearFilters,
+  onExportToExcel,
   isExporting = false,
   exportProgress = '',
+  canExport = false,
 }: ReportFiltersProps) {
   const [localFilters, setLocalFilters] = useState({
     status: filters.status || '',
@@ -186,36 +196,71 @@ export function ReportFilters({
           </div>
         </div>
 
-        <div className="flex justify-end mt-2 gap-3">
-          <motion.button
-            onClick={handleClearFilters}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors text-gray-700"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            title="Limpar filtros"
-            disabled={isExporting}
-          >
-            <FilterX className="h-5 w-5" />
-            <span>Limpar filtros</span>
-          </motion.button>
+        <div className="flex justify-between mt-2">
+          <div>
+            {canExport && (
+              <motion.button
+                onClick={onExportToExcel}
+                disabled={isExporting}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg ${
+                  isExporting
+                    ? 'bg-amber-100 text-amber-800'
+                    : 'bg-green-50 hover:bg-green-100 border border-green-200 text-green-700'
+                } transition-colors`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                title="Exportar para Excel"
+              >
+                {isExporting ? (
+                  <Loader className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Download className="h-5 w-5" />
+                )}
+                <span>{isExporting ? 'Exportando...' : 'Exportar Excel'}</span>
+              </motion.button>
+            )}
+          </div>
 
-          <motion.button
-            onClick={applyFilters}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-sm"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            title="Aplicar filtros"
-            disabled={isExporting}
-          >
-            <Filter className="h-5 w-5" />
-            <span>Aplicar filtros</span>
-          </motion.button>
+          <div className="flex gap-3">
+            <motion.button
+              onClick={handleClearFilters}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-colors text-gray-700"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              title="Limpar filtros"
+              disabled={isExporting}
+            >
+              <FilterX className="h-5 w-5" />
+              <span>Limpar filtros</span>
+            </motion.button>
+
+            <motion.button
+              onClick={applyFilters}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-sm"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              title="Aplicar filtros"
+              disabled={isExporting}
+            >
+              <Filter className="h-5 w-5" />
+              <span>Aplicar filtros</span>
+            </motion.button>
+          </div>
         </div>
 
         {isExporting && (
           <div className="flex items-center gap-2 mt-2 p-3 bg-amber-50 border border-amber-100 rounded-lg text-amber-700">
             <Loader className="h-5 w-5 animate-spin" />
             <span className="text-sm font-medium">{exportProgress}</span>
+          </div>
+        )}
+
+        {!canExport && (
+          <div className="flex items-center gap-2 mt-2 p-3 bg-gray-50 border border-gray-100 rounded-lg text-gray-500">
+            <Lock className="h-5 w-5" />
+            <span className="text-sm">
+              Você não tem permissão para exportar dados.
+            </span>
           </div>
         )}
       </div>
