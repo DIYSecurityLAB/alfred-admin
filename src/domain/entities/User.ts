@@ -1,4 +1,7 @@
-import { ListAllBlockedUserModel } from '@/data/model/user/user.model';
+import {
+  ListAllBlockedUserModel,
+  ListedUserModel,
+} from '@/data/model/user/user.model';
 import { z } from 'zod';
 
 export const BlockUser = z
@@ -83,4 +86,101 @@ export class ListAllBlockedUser {
 
     return entity;
   }
+}
+
+export class UserDocument {
+  id!: string;
+  userId!: string;
+  countryCode!: string;
+  documentType!: DocumentType;
+  documentNumber!: string;
+  expirationDate!: string | null;
+  isVerified!: boolean;
+  createdAt!: string;
+  updatedAt!: string;
+}
+
+export class Deposit {
+  id!: string;
+  transactionId!: string;
+  phone!: string;
+  coldWallet!: string;
+  network!: string;
+  paymentMethod!: string;
+  transactionDate!: string;
+  cupom!: string | null;
+  valueBRL!: number;
+  assetValue!: number;
+  cryptoType!: CryptoType;
+  status!: PaymentStatus;
+  username!: string;
+  userId!: string;
+}
+
+export class ListedUser {
+  id!: string;
+  providerId!: string;
+  isActive!: boolean;
+  username!: string | null;
+  level!: number;
+  createdAt!: string;
+  updatedAt!: string;
+  documents!: UserDocument[];
+  deposits!: Deposit[];
+
+  public static fromModel(model: ListedUserModel): ListedUser {
+    const entity = new ListedUser();
+
+    entity.id = model.id;
+    entity.providerId = model.providerId;
+    entity.isActive = model.isActive;
+    entity.username = model.username;
+    entity.level = model.level;
+    entity.createdAt = model.createdAt;
+    entity.updatedAt = model.updatedAt;
+    entity.documents = model.documents;
+    entity.deposits = model.depositos;
+
+    entity.documents = model.documents.map((doc) => {
+      return {
+        id: doc.id,
+        userId: doc.userId,
+        countryCode: doc.countryCode,
+        documentType: doc.documentType,
+        documentNumber: doc.documentNumber,
+        expirationDate: doc.expirationDate,
+        isVerified: doc.isVerified,
+        createdAt: doc.createdAt,
+        updatedAt: doc.updatedAt,
+      };
+    });
+
+    entity.deposits = model.depositos.map((dep) => {
+      return {
+        id: dep.id,
+        transactionId: dep.transactionId,
+        phone: dep.phone,
+        coldWallet: dep.coldWallet,
+        network: dep.network,
+        paymentMethod: dep.paymentMethod,
+        transactionDate: dep.transactionDate,
+        cupom: dep.cupom,
+        valueBRL: dep.valueBRL,
+        assetValue: dep.assetValue,
+        cryptoType: dep.cryptoType,
+        status: dep.status,
+        username: dep.username,
+        userId: dep.userId,
+      };
+    });
+
+    return entity;
+  }
+}
+
+export class ListAllUser {
+  data!: ListedUser[];
+  page!: number;
+  itemsPerPage!: number;
+  totalPages!: number;
 }

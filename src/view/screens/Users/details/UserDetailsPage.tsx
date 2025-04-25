@@ -1,4 +1,4 @@
-import { ListAllBlockedUser } from '@/domain/entities/User';
+import { ListedUser } from '@/domain/entities/User';
 import { UseCases } from '@/domain/usecases/UseCases';
 import { Container } from '@/view/components/Container';
 import { Loading } from '@/view/components/Loading';
@@ -13,23 +13,42 @@ import {
   CreditCard,
   ExternalLink,
   File,
-  Shield,
   User,
 } from 'lucide-react';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-export function BlockedUserDetailsPage() {
+const getLevelName = (level: number): string => {
+  switch (level) {
+    case 0:
+      return 'Madeira';
+    case 1:
+      return 'Bronze';
+    case 2:
+      return 'Prata';
+    case 3:
+      return 'Ouro';
+    case 4:
+      return 'Platina';
+    case 5:
+      return 'Diamante';
+    default:
+      return `Nível ${level}`;
+  }
+};
+
+export function UserDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const fetchBlockedUserDetails = React.useCallback(async () => {
+  const fetchUserDetails = React.useCallback(async () => {
     if (!id) throw new Error('ID não fornecido');
 
-    const { result } = await UseCases.user.block.list.execute({
-      page: 1,
+    const { result } = await UseCases.user.list.execute({
+      page: 0,
       itemsPerPage: 1,
       userId: id,
+      username: undefined,
     });
 
     if (result.type === 'ERROR') {
@@ -38,20 +57,20 @@ export function BlockedUserDetailsPage() {
       );
     }
 
-    if (!Array.isArray(result.data) || result.data.length === 0) {
-      throw new Error('Usuário bloqueado não encontrado');
+    if (!result.data) {
+      throw new Error('Usuário não encontrado');
     }
 
-    return result.data[0];
+    return result.data.data[0] as ListedUser;
   }, [id]);
 
   const {
-    data: blockedUser,
+    data: user,
     isLoading,
     error,
-  } = useQuery<ListAllBlockedUser>({
-    queryKey: ['blockedUserDetails', id],
-    queryFn: fetchBlockedUserDetails,
+  } = useQuery<ListedUser>({
+    queryKey: ['userDetails', id],
+    queryFn: fetchUserDetails,
   });
 
   const formatCurrency = (value: number) => {
@@ -62,25 +81,34 @@ export function BlockedUserDetailsPage() {
   };
 
   const getStatusBadge = (status: string) => {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case 'complete':
+      case 'completed':
         return 'bg-green-100 text-green-800';
       case 'pending':
         return 'bg-yellow-100 text-yellow-800';
       case 'canceled':
+      case 'cancelled':
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
 
+  const getLevelClass = (level: number) => {
+    if (level >= 4) return 'bg-purple-100 text-purple-800 border-purple-200';
+    if (level >= 3) return 'bg-blue-100 text-blue-800 border-blue-200';
+    if (level >= 2) return 'bg-green-100 text-green-800 border-green-200';
+    return 'bg-gray-100 text-gray-800 border-gray-200';
+  };
+
   const goBack = () => navigate(-1);
 
   if (isLoading) {
-    return <Loading label="Carregando detalhes do usuário bloqueado..." />;
+    return <Loading label="Carregando detalhes do usuário..." />;
   }
 
-  if (error || !blockedUser) {
+  if (error || !user) {
     return (
       <Container>
         <div className="flex flex-col items-center justify-center py-16">
@@ -88,9 +116,7 @@ export function BlockedUserDetailsPage() {
             <AlertTriangle className="h-8 w-8 text-yellow-500" />
           </div>
           <h3 className="text-xl font-medium mb-2 text-gray-800">
-            {error instanceof Error
-              ? error.message
-              : 'Usuário bloqueado não encontrado'}
+            {error instanceof Error ? error.message : 'Usuário não encontrado'}
           </h3>
           <button
             onClick={goBack}
@@ -107,8 +133,8 @@ export function BlockedUserDetailsPage() {
   return (
     <Container>
       <PageHeader
-        title="Detalhes do Usuário Bloqueado"
-        description="Visualize as informações detalhadas do bloqueio e do usuário"
+        title="Detalhes do Usuário"
+        description="Visualize as informações detalhadas do usuário"
         button={
           <button
             onClick={goBack}
@@ -129,32 +155,65 @@ export function BlockedUserDetailsPage() {
       >
         <div className="border-b border-gray-100 pb-6">
           <h2 className="text-xl font-semibold mb-4 flex items-center text-gray-800">
-            <Shield className="h-5 w-5 text-red-500 mr-2" />
-            Informações do Bloqueio
+            <User className="h-5 w-5 text-blue-500 mr-2" />
+            Informações do Usuário
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-500 mb-1">ID do Bloqueio</p>
-              <p className="font-medium text-gray-800 break-all">
-                {blockedUser.id}
+              <p className="text-sm text-gray-500 mb-1">Username</p>
+              <p className="font-medium text-gray-800">
+                {user.username || 'N/A'}
               </p>
             </div>
 
             <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-500 mb-1">Motivo</p>
+              <p className="text-sm text-gray-500 mb-1">ID do Usuário</p>
+              <p className="font-medium text-gray-800 break-all">{user.id}</p>
+            </div>
+
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-500 mb-1">Provider ID</p>
               <p className="font-medium text-gray-800">
-                {blockedUser.reason || 'Não especificado'}
+                {user.providerId || 'N/A'}
               </p>
+            </div>
+
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-500 mb-1">Nível</p>
+              <span
+                className={`px-2.5 py-1 rounded-full text-sm font-medium border inline-flex ${getLevelClass(user.level)}`}
+              >
+                {getLevelName(user.level)}
+              </span>
+            </div>
+
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-500 mb-1">Status</p>
+              <span
+                className={`px-2.5 py-1 rounded-full text-sm font-medium ${user.isActive ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'}`}
+              >
+                {user.isActive ? 'Ativo' : 'Inativo'}
+              </span>
             </div>
 
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">Data do Bloqueio</p>
-                  <p className="font-medium text-gray-800">
-                    {blockedUser.createdAt}
+                  <p className="text-sm text-gray-500 mb-1">Data de Criação</p>
+                  <p className="font-medium text-gray-800">{user.createdAt}</p>
+                </div>
+                <Calendar className="h-5 w-5 text-gray-400" />
+              </div>
+            </div>
+
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">
+                    Última Atualização
                   </p>
+                  <p className="font-medium text-gray-800">{user.updatedAt}</p>
                 </div>
                 <Calendar className="h-5 w-5 text-gray-400" />
               </div>
@@ -162,35 +221,13 @@ export function BlockedUserDetailsPage() {
           </div>
         </div>
 
-        <div className="border-b border-gray-100 pb-6">
-          <h2 className="text-xl font-semibold mb-4 flex items-center text-gray-800">
-            <User className="h-5 w-5 text-blue-500 mr-2" />
-            Informações do Usuário
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-500 mb-1">Username</p>
-              <p className="font-medium text-gray-800">
-                {blockedUser.user.username || 'N/A'}
-              </p>
-            </div>
-
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-500 mb-1">ID do Usuário</p>
-              <p className="font-medium text-gray-800 break-all">
-                {blockedUser.userId}
-              </p>
-            </div>
-          </div>
-
+        <div>
           <h3 className="text-lg font-medium mb-3 flex items-center text-gray-800">
             <File className="h-5 w-5 text-gray-500 mr-2" />
             Documentos
           </h3>
 
-          {blockedUser.user.documents &&
-          blockedUser.user.documents.length > 0 ? (
+          {user.documents && user.documents.length > 0 ? (
             <div className="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm">
               <table className="min-w-full divide-y divide-gray-100">
                 <thead className="bg-gray-50">
@@ -204,10 +241,16 @@ export function BlockedUserDetailsPage() {
                     <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
                       País
                     </th>
+                    <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
+                      Verificado
+                    </th>
+                    <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
+                      Data de Expiração
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {blockedUser.user.documents.map((doc) => (
+                  {user.documents.map((doc) => (
                     <tr key={doc.id} className="hover:bg-gray-50">
                       <td className="py-3 px-4 text-sm text-gray-800">
                         {doc.documentType}
@@ -217,6 +260,16 @@ export function BlockedUserDetailsPage() {
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-800">
                         {doc.countryCode}
+                      </td>
+                      <td className="py-3 px-4 text-sm">
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${doc.isVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}
+                        >
+                          {doc.isVerified ? 'Sim' : 'Não'}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-800">
+                        {doc.expirationDate ? doc.expirationDate : 'N/A'}
                       </td>
                     </tr>
                   ))}
@@ -233,12 +286,11 @@ export function BlockedUserDetailsPage() {
             <CreditCard className="h-5 w-5 text-green-500 mr-2" />
             Histórico de Depósitos
             <span className="ml-2 text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-              {blockedUser.user.depositos?.length || 0}
+              {user.deposits?.length || 0}
             </span>
           </h2>
 
-          {blockedUser.user.depositos &&
-          blockedUser.user.depositos.length > 0 ? (
+          {user.deposits && user.deposits.length > 0 ? (
             <div className="bg-white border border-gray-100 rounded-lg overflow-x-auto shadow-sm">
               <table className="min-w-full divide-y divide-gray-100">
                 <thead className="bg-gray-50">
@@ -247,7 +299,10 @@ export function BlockedUserDetailsPage() {
                       Data
                     </th>
                     <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
-                      Valor
+                      Valor (R$)
+                    </th>
+                    <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
+                      Valor Crypto
                     </th>
                     <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
                       Crypto
@@ -256,39 +311,42 @@ export function BlockedUserDetailsPage() {
                       Status
                     </th>
                     <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">
-                      ID da Transação
+                      Método
                     </th>
                     <th className="py-3 px-4 text-left text-sm font-medium text-gray-600"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {blockedUser.user.depositos.map((deposito) => (
-                    <tr key={deposito.id} className="hover:bg-gray-50">
+                  {user.deposits.map((deposit) => (
+                    <tr key={deposit.id} className="hover:bg-gray-50">
                       <td className="py-3 px-4 text-sm text-gray-800">
-                        {deposito.createdAt}
+                        {deposit.transactionDate}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-800 font-medium">
-                        {formatCurrency(deposito.valorBRL)}
+                        {formatCurrency(deposit.valueBRL)}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-800">
-                        {deposito.cryptoType || 'N/A'}
+                        {deposit.assetValue} {deposit.cryptoType}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-800">
+                        {deposit.cryptoType || 'N/A'}
                       </td>
                       <td className="py-3 px-4">
                         <span
-                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusBadge(deposito.status)}`}
+                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusBadge(deposit.status)}`}
                         >
-                          {deposito.status}
+                          {deposit.status}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-sm text-gray-600 font-mono">
-                        {deposito.transactionId.substring(0, 10)}...
+                      <td className="py-3 px-4 text-sm text-gray-800">
+                        {deposit.paymentMethod}
                       </td>
                       <td className="py-3 px-4 text-right">
                         <button
                           className="text-blue-500 hover:text-blue-700"
                           title="Ver detalhes"
                           onClick={() =>
-                            navigate(ROUTES.sales.details.call(deposito.id))
+                            navigate(ROUTES.sales.details.call(deposit.id))
                           }
                         >
                           <ExternalLink className="h-4 w-4" />
