@@ -89,19 +89,9 @@ export function Login() {
       return;
     }
 
-    if (
-      !email.endsWith('@diyseclab.io') &&
-      email !== 'lucasqcampos9@gmail.com'
-    ) {
-      setError(
-        'Apenas emails com domínio @diyseclab.io ou o email lucasqcampos9@gmail.com são permitidos.',
-      );
-      return;
-    }
-
     try {
-      if (loginMethod === 'link' || isNewUser) {
-        // Novo usuário ou solicitação de link - envia link por email
+      if (loginMethod === 'link') {
+        // Solicitação de link - envia link por email
         const result = await sendLoginLink(email);
         if (result) {
           setSuccess('Link de login enviado para seu email!');
@@ -109,7 +99,7 @@ export function Login() {
           setError('Falha ao enviar o email. Tente novamente.');
         }
       } else {
-        // Usuário existente - tenta login com senha
+        // Login com senha
         if (!password) {
           setError('Por favor, insira sua senha.');
           return;
@@ -145,7 +135,7 @@ export function Login() {
       <div className="p-8 bg-white rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4 text-center">Login Admin</h2>
         <p className="text-center mb-6">
-          Use seu email @diyseclab.io para acessar
+          Use apos login, peça para um admin liberar suas funcionalidades.
         </p>
 
         {error && (
