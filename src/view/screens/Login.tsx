@@ -10,18 +10,13 @@ export function Login() {
   const [isProcessingLink, setIsProcessingLink] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [isNewUser, setIsNewUser] = useState(false);
+
   const [loginMethod, setLoginMethod] = useState<'password' | 'link'>(
     'password',
   );
 
-  const {
-    sendLoginLink,
-    confirmSignIn,
-    currentUser,
-    loginWithPassword,
-    checkUserExists,
-  } = useAuth();
+  const { sendLoginLink, confirmSignIn, currentUser, loginWithPassword } =
+    useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -66,17 +61,6 @@ export function Login() {
 
     checkEmailLink();
   }, [confirmSignIn, navigate, location]);
-
-  // Verificar se o email já está registrado quando o usuário digita
-  const handleEmailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newEmail = e.target.value;
-    setEmail(newEmail);
-
-    if (newEmail && newEmail.includes('@')) {
-      const exists = await checkUserExists(newEmail);
-      setIsNewUser(!exists);
-    }
-  };
 
   // Lidar com o envio do formulário de login
   const handleSubmit = async (e: React.FormEvent) => {
@@ -135,7 +119,7 @@ export function Login() {
       <div className="p-8 bg-white rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4 text-center">Login Admin</h2>
         <p className="text-center mb-6">
-          Use apos login, peça para um admin liberar suas funcionalidades.
+          Use após login, peça para um admin liberar suas funcionalidades.
         </p>
 
         {error && (
@@ -158,13 +142,13 @@ export function Login() {
               type="email"
               id="email"
               value={email}
-              onChange={handleEmailChange}
-              placeholder="seu.email@diyseclab.io"
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Digite seu email"
               className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {!isNewUser && loginMethod === 'password' && (
+          {loginMethod === 'password' && (
             <div className="mb-4">
               <label htmlFor="password" className="block mb-2 font-medium">
                 Senha
@@ -180,36 +164,32 @@ export function Login() {
             </div>
           )}
 
-          {!isNewUser && (
-            <div className="mb-4 flex justify-between text-sm">
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  checked={loginMethod === 'password'}
-                  onChange={() => setLoginMethod('password')}
-                  className="mr-2"
-                />
-                Entrar com senha
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  checked={loginMethod === 'link'}
-                  onChange={() => setLoginMethod('link')}
-                  className="mr-2"
-                />
-                Enviar link por email
-              </label>
-            </div>
-          )}
+          <div className="mb-4 flex justify-between text-sm">
+            <label className="flex items-center">
+              <input
+                type="radio"
+                checked={loginMethod === 'password'}
+                onChange={() => setLoginMethod('password')}
+                className="mr-2"
+              />
+              Entrar com senha
+            </label>
+            <label className="flex items-center">
+              <input
+                type="radio"
+                checked={loginMethod === 'link'}
+                onChange={() => setLoginMethod('link')}
+                className="mr-2"
+              />
+              Enviar link por email
+            </label>
+          </div>
 
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition duration-200"
           >
-            {isNewUser || loginMethod === 'link'
-              ? 'Enviar Link de Login'
-              : 'Entrar'}
+            {loginMethod === 'link' ? 'Enviar Link de Login' : 'Entrar'}
           </button>
         </form>
       </div>
