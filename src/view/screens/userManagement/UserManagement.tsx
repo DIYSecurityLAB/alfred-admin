@@ -22,14 +22,14 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { db } from '../../configs/firebase';
-import { useAuth } from '../../hooks/useAuth';
-import { Permission, PermissionPresets } from '../../models/permissions';
-import { Button } from '../components/Button';
-import { Container } from '../components/Container';
-import { Error } from '../components/Error';
-import { Loading } from '../components/Loading';
-import { PageHeader } from '../layout/Page/PageHeader';
+import { db } from '../../../configs/firebase';
+import { useAuth } from '../../../hooks/useAuth';
+import { Permission, PermissionPresets } from '../../../models/permissions';
+import { Button } from '../../components/Button';
+import { Container } from '../../components/Container';
+import { Error } from '../../components/Error';
+import { Loading } from '../../components/Loading';
+import { PageHeader } from '../../layout/Page/PageHeader';
 
 interface UserData {
   id: string;
@@ -245,10 +245,10 @@ function PermissionsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000] p-4 overflow-y-auto">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden my-8">
         {/* Cabeçalho */}
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 sticky top-0 bg-white z-10">
           <div className="flex items-center gap-3">
             <div className="bg-blue-100 p-2 rounded-full">
               <Shield className="h-6 w-6 text-blue-600" />
@@ -269,7 +269,7 @@ function PermissionsModal({
         </div>
 
         {/* Corpo */}
-        <div className="overflow-y-auto p-6 max-h-[calc(90vh-130px)]">
+        <div className="overflow-y-auto p-4 md:p-6 max-h-[calc(90vh-130px)]">
           {/* Barra de busca e presets */}
           <div className="mb-6">
             <div className="relative flex-grow max-w-md mb-6">
@@ -398,8 +398,8 @@ function PermissionsModal({
         </div>
 
         {/* Rodapé */}
-        <div className="border-t border-gray-200 px-6 py-4 flex justify-between items-center">
-          <div>
+        <div className="border-t border-gray-200 px-4 md:px-6 py-4 flex flex-col sm:flex-row justify-between items-center sticky bottom-0 bg-white z-10">
+          <div className="mb-3 sm:mb-0">
             <button
               onClick={clearAllPermissions}
               className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center gap-1"
@@ -408,17 +408,17 @@ function PermissionsModal({
               Limpar todas
             </button>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full sm:w-auto">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
+              className="flex-1 sm:flex-initial px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
             >
               Cancelar
             </button>
             <button
               onClick={onSave}
               disabled={isSaving}
-              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300 flex items-center gap-1"
+              className="flex-1 sm:flex-initial px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300 flex items-center justify-center gap-1"
             >
               {isSaving ? (
                 <>Salvando...</>
@@ -449,6 +449,21 @@ export function UserManagement() {
     [],
   );
   const [updateLoading, setUpdateLoading] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
+
+  useEffect(() => {
+    // Detectar viewport para renderização responsiva
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+
+    handleResize(); // Executar uma vez ao carregar
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     fetchUsers();
@@ -557,6 +572,72 @@ export function UserManagement() {
     setEditingUser(null);
   };
 
+  // Componente de Card para visualização móvel
+  const UserCard = ({ user }: { user: UserData }) => (
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 mb-4">
+      <div className="flex items-center mb-3">
+        <div className="h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
+          <User className="h-5 w-5 text-gray-500" />
+        </div>
+        <div className="ml-3">
+          <h3 className="font-medium">{user.email}</h3>
+          <p className="text-xs text-gray-500">
+            ID: {user.id.substring(0, 8)}...
+          </p>
+        </div>
+      </div>
+
+      <div className="border-t border-gray-100 pt-3 mb-3">
+        <div className="flex flex-wrap gap-1 mb-2">
+          <span className="text-xs text-gray-500 w-full mb-1">Permissões:</span>
+          {(user.permissions || []).slice(0, 3).map((permission, index) => (
+            <span
+              key={index}
+              className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800"
+              title={getPermissionLabel(permission)}
+            >
+              {permission.split('_')[0]}
+            </span>
+          ))}
+          {(user.permissions || []).length > 3 && (
+            <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+              +{(user.permissions || []).length - 3}
+            </span>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 text-sm text-gray-500">
+          <div>
+            <p className="text-xs font-medium">Acessos</p>
+            <p className="text-gray-900">{user.loginCount || 0}</p>
+          </div>
+          <div>
+            <p className="text-xs font-medium">Último Login</p>
+            <p className="text-gray-900">{formatDate(user.lastLogin)}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-2">
+        {canEditPermissions && (
+          <button
+            onClick={() => openPermissionsModal(user)}
+            className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-2 rounded-md transition-colors"
+            title="Alterar permissões"
+          >
+            <Shield className="h-4 w-4" />
+          </button>
+        )}
+        <button
+          className="text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 p-2 rounded-md transition-colors"
+          title="Mais ações"
+        >
+          <MoreHorizontal className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
+
   if (loading) {
     return <Loading label="Carregando usuários..." />;
   }
@@ -582,7 +663,7 @@ export function UserManagement() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-lg shadow-md border border-gray-100 p-6"
+        className="bg-white rounded-lg shadow-md border border-gray-100 p-4 md:p-6"
       >
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -593,11 +674,11 @@ export function UserManagement() {
             </span>
           </h2>
 
-          <div className="flex items-center gap-2">
-            <div className="relative">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div className="relative flex-1 sm:flex-initial">
               <button
                 onClick={() => setFilters({})}
-                className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-50"
+                className="w-full sm:w-auto px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm flex items-center justify-center sm:justify-start gap-2 hover:bg-gray-50"
               >
                 <Filter className="h-4 w-4 text-gray-500" />
                 <span>Filtrar</span>
@@ -609,8 +690,8 @@ export function UserManagement() {
               </button>
             </div>
 
-            <div className="relative">
-              <button className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm flex items-center gap-2 hover:bg-gray-50">
+            <div className="relative flex-1 sm:flex-initial">
+              <button className="w-full sm:w-auto px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm flex items-center justify-center sm:justify-start gap-2 hover:bg-gray-50">
                 <ArrowUpDown className="h-4 w-4 text-gray-500" />
                 <span>Ordenar</span>
               </button>
@@ -618,110 +699,119 @@ export function UserManagement() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Usuário
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Permissões
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Acessos
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Último Login
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Registro
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user) => (
-                <tr
-                  key={user.id}
-                  className="hover:bg-gray-50 transition-colors"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
-                        <User className="h-5 w-5 text-gray-500" />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {user.email}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          ID: {user.id.substring(0, 8)}...
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-wrap gap-1 max-w-xs">
-                      {(user.permissions || [])
-                        .slice(0, 3)
-                        .map((permission, index) => (
-                          <span
-                            key={index}
-                            className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800"
-                            title={getPermissionLabel(permission)}
-                          >
-                            {permission.split('_')[0]}
-                          </span>
-                        ))}
-                      {(user.permissions || []).length > 3 && (
-                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
-                          +{(user.permissions || []).length - 3}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      {user.loginCount || 0}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      {formatDate(user.lastLogin)}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      {formatDate(user.createdAt)}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end gap-2">
-                      {canEditPermissions && (
-                        <button
-                          onClick={() => openPermissionsModal(user)}
-                          className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-2 rounded-md transition-colors"
-                          title="Alterar permissões"
-                        >
-                          <Shield className="h-4 w-4" />
-                        </button>
-                      )}
-                      <button
-                        className="text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 p-2 rounded-md transition-colors"
-                        title="Mais ações"
-                      >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
+        {/* Renderização condicional: Tabela para desktop, Cards para mobile */}
+        {isMobileView ? (
+          <div className="space-y-4">
+            {users.map((user) => (
+              <UserCard key={user.id} user={user} />
+            ))}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Usuário
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Permissões
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Acessos
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Último Login
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Registro
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ações
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {users.map((user) => (
+                  <tr
+                    key={user.id}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
+                          <User className="h-5 w-5 text-gray-500" />
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-gray-900">
+                            {user.email}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            ID: {user.id.substring(0, 8)}...
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-wrap gap-1 max-w-xs">
+                        {(user.permissions || [])
+                          .slice(0, 3)
+                          .map((permission, index) => (
+                            <span
+                              key={index}
+                              className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800"
+                              title={getPermissionLabel(permission)}
+                            >
+                              {permission.split('_')[0]}
+                            </span>
+                          ))}
+                        {(user.permissions || []).length > 3 && (
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                            +{(user.permissions || []).length - 3}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {user.loginCount || 0}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {formatDate(user.lastLogin)}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {formatDate(user.createdAt)}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end gap-2">
+                        {canEditPermissions && (
+                          <button
+                            onClick={() => openPermissionsModal(user)}
+                            className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 p-2 rounded-md transition-colors"
+                            title="Alterar permissões"
+                          >
+                            <Shield className="h-4 w-4" />
+                          </button>
+                        )}
+                        <button
+                          className="text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 p-2 rounded-md transition-colors"
+                          title="Mais ações"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         {users.length === 0 && (
           <div className="text-center py-10">

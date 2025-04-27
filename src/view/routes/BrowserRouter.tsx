@@ -9,7 +9,7 @@ import { DepositDetail } from '../screens/report/DepositDetail';
 import { Reports } from '../screens/report/report';
 import { SetPassword } from '../screens/SetPassword';
 import { Settings } from '../screens/Settings/Settings';
-import { UserManagement } from '../screens/UserManagement';
+import { UserManagement } from '../screens/userManagement/UserManagement';
 import { BlockedUsers } from '../screens/Users/block/BlockedUser';
 import { BlockedUserDetailsPage } from '../screens/Users/block/details/BlockedUserDetailsPage';
 import { UserDetailsPage } from '../screens/Users/details/UserDetailsPage';

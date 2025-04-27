@@ -1,6 +1,7 @@
 import {
   EmailAuthProvider,
   User,
+  createUserWithEmailAndPassword,
   isSignInWithEmailLink,
   onAuthStateChanged,
   reauthenticateWithCredential,
@@ -49,6 +50,7 @@ interface AuthContextProps {
   logout: () => Promise<void>;
   hasPermission: (permission: Permission) => boolean;
   hasAnyPermission: (permissions: Permission[]) => boolean;
+  registerWithPassword: (email: string, password: string) => Promise<boolean>;
 }
 
 export const AuthContext = createContext<AuthContextProps | null>(null);
@@ -204,6 +206,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Método para registrar um usuário diretamente com email e senha
+  const registerWithPassword = async (
+    email: string,
+    password: string,
+  ): Promise<boolean> => {
+    try {
+      // Criar o usuário no Firebase Authentication
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+
+      if (result.user) {
+        // Criar o documento do usuário no Firestore com permissões básicas
+        const userDocRef = doc(db, 'users', result.user.uid);
+        await setDoc(userDocRef, {
+          email: result.user.email,
+          permissions: [Permission.DASHBOARD_VIEW], // Permissão básica inicial
+          loginCount: 1,
+          lastLogin: serverTimestamp(),
+          createdAt: serverTimestamp(),
+          hasPassword: true, // Já tem senha configurada
+        });
+
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Erro ao registrar usuário:', error);
+      return false;
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
@@ -246,6 +282,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout,
     hasPermission: checkHasPermission,
     hasAnyPermission: checkHasAnyPermission,
+    registerWithPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
