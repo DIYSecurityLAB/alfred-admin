@@ -1,6 +1,7 @@
 import { auth } from '@/configs/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { isSignInWithEmailLink } from 'firebase/auth';
+import { Eye, EyeOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -10,13 +11,21 @@ export function Login() {
   const [isProcessingLink, setIsProcessingLink] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [isRegister, setIsRegister] = useState(false);
   const [loginMethod, setLoginMethod] = useState<'password' | 'link'>(
     'password',
   );
 
-  const { sendLoginLink, confirmSignIn, currentUser, loginWithPassword } =
-    useAuth();
+  const {
+    sendLoginLink,
+    confirmSignIn,
+    currentUser,
+    loginWithPassword,
+    checkUserExists,
+    registerWithPassword, // Presume-se que este método foi adicionado ao hook useAuth
+  } = useAuth();
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -89,15 +98,38 @@ export function Login() {
           return;
         }
 
-        const result = await loginWithPassword(email, password);
-        if (!result) {
-          setError('Email ou senha incorretos. Tente novamente.');
+        if (isRegister) {
+          // Verificar se o email já existe
+          const userExists = await checkUserExists(email);
+          if (userExists) {
+            setError(
+              'Este email já está cadastrado. Faça login ou use outro email.',
+            );
+            return;
+          }
+
+          // Registro direto com email e senha
+          const result = await registerWithPassword(email, password);
+          if (result) {
+            setSuccess('Conta criada com sucesso! Você será redirecionado...');
+            setTimeout(() => {
+              navigate('/');
+            }, 2000);
+          } else {
+            setError('Falha ao criar a conta. Tente novamente.');
+          }
+        } else {
+          // Tentativa de login
+          const result = await loginWithPassword(email, password);
+          if (!result) {
+            setError('Email ou senha incorretos. Tente novamente.');
+          }
+          // Se for bem-sucedido, o useEffect vai redirecionar
         }
-        // Se for bem-sucedido, o useEffect vai redirecionar
       }
     } catch (err) {
-      setError('Ocorreu um erro. Tente novamente.');
       console.error(err);
+      setError('Ocorreu um erro durante a autenticação. Tente novamente.');
     }
   };
 
@@ -114,12 +146,44 @@ export function Login() {
     );
   }
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="p-8 bg-white rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4 text-center">Login Admin</h2>
-        <p className="text-center mb-6">
-          Use após login, peça para um admin liberar suas funcionalidades.
+        {/* Tab de seleção entre Login e Registro */}
+        <div className="flex mb-6 bg-gray-100 p-1 rounded-lg">
+          <button
+            onClick={() => setIsRegister(false)}
+            className={`flex-1 py-2 px-4 text-center rounded-md transition-all ${
+              !isRegister
+                ? 'bg-white shadow-sm text-blue-600 font-medium'
+                : 'text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            Login
+          </button>
+          <button
+            onClick={() => setIsRegister(true)}
+            className={`flex-1 py-2 px-4 text-center rounded-md transition-all ${
+              isRegister
+                ? 'bg-white shadow-sm text-blue-600 font-medium'
+                : 'text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            Primeiro Acesso
+          </button>
+        </div>
+
+        <h2 className="text-2xl font-bold mb-2 text-center">
+          {isRegister ? 'Criar Conta' : 'Login Admin'}
+        </h2>
+        <p className="text-center mb-6 text-gray-600 text-sm">
+          {isRegister
+            ? 'Registre-se para acessar o painel administrativo.'
+            : 'Use após login, peça para um admin liberar suas funcionalidades.'}
         </p>
 
         {error && (
@@ -153,43 +217,66 @@ export function Login() {
               <label htmlFor="password" className="block mb-2 font-medium">
                 Senha
               </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Digite sua senha"
-                className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Digite sua senha"
+                  className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
           )}
 
-          <div className="mb-4 flex justify-between text-sm">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                checked={loginMethod === 'password'}
-                onChange={() => setLoginMethod('password')}
-                className="mr-2"
-              />
-              Entrar com senha
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                checked={loginMethod === 'link'}
-                onChange={() => setLoginMethod('link')}
-                className="mr-2"
-              />
-              Enviar link por email
-            </label>
-          </div>
+          {/* Opção de método de login - somente visível na tela de login, não no registro */}
+          {!isRegister && (
+            <div className="mb-6">
+              <label className="block mb-2 font-medium">Método de acesso</label>
+              <div className="flex bg-gray-100 p-1 rounded-lg">
+                <button
+                  type="button"
+                  onClick={() => setLoginMethod('password')}
+                  className={`flex-1 py-2 px-4 text-sm text-center rounded-md transition-all ${
+                    loginMethod === 'password'
+                      ? 'bg-white shadow-sm text-blue-600 font-medium'
+                      : 'text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  Usar senha
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLoginMethod('link')}
+                  className={`flex-1 py-2 px-4 text-sm text-center rounded-md transition-all ${
+                    loginMethod === 'link'
+                      ? 'bg-white shadow-sm text-blue-600 font-medium'
+                      : 'text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  Link por email
+                </button>
+              </div>
+            </div>
+          )}
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition duration-200"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-200 font-medium mt-2"
           >
-            {loginMethod === 'link' ? 'Enviar Link de Login' : 'Entrar'}
+            {loginMethod === 'link'
+              ? 'Enviar Link de Login'
+              : isRegister
+                ? 'Criar Conta'
+                : 'Entrar'}
           </button>
         </form>
       </div>
