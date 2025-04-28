@@ -19,6 +19,7 @@ import {
   CreditCard,
   ExternalLink,
   Globe,
+  LockIcon,
   Package,
   Smartphone,
   Tag,
@@ -296,7 +297,7 @@ export function DepositDetail() {
 
           {!canManageSales && (
             <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100 flex items-start">
-              <Lock className="w-5 h-5 text-blue-600 mr-3 mt-0.5 flex-shrink-0" />
+              <LockIcon className="w-5 h-5 text-blue-600 mr-3 mt-0.5 flex-shrink-0" />
               <div>
                 <h3 className="text-blue-800 font-medium">
                   Visualização Limitada

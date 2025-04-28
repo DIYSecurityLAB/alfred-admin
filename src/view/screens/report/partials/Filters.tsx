@@ -2,14 +2,16 @@
 import { motion } from 'framer-motion';
 import {
   Calendar,
+  CheckCircle,
   Download,
   Filter,
   FilterX,
   Loader,
-  Lock,
+  LockIcon,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+// Interface atualizada para incluir progresso percentual
 interface ReportFiltersProps {
   filters: any;
   onFilterChange: (filter: any) => void;
@@ -17,6 +19,7 @@ interface ReportFiltersProps {
   onExportToExcel: () => Promise<boolean>;
   isExporting?: boolean;
   exportProgress?: string;
+  exportPercent?: number;
   canExport?: boolean;
 }
 
@@ -27,6 +30,7 @@ export function ReportFilters({
   onExportToExcel,
   isExporting = false,
   exportProgress = '',
+  exportPercent = 0,
   canExport = false,
 }: ReportFiltersProps) {
   const [localFilters, setLocalFilters] = useState({
@@ -249,15 +253,42 @@ export function ReportFilters({
         </div>
 
         {isExporting && (
-          <div className="flex items-center gap-2 mt-2 p-3 bg-amber-50 border border-amber-100 rounded-lg text-amber-700">
-            <Loader className="h-5 w-5 animate-spin" />
-            <span className="text-sm font-medium">{exportProgress}</span>
+          <div className="mt-4">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-sm font-medium text-amber-700">
+                {exportProgress}
+              </span>
+              <span className="text-sm font-medium text-amber-700">
+                {exportPercent}%
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <motion.div
+                initial={{ width: '0%' }}
+                animate={{ width: `${exportPercent}%` }}
+                transition={{ duration: 0.3 }}
+                className={`h-2.5 rounded-full ${
+                  exportPercent < 100 ? 'bg-amber-500' : 'bg-green-500'
+                }`}
+              />
+            </div>
+
+            {exportPercent === 100 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex items-center gap-2 mt-2 text-sm text-green-600"
+              >
+                <CheckCircle className="w-4 h-4" />
+                <span>Exportação concluída com sucesso!</span>
+              </motion.div>
+            )}
           </div>
         )}
 
-        {!canExport && (
+        {!canExport && !isExporting && (
           <div className="flex items-center gap-2 mt-2 p-3 bg-gray-50 border border-gray-100 rounded-lg text-gray-500">
-            <Lock className="h-5 w-5" />
+            <LockIcon className="h-5 w-5" />
             <span className="text-sm">
               Você não tem permissão para exportar dados.
             </span>
