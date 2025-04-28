@@ -97,27 +97,45 @@ export function useReport() {
   };
 
   const exportToExcel = async (
-    onProgress?: (message: string) => void,
+    onProgress?: (message: string, percent: number) => void,
   ): Promise<boolean> => {
     try {
-      onProgress?.('Buscando dados do servidor...');
+      // Função auxiliar para fazer pausas controladas e atualizar progresso
+      const updateProgressWithDelay = async (
+        message: string,
+        percent: number,
+        delayMs: number = 300,
+      ) => {
+        onProgress?.(message, percent);
+        if (delayMs > 0) {
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+        }
+      };
+
+      await updateProgressWithDelay('Iniciando exportação...', 5, 500);
+      await updateProgressWithDelay('Buscando dados do servidor...', 10, 800);
 
       const hasFilters = Object.keys(prepareApiFilters()).length > 0;
       let result;
 
       if (hasFilters) {
         const filters = prepareApiFilters();
-        onProgress?.('Processando dados filtrados para exportação...');
+        await updateProgressWithDelay(
+          'Processando dados filtrados para exportação...',
+          20,
+        );
         const response = await UseCases.report.deposit.paginated.execute({
           startAt: filters.startAt,
           endAt: filters.endAt,
           status: filters.status,
         });
         result = response.result;
+        await updateProgressWithDelay('Dados filtrados recebidos', 30);
       } else {
-        onProgress?.('Processando todos os dados para exportação...');
+        await updateProgressWithDelay('Buscando todos os depósitos...', 20);
         const response = await UseCases.report.deposit.all.execute();
         result = response.result;
+        await updateProgressWithDelay('Dados completos recebidos', 30);
       }
 
       if (result.type === 'ERROR') {
@@ -132,9 +150,44 @@ export function useReport() {
         throw new Error('Não há dados para exportar');
       }
 
-      onProgress?.('Gerando arquivo Excel...');
+      await updateProgressWithDelay(
+        `Preparando ${deposits.length} registros para exportação...`,
+        40,
+        500,
+      );
 
-      const workbookData = deposits.map(formatDepositForExcel);
+      // Dividimos o processamento em lotes para exibir progresso incremental
+      const batchSize = Math.min(
+        100,
+        Math.max(10, Math.floor(deposits.length / 10)),
+      );
+      const batches = Math.ceil(deposits.length / batchSize);
+      let workbookData: ReturnType<typeof formatDepositForExcel>[] = [];
+
+      for (let i = 0; i < batches; i++) {
+        const startIdx = i * batchSize;
+        const endIdx = Math.min((i + 1) * batchSize, deposits.length);
+        const batchItems = deposits.slice(startIdx, endIdx);
+
+        const batchData = batchItems.map(formatDepositForExcel);
+        workbookData = [...workbookData, ...batchData];
+
+        // Atualizamos o progresso apenas em intervalos específicos para não sobrecarregar a UI
+        if (
+          batches <= 5 ||
+          i % Math.floor(batches / 5) === 0 ||
+          i === batches - 1
+        ) {
+          const progressPercent = 40 + Math.floor(((i + 1) / batches) * 30);
+          await updateProgressWithDelay(
+            `Processando dados (${startIdx + 1} até ${endIdx} de ${deposits.length})...`,
+            progressPercent,
+            300,
+          );
+        }
+      }
+
+      await updateProgressWithDelay('Gerando planilha Excel...', 75, 500);
 
       const ws = XLSX.utils.json_to_sheet(workbookData);
 
@@ -153,10 +206,17 @@ export function useReport() {
 
       ws['!cols'] = columnWidths;
 
+      await updateProgressWithDelay('Formatando planilha...', 80, 400);
+
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Depósitos');
 
-      onProgress?.('Finalizando download...');
+      await updateProgressWithDelay(
+        'Preparando arquivo para download...',
+        90,
+        500,
+      );
+
       const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
       const data = new Blob([excelBuffer], {
         type: 'application/octet-stream',
@@ -165,6 +225,11 @@ export function useReport() {
       const fileName = `depositos_${new Date().toISOString().split('T')[0]}.xlsx`;
       saveAs(data, fileName);
 
+      await updateProgressWithDelay(
+        'Exportação concluída com sucesso!',
+        100,
+        500,
+      );
       return true;
     } catch (error) {
       console.error('Erro na exportação:', error);
@@ -176,15 +241,18 @@ export function useReport() {
   };
 
   const formatDepositForExcel = (deposit: ReportedDeposit) => {
+    // Lidamos com cryptoType potencialmente nulo/indefinido
+    const cryptoType = deposit.cryptoType || 'N/A';
+
     return {
       ID: deposit.id,
       'ID Transação': deposit.transactionId,
       Usuário: deposit.username || 'N/A',
       Data: deposit.transactionDate,
       'Método de Pagamento': deposit.paymentMethod,
-      'Tipo de Crypto': deposit.cryptoType,
+      'Tipo de Crypto': cryptoType,
       'Valor (R$)': formatBRLValue(deposit.valueBRL),
-      'Valor Crypto': `${formatCryptoValue(deposit.assetValue)} ${deposit.cryptoType}`,
+      'Valor Crypto': `${formatCryptoValue(deposit.assetValue)} ${cryptoType}`,
       Status: formatStatus(deposit.status),
       Telefone: deposit.phone || 'N/A',
       Rede: deposit.network || 'N/A',

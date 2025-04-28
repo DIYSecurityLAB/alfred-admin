@@ -26,11 +26,12 @@ import { useReport } from './useReport';
 export function Reports() {
   const { hasPermission } = useAuth();
   const canExport = hasPermission(Permission.REPORTS_EXPORT);
-  const canViewDetails = true; // Todos que podem acessar Reports podem ver detalhes
+  const canViewDetails = true;
   const canManageSales = hasPermission(Permission.SALES_MANAGE);
 
   const [isExporting, setIsExporting] = useState(false);
   const [exportProgress, setExportProgress] = useState<string>('');
+  const [exportPercent, setExportPercent] = useState<number>(0);
   const [collapsedHeader, setCollapsedHeader] = useState(false);
   const navigate = useNavigate();
 
@@ -65,29 +66,42 @@ export function Reports() {
     navigate(ROUTES.sales.details.call(report.id));
   };
 
-  const handleExportToExcel = async () => {
-    if (!canExport) return;
+  const handleExportToExcel = async (): Promise<boolean> => {
+    if (!canExport) return false;
 
     setIsExporting(true);
     setExportProgress('Iniciando exportação...');
+    setExportPercent(0);
+
     try {
-      setTimeout(() => {
-        if (isExporting) setExportProgress('Buscando dados do servidor...');
-      }, 1000);
+      // Passamos a função de callback para atualizar o progresso
+      const result = await exportToExcel((message, percent) => {
+        setExportProgress(message);
+        setExportPercent(percent);
+      });
 
-      setTimeout(() => {
-        if (isExporting)
-          setExportProgress('Processando dados para exportação...');
-      }, 5000);
+      // Se chegou até aqui, a exportação foi bem-sucedida
+      if (result) {
+        // Mantemos a mensagem de sucesso visível por alguns segundos
+        setTimeout(() => {
+          setIsExporting(false);
+          setExportProgress('');
+          setExportPercent(0);
+        }, 3000);
+      } else {
+        // Se houve erro, limpa imediatamente
+        setIsExporting(false);
+        setExportProgress('');
+        setExportPercent(0);
+      }
 
-      setTimeout(() => {
-        if (isExporting) setExportProgress('Gerando arquivo Excel...');
-      }, 10000);
-
-      return await exportToExcel();
-    } finally {
+      return result === true;
+    } catch (error) {
+      console.error('Erro durante exportação:', error);
       setIsExporting(false);
       setExportProgress('');
+      setExportPercent(0);
+      return false;
     }
   };
 
@@ -144,6 +158,7 @@ export function Reports() {
         onExportToExcel={handleExportToExcel}
         isExporting={isExporting}
         exportProgress={exportProgress}
+        exportPercent={exportPercent}
         canExport={canExport}
       />
 

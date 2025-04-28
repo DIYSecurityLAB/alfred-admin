@@ -35,11 +35,10 @@ export const PaymentStatus = z.union([
 ]);
 export type PaymentStatus = z.infer<typeof PaymentStatus>;
 
-export const CryptoType = z.union([
-  z.literal('BITCOIN'),
-  z.literal('USDT'),
-  z.literal('DEPIX'),
-]);
+export const CryptoType = z
+  .union([z.literal('BITCOIN'), z.literal('USDT'), z.literal('DEPIX')])
+  .nullable()
+  .optional();
 export type CryptoType = z.infer<typeof CryptoType>;
 
 export class ReportedDeposit {
