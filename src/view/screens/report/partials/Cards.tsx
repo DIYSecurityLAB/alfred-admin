@@ -87,7 +87,7 @@ export function ReportCards({
             <div className="flex justify-between items-center">
               <span className="text-gray-500">Valor:</span>
               <span className="text-gray-700 font-medium">
-                R$ {report.valueBRL.toFixed(2)}
+                R$ {report.valueBRL ? report.valueBRL.toFixed(2) : '0.00'}
               </span>
             </div>
 

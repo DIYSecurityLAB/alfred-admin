@@ -108,7 +108,7 @@ export function ReportTable({
               </td>
               <td className="py-3 px-4 text-gray-800">{report.cryptoType}</td>
               <td className="py-3 px-4 font-medium text-gray-900">
-                R$ {report.valueBRL.toFixed(2)}
+                R$ {report.valueBRL ? report.valueBRL.toFixed(2) : '0.00'}
               </td>
               <td className="py-3 px-4">
                 <span
