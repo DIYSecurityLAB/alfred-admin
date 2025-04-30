@@ -86,7 +86,7 @@ export const ListedUserModel = z.object({
     z.object({
       id: z.string(),
       transactionId: z.string(),
-      phone: z.string(),
+      phone: z.string().nullable().optional(),
       coldWallet: z.string(),
       network: z.string(),
       paymentMethod: z.string(),
