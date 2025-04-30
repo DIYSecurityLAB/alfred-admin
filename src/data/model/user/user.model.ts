@@ -93,7 +93,7 @@ export const ListedUserModel = z.object({
       transactionDate: z.string(),
       cupom: z.string(),
       valueBRL: z.number(),
-      assetValue: z.number(),
+      assetValue: z.number().optional(),
       cryptoType: CryptoTypeModel,
       status: PaymentStatusModel,
       username: z.string(),
