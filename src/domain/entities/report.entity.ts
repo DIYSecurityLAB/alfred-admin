@@ -44,14 +44,13 @@ export type CryptoType = z.infer<typeof CryptoType>;
 export class ReportedDeposit {
   id!: string;
   transactionId!: string;
-  phone!: string;
   coldWallet!: string;
   network!: string;
   paymentMethod!: string;
   transactionDate!: string;
   coupon!: string | undefined;
-  valueBRL!: number;
-  assetValue!: number;
+  amount!: number;
+  cryptoValue!: number;
   status!: PaymentStatus;
   cryptoType!: CryptoType;
   username!: string;
@@ -65,8 +64,6 @@ export class ReportedDeposit {
     entity.id = model.id;
 
     entity.transactionId = model.transactionId;
-
-    entity.phone = model.phone;
 
     entity.coldWallet = model.coldWallet;
 
@@ -82,9 +79,9 @@ export class ReportedDeposit {
 
     entity.cryptoType = model.cryptoType;
 
-    entity.valueBRL = model.valueBRL;
+    entity.amount = model.amount;
 
-    entity.assetValue = model.assetValue;
+    entity.cryptoValue = model.cryptoValue;
 
     entity.status = model.status;
 
