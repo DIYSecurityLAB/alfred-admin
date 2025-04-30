@@ -275,14 +275,14 @@ export function DepositDetail() {
             <InfoCard
               icon={CreditCard}
               title="Valor em BRL"
-              value={`R$ ${deposit.valueBRL.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+              value={`R$ ${deposit.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
               iconColor="text-green-600"
               iconBgColor="bg-green-50"
             />
             <InfoCard
               icon={Bitcoin}
               title={`Valor em ${deposit.cryptoType}`}
-              value={`${deposit.assetValue.toFixed(8)} ${deposit.cryptoType}`}
+              value={`${deposit.cryptoValue.toFixed(8)} ${deposit.cryptoType}`}
               iconColor="text-amber-600"
               iconBgColor="bg-amber-50"
             />
@@ -429,7 +429,7 @@ export function DepositDetail() {
                     <div>
                       <p className="text-sm text-gray-500">Valor em Crypto</p>
                       <p className="text-gray-900 font-medium">
-                        {deposit.assetValue.toFixed(8)} {deposit.cryptoType}
+                        {deposit.cryptoValue.toFixed(8)} {deposit.cryptoType}
                       </p>
                     </div>
                     <div>
