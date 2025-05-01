@@ -24,7 +24,7 @@ export function BrowserRouter() {
       <Routes>
         <Route element={<DashboardLayout />}>
           <Route
-            path={'/dashboard'}
+            path={ROUTES.dashboard}
             element={
               <>
                 <iframe
