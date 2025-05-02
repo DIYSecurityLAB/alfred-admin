@@ -53,7 +53,7 @@ export function Users() {
     <Container>
       <PageHeader
         title="Usuários"
-        description="Gerencie todos os usuários do sistema"
+        description="Gerencie todos os usuários do sistema."
         collapsed={collapsedHeader}
         toggle={toggleHeader}
         button={

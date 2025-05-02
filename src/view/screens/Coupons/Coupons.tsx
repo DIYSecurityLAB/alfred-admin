@@ -1,17 +1,12 @@
 import { Pagination } from '@/components/Pagination';
 import { useAuth } from '@/hooks/useAuth';
 import { Permission } from '@/models/permissions';
+import { Container } from '@/view/components/Container';
 import { Loading } from '@/view/components/Loading';
+import { PageHeader } from '@/view/layout/Page/PageHeader';
 import { useCoupons } from '@/view/screens/Coupons/useCoupons';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  AlertCircle,
-  ChevronDown,
-  ChevronUp,
-  Plus,
-  Tag,
-  X,
-} from 'lucide-react';
+import { AlertCircle, Plus, X } from 'lucide-react';
 import { useState } from 'react';
 import { CouponCards } from './partials/CouponCards';
 import { CouponDetailsModal } from './partials/CouponDetailsModal';
@@ -57,27 +52,6 @@ export function Coupons() {
     setCollapsedHeader(!collapsedHeader);
   };
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        when: 'beforeChildren',
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { type: 'spring', stiffness: 100 },
-    },
-  };
-
   const errorVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: {
@@ -93,64 +67,32 @@ export function Coupons() {
   }
 
   return (
-    <motion.div
-      className="container mx-auto px-4 py-8"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <motion.div
-        className={`bg-white rounded-lg shadow-md border border-blue-50 p-6 mb-8 transition-all duration-500 ${
-          collapsedHeader ? 'cursor-pointer' : ''
-        }`}
-        variants={itemVariants}
-        onClick={collapsedHeader ? toggleHeader : undefined}
-      >
-        <div className="flex justify-between items-center">
-          <div className="flex items-center">
-            <Tag className="h-6 w-6 text-blue-500 mr-3" />
-            <div>
-              <h1 className="text-3xl font-bold mb-2 text-gray-800">Cupons</h1>
-              {!collapsedHeader && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <p className="text-gray-600">
-                    Gerencie todos os cupons de desconto
-                  </p>
-                </motion.div>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            {canCreateCoupons && (
-              <motion.button
-                onClick={openCreateModal}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Plus className="h-5 w-5" />
-                Novo Cupom
-              </motion.button>
-            )}
-            <button
-              onClick={toggleHeader}
-              className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+    <Container>
+      <PageHeader
+        title="Cupons"
+        description="Gerencie todos os cupons de desconto."
+        button={
+          canCreateCoupons && (
+            <motion.button
+              onClick={openCreateModal}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
             >
-              {collapsedHeader ? (
-                <ChevronDown className="h-5 w-5 text-blue-500" />
-              ) : (
-                <ChevronUp className="h-5 w-5 text-blue-500" />
-              )}
-            </button>
-          </div>
-        </div>
-      </motion.div>
+              <Plus className="h-5 w-5" />
+              Novo Cupom
+            </motion.button>
+          )
+        }
+        collapsed={collapsedHeader}
+        toggle={toggleHeader}
+      />
 
-      <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden p-6 space-y-8"
+      >
         {error && (
           <motion.div
             className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center text-red-600 shadow-sm"
@@ -169,13 +111,7 @@ export function Coupons() {
             </button>
           </motion.div>
         )}
-      </AnimatePresence>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden p-6"
-      >
         <CouponFilters filters={filters} onFilterChange={handleFilterChange} />
 
         {coupons.length === 0 ? (
@@ -290,6 +226,6 @@ export function Coupons() {
           />
         )}
       </AnimatePresence>
-    </motion.div>
+    </Container>
   );
 }
