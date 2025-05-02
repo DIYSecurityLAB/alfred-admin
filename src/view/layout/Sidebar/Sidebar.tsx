@@ -66,7 +66,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
       type: 'link',
       icon: LayoutDashboard,
       label: 'Dashboard',
-      path: '/dashboard',
+      path: ROUTES.dashboard,
       requiredPermission: Permission.DASHBOARD_VIEW,
     },
     {

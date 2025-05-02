@@ -6,16 +6,9 @@ import { Container } from '@/view/components/Container';
 import { Error } from '@/view/components/Error';
 import { Loading } from '@/view/components/Loading';
 import { PageHeader } from '@/view/layout/Page/PageHeader';
-import { ToggleHeaderButton } from '@/view/layout/Page/ToggleHeaderButton';
 import { ROUTES } from '@/view/routes/Routes';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  AlertCircle,
-  FileText,
-  LayoutDashboard,
-  LayoutGrid,
-  Loader,
-} from 'lucide-react';
+import { AlertCircle, LayoutDashboard, LayoutGrid, Loader } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ReportCards } from './partials/Cards';
@@ -120,33 +113,6 @@ export function Reports() {
         description="Visualize e exporte relatórios de todos os depósitos realizados."
         collapsed={collapsedHeader}
         toggle={toggleHeader}
-        button={
-          <div className="flex items-center gap-4">
-            {canExport && (
-              <button
-                onClick={handleExportToExcel}
-                disabled={isExporting}
-                className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 text-white rounded-lg transition-colors shadow-sm hover:shadow"
-              >
-                {isExporting ? (
-                  <>
-                    <Loader className="h-5 w-5 animate-spin" />
-                    <span>Exportando...</span>
-                  </>
-                ) : (
-                  <>
-                    <FileText className="h-5 w-5" />
-                    <span>Exportar Excel</span>
-                  </>
-                )}
-              </button>
-            )}
-            <ToggleHeaderButton
-              toggle={toggleHeader}
-              collapsed={collapsedHeader}
-            />
-          </div>
-        }
       />
 
       <Error error={error} clear={clearError} />
