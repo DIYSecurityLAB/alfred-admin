@@ -1,42 +1,4 @@
-/**
- * Enumeração de todas as permissões possíveis no sistema
- *
- * Nomenclatura: area_ação
- * Exemplo: coupons_view, coupons_edit, etc.
- */
-export enum Permission {
-  // Permissões para Dashboard
-  DASHBOARD_VIEW = 'dashboard_view',
-
-  // Permissões para Cupons
-  COUPONS_VIEW = 'coupons_view',
-  COUPONS_CREATE = 'coupons_create',
-  COUPONS_EDIT = 'coupons_edit',
-  COUPONS_DELETE = 'coupons_delete',
-
-  // Permissões para Vendas (Sales)
-  SALES_VIEW = 'sales_view',
-  SALES_MANAGE = 'sales_manage',
-
-  // Permissões para Relatórios (Reports)
-  REPORTS_VIEW = 'reports_view',
-  REPORTS_EXPORT = 'reports_export',
-
-  // Permissões para Usuários
-  USERS_VIEW = 'users_view',
-  USERS_MANAGE = 'users_manage',
-  USERS_BLOCK = 'users_block',
-  USERS_EDIT = 'users_edit', // Nova permissão para editar usuários
-  USERS_DETAILS_VIEW = 'users_details_view', // Permissão para visualizar detalhes de usuários
-
-  // Permissões para Configurações
-  SETTINGS_VIEW = 'settings_view',
-  SETTINGS_EDIT = 'settings_edit',
-
-  // Permissões de Administração de Usuários do Sistema
-  USER_MANAGEMENT_VIEW = 'user_management_view',
-  USER_MANAGEMENT_EDIT = 'user_management_edit',
-}
+import { Permission } from './permissions';
 
 /**
  * Interface que define o conjunto de permissões para uma role
