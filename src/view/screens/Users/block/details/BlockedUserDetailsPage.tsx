@@ -239,7 +239,7 @@ export function BlockedUserDetailsPage() {
 
           {blockedUser.user.depositos &&
           blockedUser.user.depositos.length > 0 ? (
-            <div className="bg-white border border-gray-100 rounded-lg overflow-x-auto shadow-sm">
+            <div className="bg-white border border-gray-100 rounded-lg overflow-x-hidden shadow-sm">
               <table className="min-w-full divide-y divide-gray-100">
                 <thead className="bg-gray-50">
                   <tr>
@@ -263,7 +263,11 @@ export function BlockedUserDetailsPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {blockedUser.user.depositos.map((deposito) => (
-                    <tr key={deposito.id} className="hover:bg-gray-50">
+                    <motion.tr
+                      key={deposito.id}
+                      className="hover:bg-gray-50"
+                      whileHover={{ scale: 1.01, x: 5 }}
+                    >
                       <td className="py-3 px-4 text-sm text-gray-800">
                         {deposito.createdAt}
                       </td>
@@ -294,7 +298,7 @@ export function BlockedUserDetailsPage() {
                           <ExternalLink className="h-4 w-4" />
                         </button>
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>

@@ -291,7 +291,7 @@ export function UserDetailsPage() {
           </h2>
 
           {user.deposits && user.deposits.length > 0 ? (
-            <div className="bg-white border border-gray-100 rounded-lg overflow-x-auto shadow-sm">
+            <div className="bg-white border border-gray-100 rounded-lg overflow-x-hidden shadow-sm">
               <table className="min-w-full divide-y divide-gray-100">
                 <thead className="bg-gray-50">
                   <tr>
@@ -318,7 +318,13 @@ export function UserDetailsPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {user.deposits.map((deposit) => (
-                    <tr key={deposit.id} className="hover:bg-gray-50">
+                    <motion.tr
+                      key={deposit.id}
+                      className="hover:bg-gray-50"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      whileHover={{ scale: 1.01, x: 5 }}
+                    >
                       <td className="py-3 px-4 text-sm text-gray-800">
                         {deposit.transactionDate}
                       </td>
@@ -352,7 +358,7 @@ export function UserDetailsPage() {
                           <ExternalLink className="h-4 w-4" />
                         </button>
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
