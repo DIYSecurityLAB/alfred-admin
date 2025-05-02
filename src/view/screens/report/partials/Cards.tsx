@@ -94,7 +94,7 @@ export function ReportCards({
             <div className="flex justify-between items-center">
               <span className="text-gray-500">Valor Crypto:</span>
               <span className="text-gray-700 font-medium">
-                {report.cryptoValue.toFixed(8)} {report.cryptoType}
+                {(report.cryptoValue ?? 0).toFixed(8)} {report.cryptoType}
               </span>
             </div>
 
