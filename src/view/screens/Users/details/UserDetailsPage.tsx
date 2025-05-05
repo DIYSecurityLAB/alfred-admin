@@ -5,6 +5,7 @@ import { Loading } from '@/view/components/Loading';
 import { PageHeader } from '@/view/layout/Page/PageHeader';
 import { ROUTES } from '@/view/routes/Routes';
 import { useQuery } from '@tanstack/react-query';
+import { parse } from 'date-fns';
 import { motion } from 'framer-motion';
 import {
   AlertTriangle,
@@ -76,6 +77,20 @@ export function UserDetailsPage() {
   } = useQuery<ListedUser>({
     queryKey: ['userDetails', id],
     queryFn: fetchUserDetails,
+  });
+
+  const sortedDeposits = [...(user?.deposits ?? [])].sort((a, b) => {
+    const dateA = parse(
+      a.transactionDate,
+      'dd/MM/yyyy hh:mm:ss a',
+      new Date(),
+    ).getTime();
+    const dateB = parse(
+      b.transactionDate,
+      'dd/MM/yyyy hh:mm:ss a',
+      new Date(),
+    ).getTime();
+    return dateB - dateA; // Mais recente primeiro
   });
 
   const formatCurrency = (value: number) => {
@@ -340,7 +355,7 @@ export function UserDetailsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {user.deposits
+                  {sortedDeposits
                     .filter(
                       (deposit) =>
                         selectedStatus === 'all' ||
