@@ -1,6 +1,7 @@
 import {
   ReportedDepositModel,
   ReportedDepositPaginationModel,
+  SwapPegTransactionModel,
 } from '@/data/model/report.model';
 import { z } from 'zod';
 
@@ -40,6 +41,7 @@ export const CryptoType = z
   .nullable()
   .optional();
 export type CryptoType = z.infer<typeof CryptoType>;
+export type SwapPegTransaction = z.infer<typeof SwapPegTransactionModel>;
 
 export class ReportedDeposit {
   id!: string;
@@ -57,6 +59,7 @@ export class ReportedDeposit {
   discountType!: string;
   discountValue!: number;
   valueCollected!: number;
+  swapPegTransaction?: SwapPegTransaction;
 
   public static fromModel(model: ReportedDepositModel): ReportedDeposit {
     const entity = new ReportedDeposit();
@@ -92,6 +95,8 @@ export class ReportedDeposit {
     entity.discountValue = model.discountValue ?? 0;
 
     entity.valueCollected = model.valueCollected ?? 0;
+
+    entity.swapPegTransaction = model.swapPegTransaction;
 
     return entity;
   }

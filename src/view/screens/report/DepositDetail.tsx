@@ -460,6 +460,28 @@ export function DepositDetail() {
                         Ver na Blockchain
                       </button>
                     </div>
+
+                    {/* TODO: Adicionar os icones correspondentes */}
+                    <CopyableField
+                      label="PegID"
+                      value={
+                        deposit.swapPegTransaction?.pegId || 'Não disponível'
+                      }
+                    />
+                    <CopyableField
+                      label="LiquidTxId "
+                      value={
+                        deposit.swapPegTransaction?.LiquidTxId ||
+                        'Não disponível'
+                      }
+                    />
+                    <CopyableField
+                      label="MempoolTxId"
+                      value={
+                        deposit.swapPegTransaction?.MempoolTxId ||
+                        'Não disponível'
+                      }
+                    />
                   </div>
                 </div>
               </motion.div>

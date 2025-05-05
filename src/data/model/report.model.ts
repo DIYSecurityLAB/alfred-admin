@@ -1,6 +1,13 @@
 import { z } from 'zod';
 import { CryptoTypeModel, PaymentStatusModel } from './user/user.model';
 
+export const SwapPegTransactionModel = z.object({
+  id: z.number(),
+  pegId: z.string(),
+  LiquidTxId: z.string(),
+  MempoolTxId: z.string(),
+});
+
 export const ReportedDepositModel = z.object({
   id: z.string().min(1),
   transactionId: z.string().min(1),
@@ -18,6 +25,7 @@ export const ReportedDepositModel = z.object({
   discountType: z.string().optional().nullable(),
   discountValue: z.number().optional(),
   valueCollected: z.number().optional(),
+  swapPegTransaction: SwapPegTransactionModel.optional(),
 });
 export type ReportedDepositModel = z.infer<typeof ReportedDepositModel>;
 
