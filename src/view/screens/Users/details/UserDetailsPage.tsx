@@ -5,6 +5,7 @@ import { Loading } from '@/view/components/Loading';
 import { PageHeader } from '@/view/layout/Page/PageHeader';
 import { ROUTES } from '@/view/routes/Routes';
 import { useQuery } from '@tanstack/react-query';
+import { parse } from 'date-fns';
 import { motion } from 'framer-motion';
 import {
   AlertTriangle,
@@ -15,7 +16,7 @@ import {
   File,
   User,
 } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const getLevelName = (level: number): string => {
@@ -38,6 +39,11 @@ const getLevelName = (level: number): string => {
 };
 
 export function UserDetailsPage() {
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedStatus(event.target.value);
+  };
+
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -71,6 +77,20 @@ export function UserDetailsPage() {
   } = useQuery<ListedUser>({
     queryKey: ['userDetails', id],
     queryFn: fetchUserDetails,
+  });
+
+  const sortedDeposits = [...(user?.deposits ?? [])].sort((a, b) => {
+    const dateA = parse(
+      a.transactionDate,
+      'dd/MM/yyyy hh:mm:ss a',
+      new Date(),
+    ).getTime();
+    const dateB = parse(
+      b.transactionDate,
+      'dd/MM/yyyy hh:mm:ss a',
+      new Date(),
+    ).getTime();
+    return dateB - dateA; // Mais recente primeiro
   });
 
   const formatCurrency = (value: number) => {
@@ -290,8 +310,26 @@ export function UserDetailsPage() {
             </span>
           </h2>
 
+          <div className="flex items-center mb-4">
+            <h3 className="mr-2">Filtrar por Status:</h3>
+            <select
+              value={selectedStatus}
+              onChange={handleStatusChange}
+              className="flex items-center px-4 py-2 border rounded"
+            >
+              <option value="all">All</option>
+              <option value="pending">Pending</option>
+              <option value="paid">Paid</option>
+              <option value="canceled">Canceled</option>
+              <option value="review">Review</option>
+              <option value="expired">Expired</option>
+              <option value="refunded">Refunded</option>
+              <option value="complete">Complete</option>
+            </select>
+          </div>
+
           {user.deposits && user.deposits.length > 0 ? (
-            <div className="bg-white border border-gray-100 rounded-lg overflow-x-auto shadow-sm">
+            <div className="bg-white border border-gray-100 rounded-lg overflow-x-hidden shadow-sm">
               <table className="min-w-full divide-y divide-gray-100">
                 <thead className="bg-gray-50">
                   <tr>
@@ -317,43 +355,55 @@ export function UserDetailsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {user.deposits.map((deposit) => (
-                    <tr key={deposit.id} className="hover:bg-gray-50">
-                      <td className="py-3 px-4 text-sm text-gray-800">
-                        {deposit.transactionDate}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-800 font-medium">
-                        {formatCurrency(deposit.valueBRL)}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-800">
-                        {deposit.assetValue} {deposit.cryptoType}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-800">
-                        {deposit.cryptoType || 'N/A'}
-                      </td>
-                      <td className="py-3 px-4">
-                        <span
-                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusBadge(deposit.status)}`}
-                        >
-                          {deposit.status}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-800">
-                        {deposit.paymentMethod}
-                      </td>
-                      <td className="py-3 px-4 text-right">
-                        <button
-                          className="text-blue-500 hover:text-blue-700"
-                          title="Ver detalhes"
-                          onClick={() =>
-                            navigate(ROUTES.sales.details.call(deposit.id))
-                          }
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {sortedDeposits
+                    .filter(
+                      (deposit) =>
+                        selectedStatus === 'all' ||
+                        deposit.status === selectedStatus,
+                    ) // Filtro de Status
+                    .map((deposit) => (
+                      <motion.tr
+                        key={deposit.id}
+                        className="hover:bg-gray-50"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        whileHover={{ scale: 1.01, x: 5 }}
+                      >
+                        <td className="py-3 px-4 text-sm text-gray-800">
+                          {deposit.transactionDate}
+                        </td>
+                        <td className="py-3 px-4 text-sm text-gray-800 font-medium">
+                          {formatCurrency(deposit.valueBRL)}
+                        </td>
+                        <td className="py-3 px-4 text-sm text-gray-800">
+                          {deposit.assetValue} {deposit.cryptoType}
+                        </td>
+                        <td className="py-3 px-4 text-sm text-gray-800">
+                          {deposit.cryptoType || 'N/A'}
+                        </td>
+                        <td className="py-3 px-4">
+                          <span
+                            className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusBadge(deposit.status)}`}
+                          >
+                            {deposit.status}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-sm text-gray-800">
+                          {deposit.paymentMethod}
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          <button
+                            className="text-blue-500 hover:text-blue-700"
+                            title="Ver detalhes"
+                            onClick={() =>
+                              navigate(ROUTES.sales.details.call(deposit.id))
+                            }
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </button>
+                        </td>
+                      </motion.tr>
+                    ))}
                 </tbody>
               </table>
             </div>

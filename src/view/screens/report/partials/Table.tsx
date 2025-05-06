@@ -51,7 +51,7 @@ export function ReportTable({
   };
 
   return (
-    <div className="overflow-x-auto rounded-lg shadow-md border border-gray-200 hover:overflow-hidden">
+    <div className="overflow-x-hidden rounded-lg shadow-md border border-gray-200">
       <motion.table
         className="min-w-full text-left bg-white"
         variants={tableVariants}

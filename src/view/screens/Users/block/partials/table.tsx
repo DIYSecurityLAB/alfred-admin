@@ -22,7 +22,7 @@ export function BlockedUserTable({
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-hidden">
       <table className="min-w-full border-collapse">
         <thead>
           <tr className="bg-gray-50 border-b border-gray-200">
@@ -53,6 +53,7 @@ export function BlockedUserTable({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+              whileHover={{ scale: 1.01, x: 5 }}
             >
               <td className="py-3 px-4 text-gray-600 text-sm">{user.id}</td>
               <td className="py-3 px-4">
