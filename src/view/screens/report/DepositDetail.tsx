@@ -444,44 +444,81 @@ export function DepositDetail() {
                   </div>
 
                   <div className="space-y-4">
-                    <CopyableField label="Wallet" value={deposit.coldWallet} />
-
+                    {/* TODO: Remover o ícone "ExternalLink" caso o item do depósito for undefined (para não parecer clicável) */}
                     <div>
-                      <button
-                        onClick={() =>
-                          window.open(
-                            `https://www.blockchain.com/explorer/addresses/btc/${deposit.coldWallet}`,
-                            '_blank',
-                          )
+                      <a
+                        href={
+                          deposit.coldWallet
+                            ? `https://www.blockchain.com/explorer/addresses/btc/${deposit.coldWallet}`
+                            : undefined
                         }
-                        className="mt-2 inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors"
                       >
-                        <ExternalLink className="w-4 h-4 mr-1" />
-                        Ver na Blockchain
-                      </button>
+                        <p className="text-sm text-gray-500">Wallet</p>
+                        <div className="flex items-center">
+                          <p className="text-gray-900 font-medium">
+                            {deposit.coldWallet || 'Não disponível'}
+                          </p>
+                          <ExternalLink className="ml-2 w-4 h-4 mr-1" />
+                        </div>
+                      </a>
                     </div>
 
-                    {/* TODO: Adicionar os icones correspondentes */}
-                    <CopyableField
-                      label="PegID"
-                      value={
-                        deposit.swapPegTransaction?.pegId || 'Não disponível'
-                      }
-                    />
-                    <CopyableField
-                      label="LiquidTxId "
-                      value={
-                        deposit.swapPegTransaction?.LiquidTxId ||
-                        'Não disponível'
-                      }
-                    />
-                    <CopyableField
-                      label="MempoolTxId"
-                      value={
-                        deposit.swapPegTransaction?.MempoolTxId ||
-                        'Não disponível'
-                      }
-                    />
+                    <div>
+                      <a
+                        href={
+                          deposit.swapPegTransaction?.pegId
+                            ? `https://blockstream.info/liquid/tx/${deposit.swapPegTransaction.pegId}`
+                            : undefined
+                        }
+                      >
+                        <p className="text-sm text-gray-500">PegId</p>
+                        <div className="flex items-center">
+                          <p className="text-gray-900 font-medium">
+                            {deposit.swapPegTransaction?.pegId ||
+                              'Não disponível'}
+                          </p>
+                          <ExternalLink className="ml-2 w-4 h-4 mr-1" />
+                        </div>
+                      </a>
+                    </div>
+
+                    <div>
+                      <a
+                        href={
+                          deposit.swapPegTransaction?.MempoolTxId
+                            ? `https://blockstream.info/liquid/tx/${deposit.swapPegTransaction.MempoolTxId}`
+                            : undefined
+                        }
+                      >
+                        <p className="text-sm text-gray-500">MempoolTxId</p>
+                        <div className="flex items-center">
+                          <p className="text-gray-900 font-medium">
+                            {deposit.swapPegTransaction?.MempoolTxId ||
+                              'Não disponível'}
+                          </p>
+                          <ExternalLink className="ml-2 w-4 h-4 mr-1" />
+                        </div>
+                      </a>
+                    </div>
+
+                    <div>
+                      <a
+                        href={
+                          deposit.swapPegTransaction?.LiquidTxId
+                            ? `https://blockstream.info/tx/${deposit.swapPegTransaction.LiquidTxId}`
+                            : undefined
+                        }
+                      >
+                        <p className="text-sm text-gray-500">LiquidTxId</p>
+                        <div className="flex items-center">
+                          <p className="text-gray-900 font-medium">
+                            {deposit.swapPegTransaction?.LiquidTxId ||
+                              'Não disponível'}
+                          </p>
+                          <ExternalLink className="ml-2 w-4 h-4 mr-1" />
+                        </div>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </motion.div>
