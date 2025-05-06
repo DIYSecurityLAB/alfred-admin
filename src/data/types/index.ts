@@ -1,3 +1,5 @@
+import { SwapPegTransaction } from '@/domain/entities/report.entity';
+
 export interface User {
   id: string;
   username: string;
@@ -137,6 +139,7 @@ export interface Deposit {
   valueBTC: number;
   status: PaymentStatus;
   username: string | null | undefined;
+  swapPegTransaction: SwapPegTransaction[];
 }
 
 export interface DepositReport extends Deposit {

@@ -466,7 +466,7 @@ export function DepositDetail() {
                     <div>
                       <a
                         href={
-                          deposit.swapPegTransaction?.pegId
+                          deposit.swapPegTransaction?.[0]?.pegId
                             ? `https://blockstream.info/liquid/tx/${deposit.swapPegTransaction.pegId}`
                             : undefined
                         }
@@ -474,7 +474,7 @@ export function DepositDetail() {
                         <p className="text-sm text-gray-500">PegId</p>
                         <div className="flex items-center">
                           <p className="text-gray-900 font-medium">
-                            {deposit.swapPegTransaction?.pegId ||
+                            {deposit.swapPegTransaction?.[0].pegId ||
                               'Não disponível'}
                           </p>
                           <ExternalLink className="ml-2 w-4 h-4 mr-1" />
@@ -485,15 +485,15 @@ export function DepositDetail() {
                     <div>
                       <a
                         href={
-                          deposit.swapPegTransaction?.MempoolTxId
-                            ? `https://blockstream.info/liquid/tx/${deposit.swapPegTransaction.MempoolTxId}`
+                          deposit.swapPegTransaction?.[0].MempoolTxId
+                            ? `https://blockstream.info/liquid/tx/${deposit.swapPegTransaction?.[0].MempoolTxId}`
                             : undefined
                         }
                       >
                         <p className="text-sm text-gray-500">MempoolTxId</p>
                         <div className="flex items-center">
                           <p className="text-gray-900 font-medium">
-                            {deposit.swapPegTransaction?.MempoolTxId ||
+                            {deposit.swapPegTransaction?.[0].MempoolTxId ||
                               'Não disponível'}
                           </p>
                           <ExternalLink className="ml-2 w-4 h-4 mr-1" />
@@ -504,7 +504,7 @@ export function DepositDetail() {
                     <div>
                       <a
                         href={
-                          deposit.swapPegTransaction?.LiquidTxId
+                          deposit.swapPegTransaction?.[0].LiquidTxId
                             ? `https://blockstream.info/tx/${deposit.swapPegTransaction.LiquidTxId}`
                             : undefined
                         }
@@ -512,7 +512,7 @@ export function DepositDetail() {
                         <p className="text-sm text-gray-500">LiquidTxId</p>
                         <div className="flex items-center">
                           <p className="text-gray-900 font-medium">
-                            {deposit.swapPegTransaction?.LiquidTxId ||
+                            {deposit.swapPegTransaction?.[0].LiquidTxId ||
                               'Não disponível'}
                           </p>
                           <ExternalLink className="ml-2 w-4 h-4 mr-1" />

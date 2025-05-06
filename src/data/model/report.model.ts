@@ -25,7 +25,7 @@ export const ReportedDepositModel = z.object({
   discountType: z.string().optional().nullable(),
   discountValue: z.number().optional(),
   valueCollected: z.number().optional(),
-  swapPegTransaction: SwapPegTransactionModel.optional(),
+  swapPegTransaction: z.array(SwapPegTransactionModel).optional(),
 });
 export type ReportedDepositModel = z.infer<typeof ReportedDepositModel>;
 
