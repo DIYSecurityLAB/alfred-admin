@@ -21,7 +21,6 @@ import {
   Globe,
   LockIcon,
   Package,
-  Smartphone,
   Tag,
   User,
   XCircle,
@@ -184,6 +183,15 @@ export function DepositDetail() {
     navigate(ROUTES.sales.home || '/sales');
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const safeToFixed = (value: any, digits: number = 2): string => {
+    if (value === undefined || value === null)
+      return '0'.padEnd(digits + 2, '0');
+    if (typeof value !== 'number' || isNaN(value))
+      return '0'.padEnd(digits + 2, '0');
+    return value.toFixed(digits);
+  };
+
   if (loading) {
     return <Loading label="Carregando detalhes do depósito..." />;
   }
@@ -282,7 +290,7 @@ export function DepositDetail() {
             <InfoCard
               icon={Bitcoin}
               title={`Valor em ${deposit.cryptoType}`}
-              value={`${deposit.cryptoValue.toFixed(8)} ${deposit.cryptoType}`}
+              value={`${safeToFixed(deposit.cryptoValue, 8)} ${deposit.cryptoType}`}
               iconColor="text-amber-600"
               iconBgColor="bg-amber-50"
             />
@@ -346,7 +354,7 @@ export function DepositDetail() {
                           Valor Coletado (Taxa)
                         </p>
                         <p className="text-gray-900 font-medium">
-                          R$ {deposit.valueCollected.toFixed(2)}
+                          R$ {safeToFixed(deposit.valueCollected, 2)}
                         </p>
                       </div>
                     )}
@@ -368,23 +376,14 @@ export function DepositDetail() {
                         </p>
                         <p className="text-gray-900 font-medium">
                           {deposit.discountType === 'fixed'
-                            ? `R$ ${deposit.discountValue.toFixed(2)}`
-                            : `${deposit.discountValue}%`}
+                            ? `R$ ${safeToFixed(deposit.discountValue, 2)}`
+                            : `${deposit.discountValue || 0}%`}
                         </p>
                       </div>
                     )}
                   </div>
 
                   <div className="space-y-4">
-                    <div>
-                      <p className="text-sm text-gray-500">Telefone</p>
-                      <div className="flex items-center">
-                        <Smartphone className="w-4 h-4 text-gray-400 mr-2" />
-                        <p className="text-gray-900 font-medium">
-                          {deposit.phone}
-                        </p>
-                      </div>
-                    </div>
                     <div>
                       <p className="text-sm text-gray-500">Usuário</p>
                       <div className="flex items-center">
@@ -429,7 +428,8 @@ export function DepositDetail() {
                     <div>
                       <p className="text-sm text-gray-500">Valor em Crypto</p>
                       <p className="text-gray-900 font-medium">
-                        {deposit.cryptoValue.toFixed(8)} {deposit.cryptoType}
+                        {safeToFixed(deposit.cryptoValue, 8)}{' '}
+                        {deposit.cryptoType}
                       </p>
                     </div>
                     <div>
