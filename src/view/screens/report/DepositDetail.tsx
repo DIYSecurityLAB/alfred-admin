@@ -28,12 +28,21 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
-
 const StatusBadge = ({ status }: { status: string }) => {
   const getStatusConfig = (status: string) => {
     const statusLower = status.toLowerCase();
 
-    if (statusLower === 'complete' || statusLower === 'paid') {
+    if (statusLower === 'paid') {
+      return {
+        bgColor: 'bg-blue-100',
+        textColor: 'text-blue-800',
+        borderColor: 'border-blue-200',
+        icon: <CheckCircle className="w-4 h-4 mr-2" />,
+        label: 'Pago',
+      };
+    }
+
+    if (statusLower === 'complete') {
       return {
         bgColor: 'bg-green-100',
         textColor: 'text-green-800',
@@ -124,17 +133,69 @@ const CopyableField = ({ label, value }: { label: string; value: string }) => {
   };
 
   return (
-    <div className="group">
+    <div>
       <p className="text-sm text-gray-500">{label}</p>
-      <div className="flex items-center justify-between">
-        <p className="text-gray-900 font-medium break-all pr-2">{value}</p>
-        <button
-          onClick={copyToClipboard}
-          className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-gray-100 transition-all duration-200"
-          title="Copiar para área de transferência"
-        >
-          <Copy className="w-4 h-4 text-gray-500" />
-        </button>
+      <div className="flex items-center gap-2">
+        <p className="text-gray-900 font-medium break-all">{value}</p>
+        <div className="flex gap-1">
+          <button
+            onClick={copyToClipboard}
+            className="p-1 rounded-lg hover:bg-gray-200 transition-colors"
+            title="Copiar ID completo"
+          >
+            <Copy className="w-4 h-4 text-gray-500" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const BlockchainId = ({
+  label,
+  value,
+  blockchainUrl,
+}: {
+  label: string;
+  value: string;
+  blockchainUrl: string;
+}) => {
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(value);
+    toast.success('Copiado para a área de transferência!');
+  };
+
+  // Trunca o ID para mostrar apenas o início e o fim
+  const truncateId = (id: string) => {
+    if (!id || id.length <= 16) return id;
+    return `${id.substring(0, 8)}...${id.substring(id.length - 8)}`;
+  };
+
+  return (
+    <div>
+      <p className="text-sm text-gray-500">{label}</p>
+      <div className="flex items-center gap-2">
+        <p className="text-gray-900 font-medium break-all">
+          {truncateId(value)}
+        </p>
+        <div className="flex gap-1">
+          <button
+            onClick={copyToClipboard}
+            className="p-1 rounded-lg hover:bg-gray-200 transition-colors"
+            title="Copiar ID completo"
+          >
+            <Copy className="w-4 h-4 text-gray-500" />
+          </button>
+          <a
+            href={blockchainUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-1 rounded-lg hover:bg-gray-200 transition-colors"
+            title="Ver na blockchain"
+          >
+            <ExternalLink className="w-4 h-4 text-blue-500" />
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -268,7 +329,7 @@ export function DepositDetail() {
               <div className="flex items-center gap-2 mb-1">
                 <Package className="h-5 w-5 text-blue-500" />
                 <h2 className="text-xl font-bold text-gray-900">
-                  Transação: {deposit.transactionId.substring(0, 12)}...
+                  Transação: {deposit.transactionId.substring(0, 8)}...
                 </h2>
               </div>
               <p className="text-gray-500 flex items-center gap-2">
@@ -318,10 +379,8 @@ export function DepositDetail() {
             </div>
           )}
 
-          {/* Exibir detalhes avançados somente para quem pode gerenciar */}
           {canManageSales && (
             <>
-              {/* Seção de detalhes da transação */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -403,7 +462,6 @@ export function DepositDetail() {
                 </div>
               </motion.div>
 
-              {/* Seção de detalhes de criptomoeda */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -444,20 +502,13 @@ export function DepositDetail() {
                   </div>
 
                   <div className="space-y-4">
-                    {/* Wallet */}
                     <div>
                       {deposit.coldWallet ? (
-                        <a
-                          href={`https://www.blockchain.com/explorer/addresses/btc/${deposit.coldWallet}`}
-                        >
-                          <p className="text-sm text-gray-500">Wallet</p>
-                          <div className="flex items-center">
-                            <p className="text-gray-900 font-medium">
-                              {deposit.coldWallet}
-                            </p>
-                            <ExternalLink className="ml-2 w-4 h-4 mr-1" />
-                          </div>
-                        </a>
+                        <BlockchainId
+                          label="Wallet Address"
+                          value={deposit.coldWallet}
+                          blockchainUrl={`https://www.blockchain.com/explorer/addresses/btc/${deposit.coldWallet}`}
+                        />
                       ) : (
                         <div>
                           <p className="text-sm text-gray-500">Wallet</p>
@@ -468,20 +519,13 @@ export function DepositDetail() {
                       )}
                     </div>
 
-                    {/* PegId */}
                     <div>
-                      {deposit.swapPegTransaction?.[0]?.pegId ? (
-                        <a
-                          href={`https://blockstream.info/liquid/tx/${deposit.swapPegTransaction[0].pegId}`}
-                        >
-                          <p className="text-sm text-gray-500">PegId</p>
-                          <div className="flex items-center">
-                            <p className="text-gray-900 font-medium">
-                              {deposit.swapPegTransaction[0].pegId}
-                            </p>
-                            <ExternalLink className="ml-2 w-4 h-4 mr-1" />
-                          </div>
-                        </a>
+                      {deposit.swapPegTransaction?.[0]?.PegId ? (
+                        <BlockchainId
+                          label="PegId"
+                          value={deposit.swapPegTransaction[0].PegId}
+                          blockchainUrl={`https://sideswap.io/peg-in-out/#${deposit.swapPegTransaction[0].PegId}`}
+                        />
                       ) : (
                         <div>
                           <p className="text-sm text-gray-500">PegId</p>
@@ -492,20 +536,13 @@ export function DepositDetail() {
                       )}
                     </div>
 
-                    {/* LiquidTxId */}
                     <div>
                       {deposit.swapPegTransaction?.[0]?.LiquidTxId ? (
-                        <a
-                          href={`https://blockstream.info/tx/${deposit.swapPegTransaction[0].LiquidTxId}`}
-                        >
-                          <p className="text-sm text-gray-500">LiquidTxId</p>
-                          <div className="flex items-center">
-                            <p className="text-gray-900 font-medium">
-                              {deposit.swapPegTransaction[0].LiquidTxId}
-                            </p>
-                            <ExternalLink className="ml-2 w-4 h-4 mr-1" />
-                          </div>
-                        </a>
+                        <BlockchainId
+                          label="Liquid TxId"
+                          value={deposit.swapPegTransaction[0].LiquidTxId}
+                          blockchainUrl={`https://blockstream.info/liquid/tx/${deposit.swapPegTransaction[0].LiquidTxId}`}
+                        />
                       ) : (
                         <div>
                           <p className="text-sm text-gray-500">LiquidTxId</p>
@@ -516,20 +553,13 @@ export function DepositDetail() {
                       )}
                     </div>
 
-                    {/* MempoolTxId */}
                     <div>
                       {deposit.swapPegTransaction?.[0]?.MempoolTxId ? (
-                        <a
-                          href={`https://blockstream.info/liquid/tx/${deposit.swapPegTransaction[0].MempoolTxId}`}
-                        >
-                          <p className="text-sm text-gray-500">MempoolTxId</p>
-                          <div className="flex items-center">
-                            <p className="text-gray-900 font-medium">
-                              {deposit.swapPegTransaction[0].MempoolTxId}
-                            </p>
-                            <ExternalLink className="ml-2 w-4 h-4 mr-1" />
-                          </div>
-                        </a>
+                        <BlockchainId
+                          label="Mempool TxId"
+                          value={deposit.swapPegTransaction[0].MempoolTxId}
+                          blockchainUrl={`https://blockstream.info/tx/${deposit.swapPegTransaction[0].MempoolTxId}`}
+                        />
                       ) : (
                         <div>
                           <p className="text-sm text-gray-500">MempoolTxId</p>
@@ -545,7 +575,6 @@ export function DepositDetail() {
             </>
           )}
 
-          {/* Mensagens de status são visíveis para todos */}
           <AnimatePresence>
             {deposit.status === 'expired' && (
               <motion.div
