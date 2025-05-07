@@ -318,10 +318,8 @@ export function DepositDetail() {
             </div>
           )}
 
-          {/* Exibir detalhes avançados somente para quem pode gerenciar */}
           {canManageSales && (
             <>
-              {/* Seção de detalhes da transação */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -403,7 +401,6 @@ export function DepositDetail() {
                 </div>
               </motion.div>
 
-              {/* Seção de detalhes de criptomoeda */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -444,7 +441,6 @@ export function DepositDetail() {
                   </div>
 
                   <div className="space-y-4">
-                    {/* Wallet */}
                     <div>
                       {deposit.coldWallet ? (
                         <a
@@ -468,7 +464,6 @@ export function DepositDetail() {
                       )}
                     </div>
 
-                    {/* PegId */}
                     <div>
                       {deposit.swapPegTransaction?.[0]?.pegId ? (
                         <a
@@ -492,7 +487,6 @@ export function DepositDetail() {
                       )}
                     </div>
 
-                    {/* LiquidTxId */}
                     <div>
                       {deposit.swapPegTransaction?.[0]?.LiquidTxId ? (
                         <a
@@ -516,7 +510,6 @@ export function DepositDetail() {
                       )}
                     </div>
 
-                    {/* MempoolTxId */}
                     <div>
                       {deposit.swapPegTransaction?.[0]?.MempoolTxId ? (
                         <a
@@ -545,7 +538,6 @@ export function DepositDetail() {
             </>
           )}
 
-          {/* Mensagens de status são visíveis para todos */}
           <AnimatePresence>
             {deposit.status === 'expired' && (
               <motion.div
