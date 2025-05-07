@@ -104,19 +104,19 @@ export class UserDocument {
 export class Deposit {
   id!: string;
   transactionId!: string;
-  phone!: string;
+  phone?: string | null;
   coldWallet!: string;
   network!: string;
   paymentMethod!: string;
   transactionDate!: string;
   cupom!: string | null;
   valueBRL!: number;
-  assetValue!: number;
+  assetValue?: number;
   cryptoType!: CryptoType;
   status!: PaymentStatus;
   username!: string;
   userId!: string;
-  swapPegTransaction!: SwapPegTransaction;
+  swapPegTransaction!: SwapPegTransaction[];
 }
 
 export class ListedUser {
@@ -134,15 +134,13 @@ export class ListedUser {
     const entity = new ListedUser();
 
     entity.id = model.id;
-    entity.providerId = model.providerId;
+    entity.providerId = model.providerId ?? '';
     entity.isActive = model.isActive;
     entity.username = model.username;
     entity.level = model.level;
     entity.createdAt = model.createdAt;
     entity.updatedAt = model.updatedAt;
     entity.documents = model.documents;
-    entity.deposits = model.depositos;
-
     entity.documents = model.documents.map((doc) => {
       return {
         id: doc.id,
@@ -158,23 +156,37 @@ export class ListedUser {
     });
 
     entity.deposits = model.depositos.map((dep) => {
-      return {
-        id: dep.id,
-        transactionId: dep.transactionId,
-        phone: dep.phone,
-        coldWallet: dep.coldWallet,
-        network: dep.network,
-        paymentMethod: dep.paymentMethod,
-        transactionDate: dep.transactionDate,
-        cupom: dep.cupom,
-        valueBRL: dep.valueBRL,
-        assetValue: dep.assetValue,
-        cryptoType: dep.cryptoType,
-        status: dep.status,
-        username: dep.username,
-        userId: dep.userId,
-        swapPegTransaction: dep.swapPegTransaction,
-      };
+      const deposit = new Deposit();
+
+      deposit.id = dep.id;
+      deposit.transactionId = dep.transactionId;
+      deposit.phone = dep.phone ?? '';
+      deposit.coldWallet = dep.coldWallet;
+      deposit.network = dep.network;
+      deposit.paymentMethod = dep.paymentMethod;
+      deposit.transactionDate = dep.transactionDate;
+      deposit.cupom = dep.cupom ?? null;
+      deposit.valueBRL = dep.valueBRL;
+      deposit.assetValue = dep.assetValue ?? 0;
+      deposit.cryptoType = dep.cryptoType;
+      deposit.status = dep.status;
+      deposit.username = dep.username;
+      deposit.userId = dep.userId;
+
+      deposit.swapPegTransaction = (dep.swapPegTransaction ?? []).flatMap(
+        (peg) =>
+          peg
+            ? [
+                {
+                  id: peg.id,
+                  pegId: peg.pegId,
+                  LiquidTxId: peg.LiquidTxId,
+                  MempoolTxId: peg.MempoolTxId,
+                },
+              ]
+            : [],
+      );
+      return deposit;
     });
 
     return entity;
