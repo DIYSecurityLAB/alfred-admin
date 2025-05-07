@@ -52,7 +52,7 @@ export function BlockedUsers() {
     <Container>
       <PageHeader
         title="Usuários Bloqueados"
-        description="Gerencie todos os usuários bloqueados no sistema"
+        description="Gerencie todos os usuários bloqueados no sistema."
         collapsed={collapsedHeader}
         toggle={toggleHeader}
         button={

@@ -98,6 +98,18 @@ export const ListedUserModel = z.object({
       status: PaymentStatusModel,
       username: z.string(),
       userId: z.string(),
+      swapPegTransaction: z
+        .array(
+          z
+            .object({
+              id: z.number(),
+              pegId: z.string(),
+              LiquidTxId: z.string(),
+              MempoolTxId: z.string(),
+            })
+            .optional(),
+        )
+        .optional(),
     }),
   ),
 });

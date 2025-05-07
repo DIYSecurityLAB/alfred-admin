@@ -444,21 +444,100 @@ export function DepositDetail() {
                   </div>
 
                   <div className="space-y-4">
-                    <CopyableField label="Wallet" value={deposit.coldWallet} />
-
+                    {/* Wallet */}
                     <div>
-                      <button
-                        onClick={() =>
-                          window.open(
-                            `https://www.blockchain.com/explorer/addresses/btc/${deposit.coldWallet}`,
-                            '_blank',
-                          )
-                        }
-                        className="mt-2 inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors"
-                      >
-                        <ExternalLink className="w-4 h-4 mr-1" />
-                        Ver na Blockchain
-                      </button>
+                      {deposit.coldWallet ? (
+                        <a
+                          href={`https://www.blockchain.com/explorer/addresses/btc/${deposit.coldWallet}`}
+                        >
+                          <p className="text-sm text-gray-500">Wallet</p>
+                          <div className="flex items-center">
+                            <p className="text-gray-900 font-medium">
+                              {deposit.coldWallet}
+                            </p>
+                            <ExternalLink className="ml-2 w-4 h-4 mr-1" />
+                          </div>
+                        </a>
+                      ) : (
+                        <div>
+                          <p className="text-sm text-gray-500">Wallet</p>
+                          <p className="text-gray-900 font-medium">
+                            Não disponível
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* PegId */}
+                    <div>
+                      {deposit.swapPegTransaction?.[0]?.pegId ? (
+                        <a
+                          href={`https://blockstream.info/liquid/tx/${deposit.swapPegTransaction[0].pegId}`}
+                        >
+                          <p className="text-sm text-gray-500">PegId</p>
+                          <div className="flex items-center">
+                            <p className="text-gray-900 font-medium">
+                              {deposit.swapPegTransaction[0].pegId}
+                            </p>
+                            <ExternalLink className="ml-2 w-4 h-4 mr-1" />
+                          </div>
+                        </a>
+                      ) : (
+                        <div>
+                          <p className="text-sm text-gray-500">PegId</p>
+                          <p className="text-gray-900 font-medium">
+                            Não disponível
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* LiquidTxId */}
+                    <div>
+                      {deposit.swapPegTransaction?.[0]?.LiquidTxId ? (
+                        <a
+                          href={`https://blockstream.info/tx/${deposit.swapPegTransaction[0].LiquidTxId}`}
+                        >
+                          <p className="text-sm text-gray-500">LiquidTxId</p>
+                          <div className="flex items-center">
+                            <p className="text-gray-900 font-medium">
+                              {deposit.swapPegTransaction[0].LiquidTxId}
+                            </p>
+                            <ExternalLink className="ml-2 w-4 h-4 mr-1" />
+                          </div>
+                        </a>
+                      ) : (
+                        <div>
+                          <p className="text-sm text-gray-500">LiquidTxId</p>
+                          <p className="text-gray-900 font-medium">
+                            Não disponível
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* MempoolTxId */}
+                    <div>
+                      {deposit.swapPegTransaction?.[0]?.MempoolTxId ? (
+                        <a
+                          href={`https://blockstream.info/liquid/tx/${deposit.swapPegTransaction[0].MempoolTxId}`}
+                        >
+                          <p className="text-sm text-gray-500">MempoolTxId</p>
+                          <div className="flex items-center">
+                            <p className="text-gray-900 font-medium">
+                              {deposit.swapPegTransaction[0].MempoolTxId}
+                            </p>
+                            <ExternalLink className="ml-2 w-4 h-4 mr-1" />
+                          </div>
+                        </a>
+                      ) : (
+                        <div>
+                          <p className="text-sm text-gray-500">MempoolTxId</p>
+                          <p className="text-gray-900 font-medium">
+                            Não disponível
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
