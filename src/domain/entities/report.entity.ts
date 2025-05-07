@@ -96,7 +96,7 @@ export class ReportedDeposit {
 
     entity.valueCollected = model.valueCollected ?? 0;
 
-    entity.swapPegTransaction = model.SwapPegTransaction;
+    entity.swapPegTransaction = model.swapPegTransaction;
 
     return entity;
   }
