@@ -7,7 +7,7 @@ import type {
   CouponFilter,
   CreateCouponDTO,
   UpdateCouponDTO,
-} from '../../../data/types';
+} from '../../../data/types/couponTypes';
 
 export function useCoupons() {
   const [page, setPage] = useState(1);
