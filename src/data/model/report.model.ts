@@ -3,7 +3,7 @@ import { CryptoTypeModel, PaymentStatusModel } from './user/user.model';
 
 export const SwapPegTransactionModel = z.object({
   id: z.number(),
-  pegId: z.string().optional().nullable(),
+  PegId: z.string().optional().nullable(),
   LiquidTxId: z.string().nullable(),
   MempoolTxId: z.string().nullable(),
 });
