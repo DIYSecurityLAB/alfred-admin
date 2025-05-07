@@ -84,7 +84,7 @@ export class ReportedDeposit {
 
     entity.amount = model.amount;
 
-    entity.cryptoValue = model.cryptoValue;
+    entity.cryptoValue = model.cryptoValue ?? 0;
 
     entity.status = model.status;
 
@@ -96,7 +96,7 @@ export class ReportedDeposit {
 
     entity.valueCollected = model.valueCollected ?? 0;
 
-    entity.swapPegTransaction = model.swapPegTransaction;
+    entity.swapPegTransaction = model.SwapPegTransaction;
 
     return entity;
   }

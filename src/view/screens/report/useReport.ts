@@ -254,7 +254,6 @@ export function useReport() {
       'Valor (R$)': formatBRLValue(deposit.amount),
       'Valor Crypto': `${formatCryptoValue(deposit.cryptoValue)} ${cryptoType}`,
       Status: formatStatus(deposit.status),
-      Telefone: deposit.phone || 'N/A',
       Rede: deposit.network || 'N/A',
       Wallet: deposit.coldWallet || 'N/A',
       Cupom: deposit.coupon || 'N/A',
