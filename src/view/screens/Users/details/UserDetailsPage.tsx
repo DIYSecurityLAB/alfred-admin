@@ -16,8 +16,8 @@ import {
   File,
   User,
 } from 'lucide-react';
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 const getLevelName = (level: number): string => {
   switch (level) {
@@ -39,9 +39,10 @@ const getLevelName = (level: number): string => {
 };
 
 export function UserDetailsPage() {
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedStatus = searchParams.get('status') || 'all';
   const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedStatus(event.target.value);
+    setSearchParams({ status: event.target.value });
   };
 
   const { id } = useParams<{ id: string }>();
