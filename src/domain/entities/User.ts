@@ -3,6 +3,7 @@ import {
   ListedUserModel,
 } from '@/data/model/user/user.model';
 import { z } from 'zod';
+import { SwapPegTransaction } from './report.entity';
 
 export const BlockUser = z
   .object({
@@ -115,6 +116,7 @@ export class Deposit {
   status!: PaymentStatus;
   username!: string;
   userId!: string;
+  swapPegTransaction!: SwapPegTransaction;
 }
 
 export class ListedUser {
@@ -171,6 +173,7 @@ export class ListedUser {
         status: dep.status,
         username: dep.username,
         userId: dep.userId,
+        swapPegTransaction: dep.swapPegTransaction,
       };
     });
 

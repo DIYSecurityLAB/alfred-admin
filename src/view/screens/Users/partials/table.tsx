@@ -35,7 +35,7 @@ export function UserTable({
   canEditUsers = false,
 }: UserTableProps) {
   return (
-    <div className="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+    <div className="overflow-x-hidden rounded-lg shadow-sm border border-gray-200">
       <table className="min-w-full divide-y divide-gray-100">
         <thead className="bg-gray-50">
           <tr>
@@ -66,6 +66,7 @@ export function UserTable({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="hover:bg-gray-50 transition-colors"
+              whileHover={{ scale: 1.01, x: 5 }}
             >
               <td className="py-4 px-4">
                 <div className="flex items-center">

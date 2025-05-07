@@ -50,7 +50,7 @@ export function CouponTable({
       initial="hidden"
       animate="visible"
     >
-      <div className="overflow-x-auto">
+      <div className="overflow-x-hidden">
         <table className="w-full text-left">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">

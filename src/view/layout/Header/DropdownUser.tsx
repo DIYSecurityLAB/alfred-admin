@@ -1,3 +1,4 @@
+import { useAuth } from '@/hooks/useAuth';
 import ClickOutside from '@/view/components/ClickOutside';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -13,6 +14,16 @@ import { Link } from 'react-router-dom';
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const { logout } = useAuth();
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      alert('Erro ao fazer logout.');
+      console.error('Erro ao fazer logout:', error);
+    }
+  };
 
   return (
     <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
@@ -108,7 +119,7 @@ const DropdownUser = () => {
               <li>
                 <button
                   className="w-full flex items-center gap-3 rounded-md px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors duration-200"
-                  onClick={() => alert('Logout não implementado!')}
+                  onClick={() => handleLogout()}
                 >
                   <LogOut size={18} className="text-red-500" />
                   Sair
