@@ -84,7 +84,7 @@ export function Reports() {
     if (areFiltersDifferent) {
       handleFilterChange(urlFilters);
     }
-  }, [searchParams]); // Remova `handleFilterChange` das dependências
+  }, [searchParams]);
 
   const openDepositDetails = (report: ReportedDeposit) => {
     navigate(ROUTES.sales.details.call(report.id));
