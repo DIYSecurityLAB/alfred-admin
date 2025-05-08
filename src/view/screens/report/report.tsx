@@ -10,12 +10,11 @@ import { ROUTES } from '@/view/routes/Routes';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, LayoutDashboard, LayoutGrid, Loader } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ReportCards } from './partials/Cards';
 import { ReportFilters } from './partials/Filters';
 import { ReportTable } from './partials/Table';
 import { useReport } from './useReport';
-
 export function Reports() {
   const { hasPermission } = useAuth();
   const canExport = hasPermission(Permission.REPORTS_EXPORT);
@@ -27,6 +26,8 @@ export function Reports() {
   const [exportPercent, setExportPercent] = useState<number>(0);
   const [collapsedHeader, setCollapsedHeader] = useState(false);
   const navigate = useNavigate();
+
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const {
     reports,
@@ -47,6 +48,26 @@ export function Reports() {
     refetch,
   } = useReport();
 
+  type Filters = Record<string, string | number | null>;
+
+  const handleFilterChangeWithUrl = (newFilters: Filters) => {
+    const updatedFilters = { ...filters, ...newFilters };
+
+    clearFilters();
+
+    // Remove filtros inválidos e garante que os valores sejam strings
+    const validFilters = Object.fromEntries(
+      Object.entries(updatedFilters)
+        .filter(([, value]) => value !== undefined && value !== null)
+        .map(([key, value]) => [key, String(value)]),
+    );
+
+    const params = new URLSearchParams(validFilters as Record<string, string>);
+    setSearchParams(params);
+
+    handleFilterChange(validFilters);
+  };
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       refetch();
@@ -54,6 +75,16 @@ export function Reports() {
 
     return () => clearTimeout(timeoutId);
   }, [refetch]);
+
+  useEffect(() => {
+    const urlFilters = Object.fromEntries(searchParams.entries());
+    const areFiltersDifferent =
+      JSON.stringify(filters) !== JSON.stringify(urlFilters);
+
+    if (areFiltersDifferent) {
+      handleFilterChange(urlFilters);
+    }
+  }, [searchParams]); // Remova `handleFilterChange` das dependências
 
   const openDepositDetails = (report: ReportedDeposit) => {
     navigate(ROUTES.sales.details.call(report.id));
@@ -119,7 +150,7 @@ export function Reports() {
 
       <ReportFilters
         filters={filters}
-        onFilterChange={handleFilterChange}
+        onFilterChange={handleFilterChangeWithUrl}
         onClearFilters={clearFilters}
         onExportToExcel={handleExportToExcel}
         isExporting={isExporting}
