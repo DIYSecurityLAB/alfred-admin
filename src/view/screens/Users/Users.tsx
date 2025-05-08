@@ -9,7 +9,8 @@ import { PageHeader } from '@/view/layout/Page/PageHeader';
 import { ToggleHeaderButton } from '@/view/layout/Page/ToggleHeaderButton';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, LayoutDashboard, LayoutGrid } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { UserCards } from './partials/Cards';
 import { UserFilters } from './partials/Filter';
 import { UserTable } from './partials/table';
@@ -45,6 +46,40 @@ export function Users() {
     setCollapsedHeader(!collapsedHeader);
   };
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  type Filters = Record<string, string | number | null>;
+
+  const handleFilterChangeWithUrl = (newFilters: Filters) => {
+    const updatedFilters = { ...filters, ...newFilters };
+
+    clearFilters();
+
+    // Remove filtros inválidos e garante que os valores sejam strings
+    const validFilters = Object.fromEntries(
+      Object.entries(updatedFilters)
+        .filter(
+          ([, value]) => value !== undefined && value !== null && value != '',
+        )
+        .map(([key, value]) => [key, String(value)]),
+    );
+
+    const params = new URLSearchParams(validFilters as Record<string, string>);
+    setSearchParams(params);
+
+    handleFilterChange(validFilters);
+  };
+
+  useEffect(() => {
+    const urlFilters = Object.fromEntries(searchParams.entries());
+    const areFiltersDifferent =
+      JSON.stringify(filters) !== JSON.stringify(urlFilters);
+
+    if (areFiltersDifferent) {
+      handleFilterChange(urlFilters);
+    }
+  }, [searchParams]);
+
   if (isLoading) {
     return <Loading label="Carregando usuários..." />;
   }
@@ -70,7 +105,7 @@ export function Users() {
 
       <UserFilters
         filters={filters}
-        onFilterChange={handleFilterChange}
+        onFilterChange={handleFilterChangeWithUrl}
         onClearFilters={clearFilters}
       />
 
