@@ -116,7 +116,7 @@ export class Deposit {
   status!: PaymentStatus;
   username!: string;
   userId!: string;
-  swapPegTransaction!: SwapPegTransaction[];
+  SwapPegTransaction!: SwapPegTransaction[];
 }
 
 export class ListedUser {
@@ -173,7 +173,7 @@ export class ListedUser {
       deposit.username = dep.username;
       deposit.userId = dep.userId;
 
-      deposit.swapPegTransaction = (dep.swapPegTransaction ?? []).flatMap(
+      deposit.SwapPegTransaction = (dep.SwapPegTransaction ?? []).flatMap(
         (peg) =>
           peg
             ? [

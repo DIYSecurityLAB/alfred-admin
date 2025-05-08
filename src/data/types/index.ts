@@ -80,7 +80,7 @@ export interface Deposit {
   valueBTC: number;
   status: PaymentStatus;
   username: string | null | undefined;
-  swapPegTransaction: SwapPegTransaction[];
+  SwapPegTransaction: SwapPegTransaction[];
 }
 
 export interface DepositReport extends Deposit {
