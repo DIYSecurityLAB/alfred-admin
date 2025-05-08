@@ -6,7 +6,6 @@ import { Container } from '@/view/components/Container';
 import { Error } from '@/view/components/Error';
 import { Loading } from '@/view/components/Loading';
 import { PageHeader } from '@/view/layout/Page/PageHeader';
-import { ROUTES } from '@/view/routes/Routes';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertCircle,
@@ -241,7 +240,7 @@ export function DepositDetail() {
   }, [fetchDeposit]);
 
   const handleBack = () => {
-    navigate(ROUTES.sales.home || '/sales');
+    navigate(-1);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
