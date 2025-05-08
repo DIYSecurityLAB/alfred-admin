@@ -277,6 +277,7 @@ export function useReport() {
 
   const formatCryptoValue = (value: number): string => {
     if (typeof value !== 'number') {
+      console.log('what');
       return '0.00000000';
     }
     return value.toFixed(8);

@@ -43,7 +43,7 @@ export type DocumentType =
 
 export class ListAllBlockedUser {
   id!: string;
-  userId!: string;
+  userId!: string | undefined | null;
   reason!: string | null;
   createdAt!: string;
   updatedAt!: string;
@@ -166,8 +166,8 @@ export class ListedUser {
       deposit.paymentMethod = dep.paymentMethod;
       deposit.transactionDate = dep.transactionDate;
       deposit.cupom = dep.cupom ?? null;
-      deposit.valueBRL = dep.valueBRL;
-      deposit.assetValue = dep.assetValue ?? 0;
+      deposit.valueBRL = dep.amount;
+      deposit.assetValue = dep.cryptoValue ?? 0;
       deposit.cryptoType = dep.cryptoType;
       deposit.status = dep.status;
       deposit.username = dep.username;
