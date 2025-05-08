@@ -98,7 +98,7 @@ export const ListedUserModel = z.object({
       status: PaymentStatusModel,
       username: z.string(),
       userId: z.string(),
-      swapPegTransaction: z
+      SwapPegTransaction: z
         .array(
           z
             .object({

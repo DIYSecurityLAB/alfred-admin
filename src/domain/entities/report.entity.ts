@@ -59,7 +59,7 @@ export class ReportedDeposit {
   discountType!: string;
   discountValue!: number;
   valueCollected!: number;
-  swapPegTransaction?: SwapPegTransaction[];
+  SwapPegTransaction?: SwapPegTransaction[];
 
   public static fromModel(model: ReportedDepositModel): ReportedDeposit {
     const entity = new ReportedDeposit();
@@ -96,7 +96,7 @@ export class ReportedDeposit {
 
     entity.valueCollected = model.valueCollected ?? 0;
 
-    entity.swapPegTransaction = model.SwapPegTransaction;
+    entity.SwapPegTransaction = model.SwapPegTransaction;
 
     return entity;
   }
