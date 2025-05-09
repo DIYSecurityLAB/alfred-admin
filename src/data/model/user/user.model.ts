@@ -42,11 +42,30 @@ export const ListAllBlockedUserModel = z.object({
       z.object({
         id: z.string(),
         transactionId: z.string(),
-        valorBRL: z.number(),
-        cupom: z.string().nullable().optional(),
-        cryptoType: CryptoTypeModel.nullable(),
+        phone: z.string().nullable().optional(),
+        coldWallet: z.string(),
+        network: z.string(),
+        paymentMethod: z.string(),
+        transactionDate: z.string(),
+        cupom: z.string(),
+        amount: z.number(),
+        cryptoValue: z.number().optional(),
+        cryptoType: CryptoTypeModel,
         status: PaymentStatusModel,
-        createdAt: z.string(),
+        username: z.string(),
+        userId: z.string(),
+        SwapPegTransaction: z
+          .array(
+            z
+              .object({
+                id: z.number(),
+                pegId: z.string(),
+                LiquidTxId: z.string(),
+                MempoolTxId: z.string(),
+              })
+              .optional(),
+          )
+          .optional(),
       }),
     ),
     documents: z.array(
