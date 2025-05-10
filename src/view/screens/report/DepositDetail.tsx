@@ -6,7 +6,6 @@ import { Container } from '@/view/components/Container';
 import { Error } from '@/view/components/Error';
 import { Loading } from '@/view/components/Loading';
 import { PageHeader } from '@/view/layout/Page/PageHeader';
-import { ROUTES } from '@/view/routes/Routes';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertCircle,
@@ -241,7 +240,7 @@ export function DepositDetail() {
   }, [fetchDeposit]);
 
   const handleBack = () => {
-    navigate(ROUTES.sales.home || '/sales');
+    navigate(-1);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -520,11 +519,11 @@ export function DepositDetail() {
                     </div>
 
                     <div>
-                      {deposit.swapPegTransaction?.[0]?.PegId ? (
+                      {deposit.SwapPegTransaction?.[0]?.PegId ? (
                         <BlockchainId
                           label="PegId"
-                          value={deposit.swapPegTransaction[0].PegId}
-                          blockchainUrl={`https://sideswap.io/peg-in-out/#${deposit.swapPegTransaction[0].PegId}`}
+                          value={deposit.SwapPegTransaction[0].PegId}
+                          blockchainUrl={`https://sideswap.io/peg-in-out/#${deposit.SwapPegTransaction[0].PegId}`}
                         />
                       ) : (
                         <div>
@@ -537,11 +536,11 @@ export function DepositDetail() {
                     </div>
 
                     <div>
-                      {deposit.swapPegTransaction?.[0]?.LiquidTxId ? (
+                      {deposit.SwapPegTransaction?.[0]?.LiquidTxId ? (
                         <BlockchainId
                           label="Liquid TxId"
-                          value={deposit.swapPegTransaction[0].LiquidTxId}
-                          blockchainUrl={`https://blockstream.info/liquid/tx/${deposit.swapPegTransaction[0].LiquidTxId}`}
+                          value={deposit.SwapPegTransaction[0].LiquidTxId}
+                          blockchainUrl={`https://blockstream.info/liquid/tx/${deposit.SwapPegTransaction[0].LiquidTxId}`}
                         />
                       ) : (
                         <div>
@@ -554,11 +553,11 @@ export function DepositDetail() {
                     </div>
 
                     <div>
-                      {deposit.swapPegTransaction?.[0]?.MempoolTxId ? (
+                      {deposit.SwapPegTransaction?.[0]?.MempoolTxId ? (
                         <BlockchainId
                           label="Mempool TxId"
-                          value={deposit.swapPegTransaction[0].MempoolTxId}
-                          blockchainUrl={`https://blockstream.info/tx/${deposit.swapPegTransaction[0].MempoolTxId}`}
+                          value={deposit.SwapPegTransaction[0].MempoolTxId}
+                          blockchainUrl={`https://blockstream.info/tx/${deposit.SwapPegTransaction[0].MempoolTxId}`}
                         />
                       ) : (
                         <div>

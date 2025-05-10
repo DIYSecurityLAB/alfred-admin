@@ -92,13 +92,13 @@ export const ListedUserModel = z.object({
       paymentMethod: z.string(),
       transactionDate: z.string(),
       cupom: z.string(),
-      valueBRL: z.number(),
-      assetValue: z.number().optional(),
+      amount: z.number(),
+      cryptoValue: z.number().optional(),
       cryptoType: CryptoTypeModel,
       status: PaymentStatusModel,
       username: z.string(),
       userId: z.string(),
-      swapPegTransaction: z
+      SwapPegTransaction: z
         .array(
           z
             .object({
