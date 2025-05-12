@@ -112,6 +112,10 @@ export const ListedUserModel = z.object({
       transactionDate: z.string(),
       cupom: z.string(),
       amount: z.number(),
+      valorBRL: z
+        .number()
+        .nullable()
+        .transform((val) => val ?? 0), // Temporário
       cryptoValue: z.number().optional(),
       cryptoType: CryptoTypeModel,
       status: PaymentStatusModel,
@@ -122,9 +126,21 @@ export const ListedUserModel = z.object({
           z
             .object({
               id: z.number(),
-              pegId: z.string(),
-              LiquidTxId: z.string(),
-              MempoolTxId: z.string(),
+              pegId: z
+                .string()
+                .optional()
+                .nullable()
+                .transform((val) => val ?? ''),
+              LiquidTxId: z
+                .string()
+                .optional()
+                .nullable()
+                .transform((val) => val ?? ''),
+              MempoolTxId: z
+                .string()
+                .optional()
+                .nullable()
+                .transform((val) => val ?? ''),
             })
             .optional(),
         )
