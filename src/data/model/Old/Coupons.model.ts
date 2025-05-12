@@ -3,7 +3,11 @@ import { z } from 'zod';
 export const InsertCouponModel = z.object({
   code: z.string().min(1),
   discountType: z.enum(['percentage', 'fixed']),
-  discountValue: z.number(),
+  discountValue: z
+    .number()
+    .nullable()
+    .optional()
+    .transform((val) => val ?? 0),
   minPurchaseValue: z.number().optional().default(0),
   maxDiscountValue: z.number().optional().default(0),
   usageLimit: z.number().optional().default(100),
@@ -28,7 +32,11 @@ export const ListedCouponModel = z.object({
   id: z.string().min(1),
   code: z.string().min(1),
   discountType: z.enum(['percentage', 'fixed']),
-  discountValue: z.number(),
+  discountValue: z
+    .number()
+    .nullable()
+    .optional()
+    .transform((val) => val ?? 0),
   validFrom: z.string(),
   validUntil: z.string().nullable().optional(),
   minPurchaseValue: z.number().optional().default(0),

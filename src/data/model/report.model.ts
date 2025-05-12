@@ -23,7 +23,11 @@ export const ReportedDepositModel = z.object({
   status: PaymentStatusModel,
   username: z.string().optional().nullable(),
   discountType: z.string().optional().nullable(),
-  discountValue: z.number().optional(),
+  discountValue: z
+    .number()
+    .nullable()
+    .optional()
+    .transform((val) => val ?? 0),
   valueCollected: z.number().optional(),
   SwapPegTransaction: z.array(SwapPegTransactionModel).optional(),
 });

@@ -29,36 +29,71 @@ export const DocumentTypeModel = z.union([
 ]);
 export type DocumentTypeModel = z.infer<typeof DocumentTypeModel>;
 
+/*
+ * Todo: Melhorar isso. A solução rápida foi tornar tudo optional(), que não é o ideal.
+ * Como não é uma feature extremamente crítica, essa solução funciona por enquanto.
+ */
 export const ListAllBlockedUserModel = z.object({
-  id: z.string(),
-  userId: z.string(),
-  reason: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-  user: z.object({
-    id: z.string(),
-    username: z.string(),
-    depositos: z.array(
-      z.object({
-        id: z.string(),
-        transactionId: z.string(),
-        valorBRL: z.number(),
-        cupom: z.string().nullable().optional(),
-        cryptoType: CryptoTypeModel.nullable(),
-        status: PaymentStatusModel,
-        createdAt: z.string(),
-      }),
-    ),
-    documents: z.array(
-      z.object({
-        id: z.string(),
-        countryCode: z.string(),
-        documentNumber: z.string(),
-        documentType: DocumentTypeModel,
-      }),
-    ),
-  }),
+  id: z.string().optional(),
+  userId: z.string().optional(),
+  reason: z.string().nullable().optional(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
+  user: z
+    .object({
+      id: z.string().optional(),
+      username: z.string().optional(),
+      depositos: z.array(
+        z
+          .object({
+            id: z.string().optional(),
+            transactionId: z.string().optional(),
+            phone: z.string().nullable().optional(),
+            coldWallet: z.string().optional(),
+            network: z.string().optional(),
+            paymentMethod: z.string().optional(),
+            transactionDate: z.string().optional(),
+            cupom: z.string().optional(),
+            amount: z.number().optional(),
+            valorBRL: z
+              .number()
+              .optional()
+              .nullable()
+              .transform((val) => val ?? 0),
+            cryptoValue: z.number().optional(),
+            cryptoType: CryptoTypeModel.optional(),
+            status: PaymentStatusModel.optional(),
+            username: z.string().optional(),
+            userId: z.string().optional(),
+            SwapPegTransaction: z
+              .array(
+                z
+                  .object({
+                    id: z.number().optional(),
+                    pegId: z.string().optional(),
+                    LiquidTxId: z.string().optional(),
+                    MempoolTxId: z.string().optional(),
+                  })
+                  .optional(),
+              )
+              .optional(),
+          })
+          .optional(),
+      ),
+      documents: z.array(
+        z
+          .object({
+            id: z.string().optional(),
+            countryCode: z.string().optional(),
+            documentNumber: z.string().optional(),
+            documentType: DocumentTypeModel.optional(),
+          })
+          .optional(),
+      ),
+    })
+    .optional(),
 });
+
 export type ListAllBlockedUserModel = z.infer<typeof ListAllBlockedUserModel>;
 
 export const ListedUserModel = z.object({
@@ -93,6 +128,11 @@ export const ListedUserModel = z.object({
       transactionDate: z.string(),
       cupom: z.string(),
       amount: z.number(),
+      valorBRL: z
+        .number()
+        .optional()
+        .nullable()
+        .transform((val) => val ?? 0),
       cryptoValue: z.number().optional(),
       cryptoType: CryptoTypeModel,
       status: PaymentStatusModel,
@@ -103,9 +143,21 @@ export const ListedUserModel = z.object({
           z
             .object({
               id: z.number(),
-              pegId: z.string(),
-              LiquidTxId: z.string(),
-              MempoolTxId: z.string(),
+              pegId: z
+                .string()
+                .optional()
+                .nullable()
+                .transform((val) => val ?? ''),
+              LiquidTxId: z
+                .string()
+                .optional()
+                .nullable()
+                .transform((val) => val ?? ''),
+              MempoolTxId: z
+                .string()
+                .optional()
+                .nullable()
+                .transform((val) => val ?? ''),
             })
             .optional(),
         )
