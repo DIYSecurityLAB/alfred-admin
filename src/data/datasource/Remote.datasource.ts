@@ -43,7 +43,9 @@ export class RemoteDataSource {
   constructor(baseURL?: string) {
     this.api = axios.create({
       baseURL: baseURL,
-      headers: {},
+      headers: {
+        'X-Api-Key': process.env.API_KEY,
+      },
     });
   }
 
