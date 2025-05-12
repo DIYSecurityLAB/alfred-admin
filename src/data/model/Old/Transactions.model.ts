@@ -25,7 +25,10 @@ export type CryptoTypeEnum = z.infer<typeof CryptoTypeEnum>;
 export const TransactionModel = z.object({
   id: z.string(),
   transactionId: z.string(),
-  valorBRL: z.number(),
+  valorBRL: z
+    .number()
+    .nullable()
+    .transform((val) => val ?? 0),
   valorBTC: z.number(),
   network: z.string(),
   paymentMethod: PaymentMethodEnum,

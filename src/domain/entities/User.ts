@@ -50,15 +50,7 @@ export class ListAllBlockedUser {
   user!: {
     id: string;
     username: string;
-    depositos: {
-      id: string;
-      transactionId: string;
-      valorBRL: number;
-      cupom?: string | null;
-      cryptoType: CryptoType | null;
-      status: PaymentStatus;
-      createdAt: string;
-    }[];
+    depositos: Deposit[];
     documents: {
       id: string;
       countryCode: string;
@@ -80,7 +72,39 @@ export class ListAllBlockedUser {
       entity.user = {
         id: model.user.id,
         username: model.user.username,
-        depositos: model.user.depositos,
+        depositos: model.user.depositos.map((dep) => {
+          const deposit = new Deposit();
+
+          deposit.id = dep.id;
+          deposit.transactionId = dep.transactionId;
+          deposit.phone = dep.phone ?? '';
+          deposit.coldWallet = dep.coldWallet;
+          deposit.network = dep.network;
+          deposit.paymentMethod = dep.paymentMethod;
+          deposit.transactionDate = dep.transactionDate;
+          deposit.cupom = dep.cupom ?? null;
+          deposit.valueBRL = dep.amount;
+          deposit.assetValue = dep.cryptoValue ?? 0;
+          deposit.cryptoType = dep.cryptoType;
+          deposit.status = dep.status;
+          deposit.username = dep.username;
+          deposit.userId = dep.userId;
+
+          deposit.SwapPegTransaction = (dep.SwapPegTransaction ?? []).flatMap(
+            (peg) =>
+              peg
+                ? [
+                    {
+                      id: peg.id,
+                      pegId: peg.pegId,
+                      LiquidTxId: peg.LiquidTxId,
+                      MempoolTxId: peg.MempoolTxId,
+                    },
+                  ]
+                : [],
+          );
+          return deposit;
+        }),
         documents: model.user.documents,
       };
     }
