@@ -29,31 +29,27 @@ export const DocumentTypeModel = z.union([
 ]);
 export type DocumentTypeModel = z.infer<typeof DocumentTypeModel>;
 
-/*
- * Todo: Melhorar isso. A solução rápida foi tornar tudo optional(), que não é o ideal.
- * Como não é uma feature extremamente crítica, essa solução funciona por enquanto.
- */
 export const ListAllBlockedUserModel = z.object({
-  id: z.string().optional(),
-  userId: z.string().optional(),
-  reason: z.string().nullable().optional(),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
+  id: z.string(),
+  userId: z.string(),
+  reason: z.string().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
   user: z
     .object({
-      id: z.string().optional(),
-      username: z.string().optional(),
+      id: z.string(),
+      username: z.string(),
       depositos: z.array(
         z
           .object({
-            id: z.string().optional(),
-            transactionId: z.string().optional(),
+            id: z.string(),
+            transactionId: z.string(),
             phone: z.string().nullable().optional(),
             coldWallet: z.string().optional(),
             network: z.string().optional(),
             paymentMethod: z.string().optional(),
             transactionDate: z.string().optional(),
-            cupom: z.string().optional(),
+            cupom: z.string().nullable().optional(),
             amount: z.number().optional(),
             valorBRL: z
               .number()
