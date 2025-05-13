@@ -124,8 +124,12 @@ export class RemoteDataSource {
         return Result.Error({ code: 'UNAUTHORIZED' });
       case HttpStatusCode.NotFound:
         return Result.Error({ code: 'NOT_FOUND' });
+      case HttpStatusCode.BadRequest:
+        return Result.Error({ code: 'BAD_REQUEST' });
       case HttpStatusCode.Conflict:
         return Result.Error({ code: 'ALREADY_EXISTS' });
+      default:
+        return Result.Error({ code: 'UNKNOWN' });
     }
   }
 }
