@@ -44,7 +44,7 @@ export class RemoteDataSource {
     this.api = axios.create({
       baseURL: baseURL,
       headers: {
-        'X-Api-Key': process.env.API_KEY,
+        'x-api-key': import.meta.env.VITE_API_KEY,
       },
     });
   }
@@ -124,6 +124,8 @@ export class RemoteDataSource {
         return Result.Error({ code: 'UNAUTHORIZED' });
       case HttpStatusCode.NotFound:
         return Result.Error({ code: 'NOT_FOUND' });
+      case HttpStatusCode.Conflict:
+        return Result.Error({ code: 'ALREADY_EXISTS' });
     }
   }
 }
