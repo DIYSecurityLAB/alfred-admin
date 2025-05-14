@@ -39,10 +39,21 @@ export type ReportDepositListOneRes = Promise<
   >
 >;
 
+export type ReportDepositResendReq = {
+  id: string;
+};
+export type ReportDepositResendRes = Promise<
+  Result<
+    ReportedDepositModel,
+    { code: 'SERIALIZATION' } | { code: 'NOT_FOUND' } | DefaultResultError
+  >
+>;
+
 export interface ReportRepository {
   listOne(req: ReportDepositListOneReq): ReportDepositListOneRes;
   listAll(): ReportDepositRes;
   listAllPaginated(req: ReportDepositPaginatedReq): ReportDepositPaginatedRes;
+  sendOrder(req: ReportDepositResendReq): ReportDepositResendRes;
 }
 
 export class ReportRepositoryImpl implements ReportRepository {
@@ -52,6 +63,22 @@ export class ReportRepositoryImpl implements ReportRepository {
   async listOne(req: ReportDepositListOneReq): ReportDepositListOneRes {
     const result = await this.api.get({
       url: `/report/deposit/${req.id}`,
+      model: ReportedDepositModel,
+    });
+
+    if (!result) {
+      return Result.Error({ code: 'SERIALIZATION' });
+    }
+
+    return Result.Success(result);
+  }
+
+  // ATENÇÃO: FUNÇÃO CRÍTICA!
+  @ExceptionHandler()
+  async sendOrder(req: ReportDepositResendReq): ReportDepositResendRes {
+    const result = await this.api.post({
+      url: `/v2/order`,
+      body: { orderId: req.id },
       model: ReportedDepositModel,
     });
 
