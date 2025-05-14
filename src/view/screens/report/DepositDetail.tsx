@@ -303,12 +303,10 @@ export function DepositDetail() {
 
   const handleResendOrder = async () => {
     const confirmed = window.confirm(
-      'ATENÇÃO: Você realmente deseja REENVIAR o pedido {' +
-        deposit.transactionId +
-        '}?',
+      'ATENÇÃO: Você realmente deseja REENVIAR o pedido {' + deposit.id + '}?',
     );
     if (confirmed) {
-      await resendOrder({ id: deposit.transactionId });
+      await resendOrder({ id: deposit.id });
     }
   };
 
