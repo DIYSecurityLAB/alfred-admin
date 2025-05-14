@@ -7,6 +7,7 @@ import { UpdateConfigUseCaseImpl } from './config/update.usecase';
 import { ReportDepositAllUseCaseImpl } from './report/deposit-all.usecase';
 import { ReportDepositOneUseCaseImpl } from './report/deposit-one.usecase';
 import { ReportDepositPaginatedUseCaseImpl } from './report/deposit-paginated.usecase';
+import { DepositResendUseCaseImpl } from './report/deposit-resend.usecase';
 import { BlockUserUseCaseImpl } from './user/blocked/block.usecase';
 import { ListBlockedUserUseCaseImpl } from './user/blocked/list-all.usecase';
 import { ListAllUserCaseImpl } from './user/list-all.usecase';
@@ -34,6 +35,7 @@ export const UseCases = {
       paginated: new ReportDepositPaginatedUseCaseImpl(reportRepository),
       all: new ReportDepositAllUseCaseImpl(reportRepository),
       one: new ReportDepositOneUseCaseImpl(reportRepository),
+      resendOrder: new DepositResendUseCaseImpl(reportRepository),
     },
   },
 };

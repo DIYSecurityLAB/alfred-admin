@@ -2,6 +2,7 @@ import { ReportedDeposit } from '@/domain/entities/report.entity';
 import { UseCases } from '@/domain/usecases/UseCases';
 import { useAuth } from '@/hooks/useAuth';
 import { Permission } from '@/models/permissions';
+import { Button } from '@/view/components/Button';
 import { Container } from '@/view/components/Container';
 import { Error } from '@/view/components/Error';
 import { Loading } from '@/view/components/Loading';
@@ -27,6 +28,7 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useResendOrder } from './useResendOrder';
 const StatusBadge = ({ status }: { status: string }) => {
   const getStatusConfig = (status: string) => {
     const statusLower = status.toLowerCase();
@@ -209,6 +211,7 @@ export function DepositDetail() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { resendOrder, isLoading } = useResendOrder();
 
   const fetchDeposit = useCallback(async () => {
     setLoading(true);
@@ -297,6 +300,17 @@ export function DepositDetail() {
       </Container>
     );
   }
+
+  const handleResendOrder = async () => {
+    const confirmed = window.confirm(
+      'ATENÇÃO: Você realmente deseja REENVIAR o pedido {' +
+        deposit.transactionId +
+        '}?',
+    );
+    if (confirmed) {
+      await resendOrder({ id: deposit.transactionId });
+    }
+  };
 
   return (
     <Container>
@@ -636,6 +650,11 @@ export function DepositDetail() {
                 </div>
               </motion.div>
             )}
+            <br />
+            <Button
+              label={isLoading ? 'Enviando...' : 'Reenviar pedido'}
+              onClick={handleResendOrder}
+            ></Button>
           </AnimatePresence>
         </motion.div>
       </AnimatePresence>
