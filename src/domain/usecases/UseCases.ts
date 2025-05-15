@@ -11,6 +11,7 @@ import { DepositResendUseCaseImpl } from './report/deposit-resend.usecase';
 import { BlockUserUseCaseImpl } from './user/blocked/block.usecase';
 import { ListBlockedUserUseCaseImpl } from './user/blocked/list-all.usecase';
 import { ListAllUserCaseImpl } from './user/list-all.usecase';
+import { UpdateUserUseCaseImpl } from './user/update.usecase';
 
 const API = new RemoteDataSource(String(import.meta.env.VITE_API_URL));
 
@@ -29,6 +30,7 @@ export const UseCases = {
       list: new ListBlockedUserUseCaseImpl(UserRepository),
     },
     list: new ListAllUserCaseImpl(UserRepository),
+    update: new UpdateUserUseCaseImpl(UserRepository),
   },
   report: {
     deposit: {
