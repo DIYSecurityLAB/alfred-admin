@@ -14,9 +14,10 @@ type BlockRes = Promise<
     {
       id: string;
       userId: string;
-      reason: string;
+      reason: string | undefined;
     },
-    { code: 'SERIALIZATION' | 'NOT_FOUND' } | DefaultResultError
+    | { code: 'SERIALIZATION' | 'NOT_FOUND' | 'ALREADY_EXISTS' }
+    | DefaultResultError
   >
 >;
 
