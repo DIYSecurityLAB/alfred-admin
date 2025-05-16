@@ -4,20 +4,27 @@ import { Container } from '@/view/components/Container';
 import { Loading } from '@/view/components/Loading';
 import { PageHeader } from '@/view/layout/Page/PageHeader';
 import { ROUTES } from '@/view/routes/Routes';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { parse } from 'date-fns';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertTriangle,
   ArrowLeft,
   Calendar,
   CreditCard,
+  Edit,
   ExternalLink,
   File,
+  Loader2,
+  Save,
+  ShieldAlert,
+  ShieldCheck,
   User,
+  X,
 } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const getLevelName = (level: number): string => {
   switch (level) {
@@ -47,6 +54,14 @@ export function UserDetailsPage() {
 
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  // Estados para edição
+  const [isEditing, setIsEditing] = useState(false);
+  const [editUsername, setEditUsername] = useState('');
+  const [editLevel, setEditLevel] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const fetchUserDetails = React.useCallback(async () => {
     if (!id) throw new Error('ID não fornecido');
@@ -79,6 +94,62 @@ export function UserDetailsPage() {
     queryKey: ['userDetails', id],
     queryFn: fetchUserDetails,
   });
+
+  const handleStartEditing = () => {
+    if (user) {
+      setEditUsername(user.username || '');
+      setEditLevel(user.level);
+      setIsEditing(true);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+  };
+
+  const confirmSave = () => {
+    setShowConfirmModal(true);
+  };
+
+  const cancelSave = () => {
+    setShowConfirmModal(false);
+  };
+
+  const handleSaveChanges = async () => {
+    if (!id || !user) return;
+
+    setIsSubmitting(true);
+    setShowConfirmModal(false);
+
+    try {
+      // Envie apenas os dados que realmente precisam ser atualizados
+      const { result } = await UseCases.user.update.execute({
+        id,
+        data: {
+          username: editUsername || undefined,
+          level: editLevel,
+        },
+      });
+
+      if (result.type === 'ERROR') {
+        toast.error(`Erro ao atualizar usuário: ${result.error.code}`);
+        return;
+      }
+
+      toast.success('Usuário atualizado com sucesso!');
+      setIsEditing(false);
+
+      // Recarrega os dados do usuário
+      queryClient.invalidateQueries({ queryKey: ['userDetails', id] });
+    } catch (error) {
+      console.error('Erro detalhado:', error);
+      toast.error(
+        'Erro ao atualizar usuário. Verifique o console para mais detalhes.',
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const sortedDeposits = [...(user?.deposits ?? [])].sort((a, b) => {
     const dateA = parse(
@@ -153,17 +224,102 @@ export function UserDetailsPage() {
 
   return (
     <Container>
+      {/* Modal de confirmação */}
+      <AnimatePresence>
+        {showConfirmModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl"
+            >
+              <div className="flex items-center mb-4 text-amber-500">
+                <ShieldAlert className="h-8 w-8 mr-3" />
+                <h3 className="text-xl font-semibold">Confirmar alterações</h3>
+              </div>
+
+              <p className="text-gray-600 mb-6">
+                Tem certeza que deseja salvar as alterações feitas no usuário?
+              </p>
+
+              <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                <div className="mb-3">
+                  <span className="text-gray-500 text-sm">
+                    Nome de usuário:
+                  </span>
+                  <p className="font-medium">{editUsername || 'Sem nome'}</p>
+                </div>
+                <div>
+                  <span className="text-gray-500 text-sm">Nível:</span>
+                  <p className="font-medium">{getLevelName(editLevel)}</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={cancelSave}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleSaveChanges}
+                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center"
+                >
+                  <ShieldCheck className="h-4 w-4 mr-2" />
+                  Confirmar
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Overlay de carregamento */}
+      <AnimatePresence>
+        {isSubmitting && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-white bg-opacity-70 z-50 flex flex-col items-center justify-center"
+          >
+            <Loader2 className="h-12 w-12 text-blue-500 animate-spin mb-4" />
+            <p className="text-lg font-medium text-gray-700">
+              Atualizando usuário...
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <PageHeader
         title="Detalhes do Usuário"
         description="Visualize as informações detalhadas do usuário"
         button={
-          <button
-            onClick={goBack}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            Voltar
-          </button>
+          <div className="flex gap-2">
+            {!isEditing ? (
+              <button
+                onClick={handleStartEditing}
+                className="flex items-center gap-2 px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors shadow-sm"
+              >
+                <Edit className="h-5 w-5" />
+                Editar Usuário
+              </button>
+            ) : null}
+            <button
+              onClick={goBack}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              Voltar
+            </button>
+          </div>
         }
         collapsed={false}
         toggle={() => {}}
@@ -175,17 +331,57 @@ export function UserDetailsPage() {
         className="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden p-6 space-y-8"
       >
         <div className="border-b border-gray-100 pb-6">
-          <h2 className="text-xl font-semibold mb-4 flex items-center text-gray-800">
-            <User className="h-5 w-5 text-blue-500 mr-2" />
-            Informações do Usuário
-          </h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold flex items-center text-gray-800">
+              <User className="h-5 w-5 text-blue-500 mr-2" />
+              Informações do Usuário
+            </h2>
+
+            {isEditing && (
+              <div className="flex gap-2">
+                <button
+                  onClick={confirmSave}
+                  disabled={isSubmitting}
+                  className="flex items-center gap-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors disabled:opacity-50 shadow-sm"
+                >
+                  <Save className="h-4 w-4" />
+                  Salvar Alterações
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  disabled={isSubmitting}
+                  className="flex items-center gap-1 px-4 py-2 bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  <X className="h-4 w-4" />
+                  Cancelar
+                </button>
+              </div>
+            )}
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="p-4 bg-gray-50 rounded-lg">
+            <div
+              className={`p-4 ${isEditing ? 'bg-blue-50 border border-blue-100' : 'bg-gray-50'} rounded-lg transition-colors duration-300`}
+            >
               <p className="text-sm text-gray-500 mb-1">Username</p>
-              <p className="font-medium text-gray-800">
-                {user.username || 'N/A'}
-              </p>
+              {isEditing ? (
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={editUsername}
+                    onChange={(e) => setEditUsername(e.target.value)}
+                    className="w-full p-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+                    placeholder="Digite o nome de usuário"
+                  />
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <Edit className="h-4 w-4 text-blue-400" />
+                  </div>
+                </div>
+              ) : (
+                <p className="font-medium text-gray-800">
+                  {user.username || 'N/A'}
+                </p>
+              )}
             </div>
 
             <div className="p-4 bg-gray-50 rounded-lg">
@@ -200,13 +396,35 @@ export function UserDetailsPage() {
               </p>
             </div>
 
-            <div className="p-4 bg-gray-50 rounded-lg">
+            <div
+              className={`p-4 ${isEditing ? 'bg-blue-50 border border-blue-100' : 'bg-gray-50'} rounded-lg transition-colors duration-300`}
+            >
               <p className="text-sm text-gray-500 mb-1">Nível</p>
-              <span
-                className={`px-2.5 py-1 rounded-full text-sm font-medium border inline-flex ${getLevelClass(user.level)}`}
-              >
-                {getLevelName(user.level)}
-              </span>
+              {isEditing ? (
+                <div className="relative">
+                  <select
+                    value={editLevel}
+                    onChange={(e) => setEditLevel(Number(e.target.value))}
+                    className="w-full p-2 border border-blue-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm pr-10"
+                  >
+                    <option value="0">0 - Madeira</option>
+                    <option value="1">1 - Bronze</option>
+                    <option value="2">2 - Prata</option>
+                    <option value="3">3 - Ouro</option>
+                    <option value="4">4 - Platina</option>
+                    <option value="5">5 - Diamante</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <Edit className="h-4 w-4 text-blue-400" />
+                  </div>
+                </div>
+              ) : (
+                <span
+                  className={`px-2.5 py-1 rounded-full text-sm font-medium border inline-flex ${getLevelClass(user.level)}`}
+                >
+                  {getLevelName(user.level)}
+                </span>
+              )}
             </div>
 
             <div className="p-4 bg-gray-50 rounded-lg">
@@ -240,6 +458,17 @@ export function UserDetailsPage() {
               </div>
             </div>
           </div>
+
+          {isEditing && (
+            <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-700 flex items-start">
+              <AlertTriangle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0 mt-0.5" />
+              <p>
+                Você está editando informações do usuário. As alterações serão
+                aplicadas imediatamente após salvar. Certifique-se de verificar
+                os dados antes de confirmar.
+              </p>
+            </div>
+          )}
         </div>
 
         <div>

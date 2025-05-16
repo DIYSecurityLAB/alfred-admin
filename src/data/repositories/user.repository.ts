@@ -6,6 +6,7 @@ import { BlockUserModel } from '../model/Blacklist.model';
 import {
   ListAllBlockedUserModel,
   ListAllUserModel,
+  ListedUserModel,
 } from '../model/user/user.model';
 
 type BlockReq = BlockUserModel;
@@ -45,10 +46,30 @@ type ListRes = Promise<
   >
 >;
 
+type UpdateUserReq = {
+  id: string;
+  data: {
+    username?: string;
+    level?: number;
+    // Adicionamos os campos opcionais para documents e depositos
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    documents?: any[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    depositos?: any[];
+  };
+};
+type UpdateUserRes = Promise<
+  Result<
+    ListedUserModel,
+    { code: 'SERIALIZATION' | 'NOT_FOUND' } | DefaultResultError
+  >
+>;
+
 export interface UserRepository {
   list(req: ListReq): ListRes;
   block(req: BlockReq): BlockRes;
   listAllBlocked(req: ListBlockedReq): ListBlockedRes;
+  update(req: UpdateUserReq): UpdateUserRes;
 }
 
 export class UserRepositoryImpl implements UserRepository {
@@ -102,6 +123,31 @@ export class UserRepositoryImpl implements UserRepository {
       model: z.array(ListAllBlockedUserModel),
       body: {
         userId: userId,
+      },
+    });
+
+    if (!result) {
+      return Result.Error({ code: 'SERIALIZATION' });
+    }
+
+    return Result.Success(result);
+  }
+
+  @ExceptionHandler()
+  async update(req: UpdateUserReq): UpdateUserRes {
+    const { id, data } = req;
+
+    // Modificando o formato para corresponder à estrutura esperada pelo controlador
+    const result = await this.api.post({
+      url: '/user/update',
+      model: ListedUserModel,
+      body: {
+        id: id,
+        data: {
+          username: data.username,
+          level: data.level,
+          // Remova os campos documents e depositos que podem estar causando conflitos
+        },
       },
     });
 
