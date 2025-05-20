@@ -29,15 +29,15 @@ export function useReport() {
   };
 
   const prepareApiFilters = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const apiFilters: any = {};
-
-    if (filters.status) apiFilters.status = filters.status;
-
-    if (filters.startAt) apiFilters.startAt = formatDateForApi(filters.startAt);
-    if (filters.endAt) apiFilters.endAt = formatDateForApi(filters.endAt);
-
-    return apiFilters;
+    return {
+      status: Array.isArray(filters.status)
+        ? filters.status
+        : filters.status
+          ? [filters.status]
+          : undefined,
+      startAt: filters.startAt ? formatDateForApi(filters.startAt) : undefined,
+      endAt: filters.endAt ? formatDateForApi(filters.endAt) : undefined,
+    };
   };
 
   const { data, isLoading, refetch } = useQuery({

@@ -48,7 +48,7 @@ export function Reports() {
     refetch,
   } = useReport();
 
-  type Filters = Record<string, string | number | null>;
+  type Filters = Record<string, string | number | null | (string | number)[]>;
 
   const handleFilterChangeWithUrl = (newFilters: Filters) => {
     const updatedFilters = { ...filters, ...newFilters };
@@ -62,7 +62,16 @@ export function Reports() {
         .map(([key, value]) => [key, String(value)]),
     );
 
-    const params = new URLSearchParams(validFilters as Record<string, string>);
+    const params = new URLSearchParams();
+
+    Object.entries(validFilters).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((v) => params.append(key, String(v)));
+      } else {
+        params.set(key, String(value));
+      }
+    });
+
     setSearchParams(params);
 
     handleFilterChange(validFilters);
@@ -77,7 +86,20 @@ export function Reports() {
   }, [refetch]);
 
   useEffect(() => {
-    const urlFilters = Object.fromEntries(searchParams.entries());
+    const urlFilters: Filters = {};
+
+    for (const [key, value] of searchParams.entries()) {
+      // verifica se a chave existe, e transforma num array se necessário
+      if (urlFilters[key]) {
+        const current = urlFilters[key];
+        urlFilters[key] = Array.isArray(current)
+          ? [...current, value]
+          : [current, value];
+      } else {
+        urlFilters[key] = value;
+      }
+    }
+
     const areFiltersDifferent =
       JSON.stringify(filters) !== JSON.stringify(urlFilters);
 
