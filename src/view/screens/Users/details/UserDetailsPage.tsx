@@ -40,9 +40,20 @@ const getLevelName = (level: number): string => {
 
 export function UserDetailsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const selectedStatus = searchParams.get('status') || 'all';
+  const [selectedStatuses, setSelectedStatuses] = React.useState<string[]>(
+    searchParams.get('status')?.split(',') || ['all'],
+  );
   const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSearchParams({ status: event.target.value });
+    const options = Array.from(event.target.selectedOptions);
+    const selectedValues = options.map((option) => option.value);
+
+    if (selectedValues.includes('all')) {
+      setSelectedStatuses(['all']);
+      setSearchParams({ status: 'all' });
+    } else {
+      setSelectedStatuses(selectedValues);
+      setSearchParams({ status: selectedValues.join(',') });
+    }
   };
 
   const { id } = useParams<{ id: string }>();
@@ -314,7 +325,8 @@ export function UserDetailsPage() {
           <div className="flex items-center mb-4">
             <h3 className="mr-2">Filtrar por Status:</h3>
             <select
-              value={selectedStatus}
+              multiple
+              value={selectedStatuses}
               onChange={handleStatusChange}
               className="flex items-center px-4 py-2 border rounded"
             >
@@ -359,9 +371,9 @@ export function UserDetailsPage() {
                   {sortedDeposits
                     .filter(
                       (deposit) =>
-                        selectedStatus === 'all' ||
-                        deposit.status === selectedStatus,
-                    ) // Filtro de Status
+                        selectedStatuses.includes('all') ||
+                        selectedStatuses.includes(deposit.status),
+                    )
                     .map((deposit) => (
                       <motion.tr
                         key={deposit.id}
