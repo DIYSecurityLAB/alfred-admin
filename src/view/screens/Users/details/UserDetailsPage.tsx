@@ -43,16 +43,17 @@ export function UserDetailsPage() {
   const [selectedStatuses, setSelectedStatuses] = React.useState<string[]>(
     searchParams.get('status')?.split(',') || ['all'],
   );
-  const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const options = Array.from(event.target.selectedOptions);
-    const selectedValues = options.map((option) => option.value);
-
-    if (selectedValues.includes('all')) {
+  const handleStatusChange = (status: string) => {
+    if (status === 'all') {
       setSelectedStatuses(['all']);
       setSearchParams({ status: 'all' });
     } else {
-      setSelectedStatuses(selectedValues);
-      setSearchParams({ status: selectedValues.join(',') });
+      const updatedStatuses = selectedStatuses.includes(status)
+        ? selectedStatuses.filter((s) => s !== status) // Remove o status
+        : [...selectedStatuses.filter((s) => s !== 'all'), status]; // Adiciona o status e remove "All"
+
+      setSelectedStatuses(updatedStatuses);
+      setSearchParams({ status: updatedStatuses.join(',') });
     }
   };
 
@@ -322,23 +323,33 @@ export function UserDetailsPage() {
             </span>
           </h2>
 
-          <div className="flex items-center mb-4">
+          <div>
             <h3 className="mr-2">Filtrar por Status:</h3>
-            <select
-              multiple
-              value={selectedStatuses}
-              onChange={handleStatusChange}
-              className="flex items-center px-4 py-2 border rounded"
-            >
-              <option value="all">All</option>
-              <option value="pending">Pending</option>
-              <option value="paid">Paid</option>
-              <option value="canceled">Canceled</option>
-              <option value="review">Review</option>
-              <option value="expired">Expired</option>
-              <option value="refunded">Refunded</option>
-              <option value="complete">Complete</option>
-            </select>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { value: 'all', label: 'All' },
+                { value: 'pending', label: 'Pending' },
+                { value: 'paid', label: 'Paid' },
+                { value: 'canceled', label: 'Canceled' },
+                { value: 'review', label: 'Review' },
+                { value: 'expired', label: 'Expired' },
+                { value: 'refunded', label: 'Refunded' },
+                { value: 'complete', label: 'Complete' },
+              ].map((status) => (
+                <label
+                  key={status.value}
+                  className="flex items-center space-x-2"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedStatuses.includes(status.value)}
+                    onChange={() => handleStatusChange(status.value)}
+                    className="form-checkbox"
+                  />
+                  <span>{status.label}</span>
+                </label>
+              ))}
+            </div>
           </div>
 
           {user.deposits && user.deposits.length > 0 ? (
