@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Lock, ShieldAlert, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { Permission, getPermissionName } from '../../models/permissions';
 
@@ -13,6 +14,7 @@ export function LockedFeatureMessage({
   showBackButton = false,
 }: LockedFeatureMessageProps) {
   const { userData } = useAuth();
+  const navigate = useNavigate();
 
   const getMessage = () => {
     if (requiredPermissions) {
@@ -74,7 +76,7 @@ export function LockedFeatureMessage({
 
           {showBackButton && (
             <button
-              onClick={() => window.history.back()}
+              onClick={() => navigate(-1)}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow transition-colors"
             >
               Voltar

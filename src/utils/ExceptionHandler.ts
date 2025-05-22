@@ -21,7 +21,7 @@ export function ExceptionHandler() {
         }
 
         if (isAxiosError(error)) {
-          RemoteDataSource.checkError(error);
+          return RemoteDataSource.checkError(error);
         }
 
         console.error(error);

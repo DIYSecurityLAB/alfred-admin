@@ -8,7 +8,10 @@ export type BlockReq = BlockUser;
 export type UpdateRes = Promise<
   Result<
     object,
-    { code: 'SERIALIZATION' } | { code: 'NOT_FOUND' } | DefaultResultError
+    | { code: 'SERIALIZATION' }
+    | { code: 'NOT_FOUND' }
+    | { code: 'ALREADY_EXISTS' }
+    | DefaultResultError
   >
 >;
 
@@ -27,6 +30,8 @@ export class BlockUserUseCaseImpl implements BlockUserUseCase {
           return Result.Error({ code: 'SERIALIZATION' });
         case 'NOT_FOUND':
           return Result.Error({ code: 'NOT_FOUND' });
+        case 'ALREADY_EXISTS':
+          return Result.Error({ code: 'ALREADY_EXISTS' });
         default:
           return Result.Error({ code: 'UNKNOWN' });
       }

@@ -269,10 +269,10 @@ export function BlockedUserDetailsPage() {
                       whileHover={{ scale: 1.01, x: 5 }}
                     >
                       <td className="py-3 px-4 text-sm text-gray-800">
-                        {deposito.createdAt}
+                        {deposito.transactionDate}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-800 font-medium">
-                        {formatCurrency(deposito.valorBRL)}
+                        {formatCurrency(deposito.valueBRL)}
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-800">
                         {deposito.cryptoType || 'N/A'}

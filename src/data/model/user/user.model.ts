@@ -32,7 +32,7 @@ export type DocumentTypeModel = z.infer<typeof DocumentTypeModel>;
 export const ListAllBlockedUserModel = z.object({
   id: z.string(),
   userId: z.string(),
-  reason: z.string().nullable(),
+  reason: z.string().nullable().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
   user: z
