@@ -55,26 +55,20 @@ export function Reports() {
 
     clearFilters();
 
-    // Remove filtros inválidos e garante que os valores sejam strings
-    const validFilters = Object.fromEntries(
-      Object.entries(updatedFilters)
-        .filter(([, value]) => value !== undefined && value !== null)
-        .map(([key, value]) => [key, String(value)]),
-    );
-
     const params = new URLSearchParams();
 
-    Object.entries(validFilters).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach((v) => params.append(key, String(v)));
-      } else {
-        params.set(key, String(value));
+    Object.entries(updatedFilters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        if (Array.isArray(value)) {
+          value.forEach((v) => params.append(key, String(v)));
+        } else {
+          params.set(key, String(value));
+        }
       }
     });
 
     setSearchParams(params);
-
-    handleFilterChange(validFilters);
+    handleFilterChange(updatedFilters);
   };
 
   useEffect(() => {
