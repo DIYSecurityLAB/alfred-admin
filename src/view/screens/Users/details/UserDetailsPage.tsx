@@ -43,6 +43,9 @@ export function UserDetailsPage() {
   const [selectedStatuses, setSelectedStatuses] = React.useState<string[]>(
     searchParams.get('status')?.split(',') || ['all'],
   );
+
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
   const handleStatusChange = (status: string) => {
     if (status === 'all') {
       setSelectedStatuses(['all']);
@@ -324,32 +327,55 @@ export function UserDetailsPage() {
           </h2>
 
           <div>
-            <h3 className="mr-2">Filtrar por Status:</h3>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { value: 'all', label: 'All' },
-                { value: 'pending', label: 'Pending' },
-                { value: 'paid', label: 'Paid' },
-                { value: 'canceled', label: 'Canceled' },
-                { value: 'review', label: 'Review' },
-                { value: 'expired', label: 'Expired' },
-                { value: 'refunded', label: 'Refunded' },
-                { value: 'complete', label: 'Complete' },
-              ].map((status) => (
-                <label
-                  key={status.value}
-                  className="flex items-center space-x-2"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedStatuses.includes(status.value)}
-                    onChange={() => handleStatusChange(status.value)}
-                    className="form-checkbox"
-                  />
-                  <span>{status.label}</span>
-                </label>
-              ))}
+            <div>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+              >
+                Filtrar por Status
+              </button>
             </div>
+            <br />
+            {isModalOpen && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
+                  <h4 className="text-lg font-semibold mb-4">
+                    Selecione os Status
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { value: 'all', label: 'All' },
+                      { value: 'pending', label: 'Pending' },
+                      { value: 'paid', label: 'Paid' },
+                      { value: 'canceled', label: 'Canceled' },
+                      { value: 'review', label: 'Review' },
+                      { value: 'expired', label: 'Expired' },
+                      { value: 'refunded', label: 'Refunded' },
+                      { value: 'complete', label: 'Complete' },
+                    ].map((status) => (
+                      <label
+                        key={status.value}
+                        className="flex items-center space-x-2"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedStatuses.includes(status.value)}
+                          onChange={() => handleStatusChange(status.value)}
+                          className="form-checkbox"
+                        />
+                        <span>{status.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => setIsModalOpen(false)} // Fecha o modal
+                    className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
+                  >
+                    Fechar
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {user.deposits && user.deposits.length > 0 ? (
