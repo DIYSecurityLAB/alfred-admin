@@ -14,6 +14,7 @@ import { BlockedUsers } from '../screens/Users/block/BlockedUser';
 import { BlockedUserDetailsPage } from '../screens/Users/block/details/BlockedUserDetailsPage';
 import { UserDetailsPage } from '../screens/Users/details/UserDetailsPage';
 import { Users } from '../screens/Users/Users';
+import { VipUsers } from '../screens/Users/vip/VipUser';
 import { PermissionProtectedRoute } from './PermissionProtectedRoute';
 import { PrivateRoute } from './PrivateRoute';
 import { ROUTES } from './Routes';
@@ -97,6 +98,20 @@ export function BrowserRouter() {
               <Route
                 path={ROUTES.users.details.path}
                 element={<UserDetailsPage />}
+              />
+            </Route>
+
+            <Route
+              element={
+                <PermissionProtectedRoute
+                  requiredPermissions={Permission.USERS_VIEW}
+                />
+              }
+            >
+              <Route path={ROUTES.users.vips.home} element={<VipUsers />} />
+              <Route
+                path={ROUTES.users.vips.details.path}
+                element={<VipUsers />}
               />
             </Route>
 
