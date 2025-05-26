@@ -54,11 +54,14 @@ async function retryWithBackoff<T>(fn: () => Promise<T>): Promise<T> {
       return await fn();
     } catch (err) {
       attempt++;
+      console.warn(`[Retry Attempt ${attempt}] Error on request:`, err);
       if (attempt >= retries) throw err;
       const delay = baseDelay * 2 ** attempt;
       await new Promise((res) => setTimeout(res, delay));
     }
   }
+
+  console.error(`[Retry Failed] Max retries reached for request`);
 
   throw new Error('Unreachable');
 }
@@ -102,7 +105,7 @@ export class RemoteDataSource {
     const serialized = model.safeParse(data);
 
     if (!serialized.success) {
-      console.log(serialized.error?.errors);
+      console.warn(`[Validation Error] ${url}`, serialized.error?.errors);
       return null;
     }
 
@@ -124,7 +127,10 @@ export class RemoteDataSource {
 
     console.log(serialized.error?.errors);
 
-    if (!serialized.success) return null;
+    if (!serialized.success) {
+      console.warn(`[Validation Error] ${url}`, serialized.error?.errors);
+      return null;
+    }
 
     return serialized.data;
   }
@@ -144,7 +150,10 @@ export class RemoteDataSource {
 
     console.log(serialized.error?.errors);
 
-    if (!serialized.success) return null;
+    if (!serialized.success) {
+      console.warn(`[Validation Error] ${url}`, serialized.error?.errors);
+      return null;
+    }
 
     return serialized.data;
   }
