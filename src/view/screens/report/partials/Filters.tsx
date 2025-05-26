@@ -140,15 +140,15 @@ export function ReportFilters({
     };
 
     return (
-      <div className="relative inline-block text-left">
+      <div className="relative inline-block text-left py-0">
         {/* Botão para exibir ou esconder as opções */}
         <button
           onClick={toggleDropdown}
-          className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          className="w-full px-4 text-sm font-medium text-gray-800 border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-300 flex justify-between items-center items-center"
         >
-          Selecionar status
+          Filtrar por status
           <svg
-            className={`w-5 h-5 ml-2 transition-transform ${
+            className={`w-5 h-5 ml-auto transition-transform ${
               isExpanded ? 'rotate-180' : 'rotate-0'
             }`}
             xmlns="http://www.w3.org/2000/svg"
