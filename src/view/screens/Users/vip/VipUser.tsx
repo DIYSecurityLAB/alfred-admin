@@ -16,6 +16,8 @@ export function VipUsers() {
         collapsed={collapsedHeader}
         toggle={toggleHeader}
       />
+
+      <h1>Página em construção</h1>
     </div>
   );
 }
