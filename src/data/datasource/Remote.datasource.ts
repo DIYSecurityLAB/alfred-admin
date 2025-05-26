@@ -37,21 +37,26 @@ export type HeaderValues =
   | 'Content-Type'
   | 'User-Agent';
 
-async function retryWithBackoff<T>(
-  fn: () => Promise<T>,
-  retries = 3,
-  delay = 300,
-): Promise<T> {
+export const getRetryConfig = () => ({
+  retries: Number(import.meta.env.VITE_HTTP_RETRY_COUNT) || 3,
+  baseDelay: Number(import.meta.env.VITE_HTTP_RETRY_BASE_DELAY) || 300,
+});
+
+async function retryWithBackoff<T>(fn: () => Promise<T>): Promise<T> {
+  const { retries, baseDelay } = getRetryConfig();
   let attempt = 0;
+
   while (attempt < retries) {
     try {
       return await fn();
     } catch (err) {
       attempt++;
       if (attempt >= retries) throw err;
-      await new Promise((res) => setTimeout(res, delay * 2 ** attempt));
+      const delay = baseDelay * 2 ** attempt;
+      await new Promise((res) => setTimeout(res, delay));
     }
   }
+
   throw new Error('Unreachable');
 }
 
@@ -62,7 +67,7 @@ export class RemoteDataSource {
     this.api = axios.create({
       baseURL: baseURL,
       headers: {
-        'x-api-key': import.meta.env.VITE_API_KEY,
+        'x-api-key': import.meta.env.VITE_API_KEY, // TODO: Use HeaderValues
       },
     });
   }
