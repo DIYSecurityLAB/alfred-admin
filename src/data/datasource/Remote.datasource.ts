@@ -37,6 +37,24 @@ export type HeaderValues =
   | 'Content-Type'
   | 'User-Agent';
 
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  retries = 3,
+  delay = 300,
+): Promise<T> {
+  let attempt = 0;
+  while (attempt < retries) {
+    try {
+      return await fn();
+    } catch (err) {
+      attempt++;
+      if (attempt >= retries) throw err;
+      await new Promise((res) => setTimeout(res, delay * 2 ** attempt));
+    }
+  }
+  throw new Error('Unreachable');
+}
+
 export class RemoteDataSource {
   private api: AxiosInstance;
 
@@ -66,16 +84,17 @@ export class RemoteDataSource {
     url,
     params,
   }: RemoteGetReq<Response>): RemoteRequestRes<Response> {
-    const { data } = await this.api.get<Response>(url, {
-      params,
-      timeout: 300000,
-    });
+    const { data } = await retryWithBackoff(() =>
+      this.api.get<Response>(url, {
+        params,
+        timeout: 300000,
+      }),
+    );
 
     const serialized = model.safeParse(data);
 
     if (!serialized.success) {
       console.log(serialized.error?.errors);
-
       return null;
     }
 
@@ -87,9 +106,11 @@ export class RemoteDataSource {
     url,
     body,
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
-    const { data } = await this.api.post<Response>(url, body, {
-      timeout: 300000,
-    });
+    const { data } = await retryWithBackoff(() =>
+      this.api.post<Response>(url, body, {
+        timeout: 300000,
+      }),
+    );
 
     const serialized = model.safeParse(data);
 
@@ -105,9 +126,11 @@ export class RemoteDataSource {
     url,
     body,
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
-    const { data } = await this.api.patch<Response>(url, body, {
-      timeout: 300000,
-    });
+    const { data } = await retryWithBackoff(() =>
+      this.api.patch<Response>(url, body, {
+        timeout: 300000,
+      }),
+    );
 
     const serialized = model.safeParse(data);
 
