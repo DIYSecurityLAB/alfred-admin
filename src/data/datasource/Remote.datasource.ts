@@ -42,6 +42,9 @@ export const getRetryConfig = () => ({
   baseDelay: Number(import.meta.env.VITE_HTTP_RETRY_BASE_DELAY) || 300,
 });
 
+export const timeout: number =
+  Number(import.meta.env.VITE_HTTP_TIMEOUT) || 300000;
+
 async function retryWithBackoff<T>(fn: () => Promise<T>): Promise<T> {
   const { retries, baseDelay } = getRetryConfig();
   let attempt = 0;
@@ -92,7 +95,7 @@ export class RemoteDataSource {
     const { data } = await retryWithBackoff(() =>
       this.api.get<Response>(url, {
         params,
-        timeout: 300000,
+        timeout: timeout,
       }),
     );
 
@@ -113,7 +116,7 @@ export class RemoteDataSource {
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
     const { data } = await retryWithBackoff(() =>
       this.api.post<Response>(url, body, {
-        timeout: 300000,
+        timeout: timeout,
       }),
     );
 
@@ -133,7 +136,7 @@ export class RemoteDataSource {
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
     const { data } = await retryWithBackoff(() =>
       this.api.patch<Response>(url, body, {
-        timeout: 300000,
+        timeout: timeout,
       }),
     );
 
