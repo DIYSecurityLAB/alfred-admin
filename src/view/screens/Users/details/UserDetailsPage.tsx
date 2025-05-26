@@ -16,7 +16,7 @@ import {
   File,
   User,
 } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 const getLevelName = (level: number): string => {
@@ -44,7 +44,9 @@ export function UserDetailsPage() {
     searchParams.get('status')?.split(',') || ['all'],
   );
 
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleDropdown = () => setIsExpanded((prev) => !prev);
 
   const handleStatusChange = (status: string) => {
     if (status === 'all') {
@@ -326,53 +328,60 @@ export function UserDetailsPage() {
             </span>
           </h2>
 
-          <div>
-            <div>
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+          <div className="relative w-full">
+            <button
+              onClick={toggleDropdown}
+              className="px-4 mb-2 py-2.5 bg-gray-50 text-sm font-medium text-gray-800 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-300 flex justify-between items-center transition"
+            >
+              Filtrar por status
+              <svg
+                className={`w-5 h-5 ml-auto transition-transform ${
+                  isExpanded ? 'rotate-180' : 'rotate-0'
+                }`}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                Filtrar por Status
-              </button>
-            </div>
-            <br />
-            {isModalOpen && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
-                  <h4 className="text-lg font-semibold mb-4">
-                    Selecione os Status
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { value: 'all', label: 'All' },
-                      { value: 'pending', label: 'Pending' },
-                      { value: 'paid', label: 'Paid' },
-                      { value: 'canceled', label: 'Canceled' },
-                      { value: 'review', label: 'Review' },
-                      { value: 'expired', label: 'Expired' },
-                      { value: 'refunded', label: 'Refunded' },
-                      { value: 'complete', label: 'Complete' },
-                    ].map((status) => (
-                      <label
-                        key={status.value}
-                        className="flex items-center space-x-2"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedStatuses.includes(status.value)}
-                          onChange={() => handleStatusChange(status.value)}
-                          className="form-checkbox"
-                        />
-                        <span>{status.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                  <button
-                    onClick={() => setIsModalOpen(false)} // Fecha o modal
-                    className="mt-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
-                  >
-                    Fechar
-                  </button>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {isExpanded && (
+              <div className="absolute z-10 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg p-4">
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  {[
+                    { value: 'all', label: 'Todos os status' },
+                    { value: 'pending', label: 'Pendente' },
+                    { value: 'paid', label: 'Pago' },
+                    { value: 'canceled', label: 'Cancelado' },
+                    { value: 'review', label: 'Em revisão' },
+                    { value: 'expired', label: 'Expirado' },
+                    { value: 'refunded', label: 'Reembolsado' },
+                    { value: 'complete', label: 'Completo' },
+                  ].map((status) => (
+                    <label
+                      key={status.value}
+                      className="flex items-center space-x-2"
+                    >
+                      <input
+                        type="checkbox"
+                        className="form-checkbox cursor-pointer"
+                        checked={
+                          status.value === 'all'
+                            ? selectedStatuses.length === 0
+                            : selectedStatuses.includes(status.value)
+                        }
+                        onChange={() => handleStatusChange(status.value)}
+                      />
+                      <span className="text-gray-800">{status.label}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
             )}
