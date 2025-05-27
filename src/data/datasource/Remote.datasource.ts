@@ -72,11 +72,16 @@ export class CircuitBreaker {
   private circuitOpen = false;
   private nextAttempt = 0;
 
-  constructor(
-    private failureThreshold = 3, // Nº de falhas consecutivas
-    private timeWindow = 10000,
-    private cooldownPeriod = 15000,
-  ) {}
+  private failureThreshold: number;
+  private timeWindow: number;
+  private cooldownPeriod: number;
+
+  constructor() {
+    this.failureThreshold =
+      Number(import.meta.env.VITE_CB_FAILURE_THRESHOLD) || 3;
+    this.timeWindow = Number(import.meta.env.VITE_CB_TIME_WINDOW_MS) || 10000;
+    this.cooldownPeriod = Number(import.meta.env.VITE_CB_COOLDOWN_MS) || 15000;
+  }
 
   public async exec<T>(fn: () => Promise<T>): Promise<T> {
     const now = Date.now();
