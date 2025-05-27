@@ -97,6 +97,11 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
           requiredPermission: Permission.USERS_VIEW,
         },
         {
+          path: ROUTES.users.vips.home,
+          label: 'Listar Usuários VIPS',
+          requiredPermission: Permission.USERS_VIEW,
+        },
+        {
           path: ROUTES.users.blocked.home,
           label: 'Usuários Bloqueados',
           requiredPermission: Permission.USERS_BLOCK_VIEW, // Usando a nova permissão específica

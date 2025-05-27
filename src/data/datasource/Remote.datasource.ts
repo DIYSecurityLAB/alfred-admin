@@ -37,6 +37,35 @@ export type HeaderValues =
   | 'Content-Type'
   | 'User-Agent';
 
+export const getRetryConfig = () => ({
+  retries: Number(import.meta.env.VITE_HTTP_RETRY_COUNT) || 3,
+  baseDelay: Number(import.meta.env.VITE_HTTP_RETRY_BASE_DELAY) || 300,
+});
+
+export const timeout: number =
+  Number(import.meta.env.VITE_HTTP_TIMEOUT) || 300000;
+
+async function retryWithBackoff<T>(fn: () => Promise<T>): Promise<T> {
+  const { retries, baseDelay } = getRetryConfig();
+  let attempt = 0;
+
+  while (attempt < retries) {
+    try {
+      return await fn();
+    } catch (err) {
+      attempt++;
+      console.warn(`[Retry Attempt ${attempt}] Error on request:`, err);
+      if (attempt >= retries) throw err;
+      const delay = baseDelay * 2 ** attempt;
+      await new Promise((res) => setTimeout(res, delay));
+    }
+  }
+
+  console.error(`[Retry Failed] Max retries reached for request`);
+
+  throw new Error('Unreachable');
+}
+
 export class RemoteDataSource {
   private api: AxiosInstance;
 
@@ -44,7 +73,7 @@ export class RemoteDataSource {
     this.api = axios.create({
       baseURL: baseURL,
       headers: {
-        'x-api-key': import.meta.env.VITE_API_KEY,
+        'x-api-key': import.meta.env.VITE_API_KEY, // TODO: Use HeaderValues
       },
     });
   }
@@ -66,16 +95,17 @@ export class RemoteDataSource {
     url,
     params,
   }: RemoteGetReq<Response>): RemoteRequestRes<Response> {
-    const { data } = await this.api.get<Response>(url, {
-      params,
-      timeout: 300000,
-    });
+    const { data } = await retryWithBackoff(() =>
+      this.api.get<Response>(url, {
+        params,
+        timeout: timeout,
+      }),
+    );
 
     const serialized = model.safeParse(data);
 
     if (!serialized.success) {
-      console.log(serialized.error?.errors);
-
+      console.warn(`[Validation Error] ${url}`, serialized.error?.errors);
       return null;
     }
 
@@ -87,15 +117,20 @@ export class RemoteDataSource {
     url,
     body,
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
-    const { data } = await this.api.post<Response>(url, body, {
-      timeout: 300000,
-    });
+    const { data } = await retryWithBackoff(() =>
+      this.api.post<Response>(url, body, {
+        timeout: timeout,
+      }),
+    );
 
     const serialized = model.safeParse(data);
 
     console.log(serialized.error?.errors);
 
-    if (!serialized.success) return null;
+    if (!serialized.success) {
+      console.warn(`[Validation Error] ${url}`, serialized.error?.errors);
+      return null;
+    }
 
     return serialized.data;
   }
@@ -105,15 +140,20 @@ export class RemoteDataSource {
     url,
     body,
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
-    const { data } = await this.api.patch<Response>(url, body, {
-      timeout: 300000,
-    });
+    const { data } = await retryWithBackoff(() =>
+      this.api.patch<Response>(url, body, {
+        timeout: timeout,
+      }),
+    );
 
     const serialized = model.safeParse(data);
 
     console.log(serialized.error?.errors);
 
-    if (!serialized.success) return null;
+    if (!serialized.success) {
+      console.warn(`[Validation Error] ${url}`, serialized.error?.errors);
+      return null;
+    }
 
     return serialized.data;
   }

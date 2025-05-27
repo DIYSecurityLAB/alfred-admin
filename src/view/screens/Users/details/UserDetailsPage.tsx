@@ -16,7 +16,7 @@ import {
   File,
   User,
 } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 const getLevelName = (level: number): string => {
@@ -40,9 +40,26 @@ const getLevelName = (level: number): string => {
 
 export function UserDetailsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const selectedStatus = searchParams.get('status') || 'all';
-  const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSearchParams({ status: event.target.value });
+  const [selectedStatuses, setSelectedStatuses] = React.useState<string[]>(
+    searchParams.get('status')?.split(',') || ['all'],
+  );
+
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleDropdown = () => setIsExpanded((prev) => !prev);
+
+  const handleStatusChange = (status: string) => {
+    if (status === 'all') {
+      setSelectedStatuses(['all']);
+      setSearchParams({ status: 'all' });
+    } else {
+      const updatedStatuses = selectedStatuses.includes(status)
+        ? selectedStatuses.filter((s) => s !== status) // Remove o status
+        : [...selectedStatuses.filter((s) => s !== 'all'), status]; // Adiciona o status e remove "All"
+
+      setSelectedStatuses(updatedStatuses);
+      setSearchParams({ status: updatedStatuses.join(',') });
+    }
   };
 
   const { id } = useParams<{ id: string }>();
@@ -311,22 +328,63 @@ export function UserDetailsPage() {
             </span>
           </h2>
 
-          <div className="flex items-center mb-4">
-            <h3 className="mr-2">Filtrar por Status:</h3>
-            <select
-              value={selectedStatus}
-              onChange={handleStatusChange}
-              className="flex items-center px-4 py-2 border rounded"
+          <div className="relative w-full">
+            <button
+              onClick={toggleDropdown}
+              className="px-4 mb-2 py-2.5 bg-gray-50 text-sm font-medium text-gray-800 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-300 flex justify-between items-center transition"
             >
-              <option value="all">All</option>
-              <option value="pending">Pending</option>
-              <option value="paid">Paid</option>
-              <option value="canceled">Canceled</option>
-              <option value="review">Review</option>
-              <option value="expired">Expired</option>
-              <option value="refunded">Refunded</option>
-              <option value="complete">Complete</option>
-            </select>
+              Filtrar por status
+              <svg
+                className={`w-5 h-5 ml-auto transition-transform ${
+                  isExpanded ? 'rotate-180' : 'rotate-0'
+                }`}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {isExpanded && (
+              <div className="absolute z-10 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg p-4">
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  {[
+                    { value: 'all', label: 'Todos os status' },
+                    { value: 'pending', label: 'Pendente' },
+                    { value: 'paid', label: 'Pago' },
+                    { value: 'canceled', label: 'Cancelado' },
+                    { value: 'review', label: 'Em revisão' },
+                    { value: 'expired', label: 'Expirado' },
+                    { value: 'refunded', label: 'Reembolsado' },
+                    { value: 'complete', label: 'Completo' },
+                  ].map((status) => (
+                    <label
+                      key={status.value}
+                      className="flex items-center space-x-2"
+                    >
+                      <input
+                        type="checkbox"
+                        className="form-checkbox cursor-pointer"
+                        checked={
+                          status.value === 'all'
+                            ? selectedStatuses.length === 0
+                            : selectedStatuses.includes(status.value)
+                        }
+                        onChange={() => handleStatusChange(status.value)}
+                      />
+                      <span className="text-gray-800">{status.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {user.deposits && user.deposits.length > 0 ? (
@@ -359,9 +417,9 @@ export function UserDetailsPage() {
                   {sortedDeposits
                     .filter(
                       (deposit) =>
-                        selectedStatus === 'all' ||
-                        deposit.status === selectedStatus,
-                    ) // Filtro de Status
+                        selectedStatuses.includes('all') ||
+                        selectedStatuses.includes(deposit.status),
+                    )
                     .map((deposit) => (
                       <motion.tr
                         key={deposit.id}
