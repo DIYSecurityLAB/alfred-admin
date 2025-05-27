@@ -29,38 +29,53 @@ export function useReport() {
   };
 
   const prepareApiFilters = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const apiFilters: any = {};
-
-    if (filters.status) apiFilters.status = filters.status;
-
-    if (filters.startAt) apiFilters.startAt = formatDateForApi(filters.startAt);
-    if (filters.endAt) apiFilters.endAt = formatDateForApi(filters.endAt);
-
-    return apiFilters;
+    return {
+      status: Array.isArray(filters.status)
+        ? filters.status
+        : filters.status
+          ? [filters.status]
+          : undefined,
+      startAt: filters.startAt ? formatDateForApi(filters.startAt) : undefined,
+      endAt: filters.endAt ? formatDateForApi(filters.endAt) : undefined,
+    };
   };
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['reports', page, perPage, filters],
     queryFn: async () => {
       try {
-        const filters = prepareApiFilters();
+        const apiFilters = prepareApiFilters();
 
         const { result } = await UseCases.report.deposit.paginated.execute({
           page: Math.max(0, page - 1),
           pageSize: perPage,
-          status: filters.status,
-          startAt: filters.startAt,
-          endAt: filters.endAt,
+          startAt: apiFilters.startAt,
+          endAt: apiFilters.endAt,
+          //status: apiFilters.status - REMOVIDO POIS O FILTRO É FEITO NO FRONT (NÃO IDEAL)
         });
 
         if (result.type === 'ERROR') {
           throw new Error(result.error?.code || 'Erro ao carregar relatórios');
         }
 
+        const allReports: ReportedDeposit[] = result.data?.data || [];
+
+        // Filtrando por multiplos status
+        const selectedStatuses = Array.isArray(filters.status)
+          ? filters.status
+          : filters.status
+            ? [filters.status]
+            : [];
+
+        const filteredReports = selectedStatuses.length
+          ? allReports.filter((report) =>
+              selectedStatuses.includes(report.status),
+            )
+          : allReports;
+
         return {
-          reports: result.data?.data || [],
-          total: (result.data?.totalPages || 0) * (result.data?.pageSize || 0),
+          reports: filteredReports,
+          total: filteredReports.length,
           totalPages: result.data?.totalPages || 0,
         };
       } catch (err) {

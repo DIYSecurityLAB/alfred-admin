@@ -25,6 +25,13 @@ export const ROUTES = {
         call: (id: string) => `/blocked-users/${id}`,
       },
     },
+    vips: {
+      home: '/vip-users',
+      details: {
+        path: '/vip-users/:id',
+        call: (id: string) => `/vip-users/${id}`,
+      },
+    },
   },
   settings: '/settings',
 };
