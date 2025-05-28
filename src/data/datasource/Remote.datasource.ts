@@ -66,8 +66,78 @@ async function retryWithBackoff<T>(fn: () => Promise<T>): Promise<T> {
   throw new Error('Unreachable');
 }
 
+export class CircuitBreaker {
+  private failureCount = 0;
+  private lastFailureTime = 0;
+  private circuitOpen = false;
+  private nextAttempt = 0;
+
+  private failureThreshold: number;
+  private timeWindow: number;
+  private cooldownPeriod: number;
+
+  constructor() {
+    this.failureThreshold =
+      Number(import.meta.env.VITE_CB_FAILURE_THRESHOLD) || 3;
+    this.timeWindow = Number(import.meta.env.VITE_CB_TIME_WINDOW_MS) || 10000;
+    this.cooldownPeriod = Number(import.meta.env.VITE_CB_COOLDOWN_MS) || 15000;
+  }
+
+  public async exec<T>(fn: () => Promise<T>): Promise<T> {
+    const now = Date.now();
+
+    if (this.circuitOpen) {
+      if (now < this.nextAttempt) {
+        throw new Error('Circuit breaker is open. Skipping request.');
+      }
+      console.warn(
+        '[Circuit Breaker] Half-open state: allowing a test request.',
+      );
+    }
+
+    try {
+      const result = await fn();
+      this.reset();
+      return result;
+    } catch (err) {
+      this.recordFailure();
+      throw err;
+    }
+  }
+
+  private recordFailure() {
+    const now = Date.now();
+
+    if (now - this.lastFailureTime > this.timeWindow) {
+      this.failureCount = 1;
+    } else {
+      this.failureCount++;
+    }
+
+    this.lastFailureTime = now;
+
+    if (this.failureCount >= this.failureThreshold) {
+      this.circuitOpen = true;
+      this.nextAttempt = now + this.cooldownPeriod;
+      console.error(
+        '[Circuit Breaker] Opened circuit due to repeated failures.',
+      );
+    }
+  }
+
+  private reset() {
+    if (this.circuitOpen) {
+      console.info('[Circuit Breaker] Closing circuit after successful test.');
+    }
+    this.failureCount = 0;
+    this.circuitOpen = false;
+    this.nextAttempt = 0;
+  }
+}
+
 export class RemoteDataSource {
   private api: AxiosInstance;
+  private circuitBreaker = new CircuitBreaker();
 
   constructor(baseURL?: string) {
     this.api = axios.create({
@@ -95,11 +165,13 @@ export class RemoteDataSource {
     url,
     params,
   }: RemoteGetReq<Response>): RemoteRequestRes<Response> {
-    const { data } = await retryWithBackoff(() =>
-      this.api.get<Response>(url, {
-        params,
-        timeout: timeout,
-      }),
+    const { data } = await this.circuitBreaker.exec(() =>
+      retryWithBackoff(() =>
+        this.api.get<Response>(url, {
+          params,
+          timeout: timeout,
+        }),
+      ),
     );
 
     const serialized = model.safeParse(data);
@@ -117,10 +189,12 @@ export class RemoteDataSource {
     url,
     body,
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
-    const { data } = await retryWithBackoff(() =>
-      this.api.post<Response>(url, body, {
-        timeout: timeout,
-      }),
+    const { data } = await this.circuitBreaker.exec(() =>
+      retryWithBackoff(() =>
+        this.api.post<Response>(url, body, {
+          timeout: timeout,
+        }),
+      ),
     );
 
     const serialized = model.safeParse(data);
@@ -140,10 +214,12 @@ export class RemoteDataSource {
     url,
     body,
   }: RemotePostReq<Response>): RemoteRequestRes<Response> {
-    const { data } = await retryWithBackoff(() =>
-      this.api.patch<Response>(url, body, {
-        timeout: timeout,
-      }),
+    const { data } = await this.circuitBreaker.exec(() =>
+      retryWithBackoff(() =>
+        this.api.patch<Response>(url, body, {
+          timeout: timeout,
+        }),
+      ),
     );
 
     const serialized = model.safeParse(data);

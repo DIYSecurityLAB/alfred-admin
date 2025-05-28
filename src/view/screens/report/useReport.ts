@@ -46,19 +46,13 @@ export function useReport() {
       try {
         const apiFilters = prepareApiFilters();
 
-        const { result } = await UseCases.report.deposit.paginated.execute({
-          page: Math.max(0, page - 1),
-          pageSize: perPage,
-          startAt: apiFilters.startAt,
-          endAt: apiFilters.endAt,
-          //status: apiFilters.status - REMOVIDO POIS O FILTRO É FEITO NO FRONT (NÃO IDEAL)
-        });
+        const { result } = await UseCases.report.deposit.all.execute();
 
         if (result.type === 'ERROR') {
           throw new Error(result.error?.code || 'Erro ao carregar relatórios');
         }
 
-        const allReports: ReportedDeposit[] = result.data?.data || [];
+        let allReports: ReportedDeposit[] = result.data || [];
 
         // Filtrando por multiplos status
         const selectedStatuses = Array.isArray(filters.status)
@@ -67,16 +61,48 @@ export function useReport() {
             ? [filters.status]
             : [];
 
-        const filteredReports = selectedStatuses.length
-          ? allReports.filter((report) =>
-              selectedStatuses.includes(report.status),
-            )
-          : allReports;
+        if (selectedStatuses.length) {
+          allReports = allReports.filter((report) =>
+            selectedStatuses.includes(report.status),
+          );
+        }
+
+        // Filtro por data
+        if (apiFilters.startAt) {
+          allReports = allReports.filter((report) => {
+            const [day, month, year] = report.transactionDate.split('-');
+            const reportDate = new Date(`${year}-${month}-${day}`);
+            const [startDay = '01', startMonth = '01', startYear = '1970'] =
+              apiFilters.startAt?.split('-') ?? [];
+            const startDate = new Date(
+              `${startYear}-${startMonth}-${startDay}`,
+            );
+            return reportDate >= startDate;
+          });
+        }
+        if (apiFilters.endAt) {
+          allReports = allReports.filter((report) => {
+            const [day, month, year] = report.transactionDate.split('-');
+            const reportDate = new Date(`${year}-${month}-${day}`);
+            const [endDay = '31', endMonth = '12', endYear = '2100'] =
+              apiFilters.endAt?.split('-') ?? [];
+            const endDate = new Date(`${endYear}-${endMonth}-${endDay}`);
+            return reportDate <= endDate;
+          });
+        }
+
+        // Paginação manual
+        const total = allReports.length;
+        const totalPages = Math.ceil(total / perPage);
+        const paginatedReports = allReports.slice(
+          (page - 1) * perPage,
+          page * perPage,
+        );
 
         return {
-          reports: filteredReports,
-          total: filteredReports.length,
-          totalPages: result.data?.totalPages || 0,
+          reports: paginatedReports,
+          total,
+          totalPages,
         };
       } catch (err) {
         const errorMessage =
