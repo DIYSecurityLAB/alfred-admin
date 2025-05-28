@@ -1,7 +1,7 @@
+import { Coupon } from '@/data/types/couponTypes';
 import { motion } from 'framer-motion';
 import { AlertTriangle, Loader, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
-import type { Coupon } from '../../../../data/types';
 
 interface DeleteConfirmModalProps {
   coupon: Coupon;

@@ -1,6 +1,6 @@
+import { Coupon } from '@/data/types/couponTypes';
 import { motion } from 'framer-motion';
 import { Edit, Eye, Lock, ToggleLeft, ToggleRight } from 'lucide-react';
-import type { Coupon } from '../../../../data/types';
 
 interface CouponTableProps {
   coupons: Coupon[];

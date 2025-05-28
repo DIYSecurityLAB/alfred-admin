@@ -12,7 +12,7 @@ export interface Coupon {
   validUntil?: string | null | undefined;
 }
 
-export type CreateCouponDTO = Omit<Coupon, 'id' | 'usedCount'> & {
+export type CreateCouponDTO = Omit<Coupon, 'id'> & {
   validUntil?: string | null;
 };
 

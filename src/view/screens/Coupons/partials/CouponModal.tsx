@@ -1,9 +1,9 @@
+import { Coupon } from '@/data/types/couponTypes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import { Calendar, CreditCard, Save, Tag, Users, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import type { Coupon } from '../../../../data/types';
 
 const couponSchema = z.object({
   code: z.string().min(3, 'Código deve ter no mínimo 3 caracteres'),

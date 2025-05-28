@@ -105,8 +105,10 @@ export function useCoupons() {
 
   const createMutation = useMutation({
     mutationFn: async (couponData: CreateCouponDTO) => {
+      // Envia usedCount: 0 na requisição (O backend não deveria lidar com isso?)
+      const dataToSend = { ...couponData, usedCount: 0 };
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result = await couponRepository.insert(couponData as any);
+      const result = await couponRepository.insert(dataToSend as any);
       if (!result.isSuccess) {
         const errorMessage = result.error?.code
           ? `Erro ao criar cupom: ${result.error.code}`

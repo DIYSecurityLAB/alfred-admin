@@ -1,6 +1,6 @@
+import { CouponFilter } from '@/data/types/couponTypes';
 import { motion } from 'framer-motion';
 import { FilterX, Search, SortAsc } from 'lucide-react';
-import type { CouponFilter } from '../../../../data/types';
 
 interface CouponFiltersProps {
   filters: CouponFilter;
