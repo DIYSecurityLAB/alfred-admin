@@ -1,3 +1,4 @@
+import { Coupon } from '@/data/types/couponTypes';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Calendar,
@@ -14,7 +15,6 @@ import {
   XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
-import type { Coupon } from '../../../../data/types';
 
 interface CouponDetailsModalProps {
   coupon: Coupon;

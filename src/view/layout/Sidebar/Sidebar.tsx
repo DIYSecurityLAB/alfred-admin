@@ -98,7 +98,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
         },
         {
           path: ROUTES.users.vips.home,
-          label: 'Listar Usuários VIPS',
+          label: 'Usuários Vips',
           requiredPermission: Permission.USERS_VIEW,
         },
         {

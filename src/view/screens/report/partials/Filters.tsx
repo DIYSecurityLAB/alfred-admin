@@ -98,26 +98,10 @@ export function ReportFilters({
   };
 
   const handleFieldChange = (field: string, value: string) => {
-    setLocalFilters((prev) => {
-      if (field === 'status') {
-        const currentValues: string[] = prev.status || []; // Define que é um array de strings
-
-        if (value === '') {
-          // Se "Todos os status" for selecionado, reseta os filtros
-          return { ...prev, [field]: [] };
-        }
-
-        // Adiciona ou remove o status do array
-        const updatedValues = currentValues.includes(value)
-          ? currentValues.filter((item: string) => item !== value) // Define o tipo de 'item'
-          : [...currentValues, value];
-
-        return { ...prev, [field]: updatedValues };
-      }
-
-      // Para outros campos, mantém a lógica original
-      return { ...prev, [field]: value || '' };
-    });
+    setLocalFilters((prev) => ({
+      ...prev,
+      [field]: value || '',
+    }));
   };
 
   const handleClearFilters = () => {
@@ -130,73 +114,6 @@ export function ReportFilters({
     });
 
     onClearFilters();
-  };
-
-  const StatusFilter = () => {
-    const [isExpanded, setIsExpanded] = useState(false);
-
-    const toggleDropdown = () => {
-      setIsExpanded((prev) => !prev);
-    };
-
-    return (
-      <div className="relative inline-block text-left py-0">
-        {/* Botão para exibir ou esconder as opções */}
-        <button
-          onClick={toggleDropdown}
-          className="w-full px-4 text-sm font-medium text-gray-800 border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-300 flex justify-between items-center items-center"
-        >
-          Filtrar por status
-          <svg
-            className={`w-5 h-5 ml-auto transition-transform ${
-              isExpanded ? 'rotate-180' : 'rotate-0'
-            }`}
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </button>
-
-        {/* Opções de filtro */}
-        {isExpanded && (
-          <div className="absolute z-10 mt-2 w-56 bg-white border border-gray-300 rounded-lg shadow-lg">
-            <div className="p-4 flex flex-wrap gap-2">
-              {[
-                { value: '', label: 'Todos os status' },
-                { value: 'complete', label: 'Completo' },
-                { value: 'paid', label: 'Pago' },
-                { value: 'pending', label: 'Pendente' },
-                { value: 'canceled', label: 'Cancelado' },
-                { value: 'review', label: 'Em revisão' },
-                { value: 'expired', label: 'Expirado' },
-                { value: 'refunded', label: 'Reembolsado' },
-              ].map((status) => (
-                <label
-                  key={status.value}
-                  className="flex items-center space-x-2"
-                >
-                  <input
-                    type="checkbox"
-                    checked={localFilters.status.includes(status.value)}
-                    onChange={() => handleFieldChange('status', status.value)}
-                    className="form-checkbox cursor-pointer"
-                  />
-                  <span className="text-gray-800">{status.label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    );
   };
 
   const applyFilters = () => {
@@ -222,9 +139,28 @@ export function ReportFilters({
             <label className="block mb-1.5 text-sm font-medium text-gray-600">
               Status
             </label>
-            <div className="w-full px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-300 cursor-pointer">
-              <StatusFilter />
-            </div>
+            <select
+              value={localFilters.status}
+              onChange={(e) => handleFieldChange('status', e.target.value)}
+              className="w-full px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-300 appearance-none cursor-pointer"
+              style={{
+                backgroundImage:
+                  "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'right 0.75rem center',
+                backgroundSize: '1.5em 1.5em',
+                paddingRight: '2.5rem',
+              }}
+            >
+              <option value="">Todos os status</option>
+              <option value="complete">Completo</option>
+              <option value="paid">Pago</option>
+              <option value="pending">Pendente</option>
+              <option value="canceled">Cancelado</option>
+              <option value="review">Em revisão</option>
+              <option value="expired">Expirado</option>
+              <option value="refunded">Reembolsado</option>
+            </select>
           </div>
 
           <div className="w-full md:w-48">

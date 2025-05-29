@@ -48,27 +48,24 @@ export function Reports() {
     refetch,
   } = useReport();
 
-  type Filters = Record<string, string | number | null | (string | number)[]>;
+  type Filters = Record<string, string | number | null>;
 
   const handleFilterChangeWithUrl = (newFilters: Filters) => {
     const updatedFilters = { ...filters, ...newFilters };
 
     clearFilters();
 
-    const params = new URLSearchParams();
+    // Remove filtros inválidos e garante que os valores sejam strings
+    const validFilters = Object.fromEntries(
+      Object.entries(updatedFilters)
+        .filter(([, value]) => value !== undefined && value !== null)
+        .map(([key, value]) => [key, String(value)]),
+    );
 
-    Object.entries(updatedFilters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        if (Array.isArray(value)) {
-          value.forEach((v) => params.append(key, String(v)));
-        } else {
-          params.set(key, String(value));
-        }
-      }
-    });
-
+    const params = new URLSearchParams(validFilters as Record<string, string>);
     setSearchParams(params);
-    handleFilterChange(updatedFilters);
+
+    handleFilterChange(validFilters);
   };
 
   useEffect(() => {
@@ -80,20 +77,7 @@ export function Reports() {
   }, [refetch]);
 
   useEffect(() => {
-    const urlFilters: Filters = {};
-
-    for (const [key, value] of searchParams.entries()) {
-      // verifica se a chave existe, e transforma num array se necessário
-      if (urlFilters[key]) {
-        const current = urlFilters[key];
-        urlFilters[key] = Array.isArray(current)
-          ? [...current, value]
-          : [current, value];
-      } else {
-        urlFilters[key] = value;
-      }
-    }
-
+    const urlFilters = Object.fromEntries(searchParams.entries());
     const areFiltersDifferent =
       JSON.stringify(filters) !== JSON.stringify(urlFilters);
 
