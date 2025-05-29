@@ -29,80 +29,39 @@ export function useReport() {
   };
 
   const prepareApiFilters = () => {
-    return {
-      status: Array.isArray(filters.status)
-        ? filters.status
-        : filters.status
-          ? [filters.status]
-          : undefined,
-      startAt: filters.startAt ? formatDateForApi(filters.startAt) : undefined,
-      endAt: filters.endAt ? formatDateForApi(filters.endAt) : undefined,
-    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const apiFilters: any = {};
+
+    if (filters.status) apiFilters.status = filters.status;
+
+    if (filters.startAt) apiFilters.startAt = formatDateForApi(filters.startAt);
+    if (filters.endAt) apiFilters.endAt = formatDateForApi(filters.endAt);
+
+    return apiFilters;
   };
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['reports', page, perPage, filters],
     queryFn: async () => {
       try {
-        const apiFilters = prepareApiFilters();
+        const filters = prepareApiFilters();
 
-        const { result } = await UseCases.report.deposit.all.execute();
+        const { result } = await UseCases.report.deposit.paginated.execute({
+          page: Math.max(0, page - 1),
+          pageSize: perPage,
+          status: filters.status,
+          startAt: filters.startAt,
+          endAt: filters.endAt,
+        });
 
         if (result.type === 'ERROR') {
           throw new Error(result.error?.code || 'Erro ao carregar relatórios');
         }
 
-        let allReports: ReportedDeposit[] = result.data || [];
-
-        // Filtrando por multiplos status
-        const selectedStatuses = Array.isArray(filters.status)
-          ? filters.status
-          : filters.status
-            ? [filters.status]
-            : [];
-
-        if (selectedStatuses.length) {
-          allReports = allReports.filter((report) =>
-            selectedStatuses.includes(report.status),
-          );
-        }
-
-        // Filtro por data
-        if (apiFilters.startAt) {
-          allReports = allReports.filter((report) => {
-            const [day, month, year] = report.transactionDate.split('-');
-            const reportDate = new Date(`${year}-${month}-${day}`);
-            const [startDay = '01', startMonth = '01', startYear = '1970'] =
-              apiFilters.startAt?.split('-') ?? [];
-            const startDate = new Date(
-              `${startYear}-${startMonth}-${startDay}`,
-            );
-            return reportDate >= startDate;
-          });
-        }
-        if (apiFilters.endAt) {
-          allReports = allReports.filter((report) => {
-            const [day, month, year] = report.transactionDate.split('-');
-            const reportDate = new Date(`${year}-${month}-${day}`);
-            const [endDay = '31', endMonth = '12', endYear = '2100'] =
-              apiFilters.endAt?.split('-') ?? [];
-            const endDate = new Date(`${endYear}-${endMonth}-${endDay}`);
-            return reportDate <= endDate;
-          });
-        }
-
-        // Paginação manual
-        const total = allReports.length;
-        const totalPages = Math.ceil(total / perPage);
-        const paginatedReports = allReports.slice(
-          (page - 1) * perPage,
-          page * perPage,
-        );
-
         return {
-          reports: paginatedReports,
-          total,
-          totalPages,
+          reports: result.data?.data || [],
+          total: (result.data?.totalPages || 0) * (result.data?.pageSize || 0),
+          totalPages: result.data?.totalPages || 0,
         };
       } catch (err) {
         const errorMessage =
