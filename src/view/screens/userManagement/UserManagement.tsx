@@ -238,6 +238,7 @@ function PermissionsModal({
       [Permission.SETTINGS_EDIT]: 'Editar Configurações',
       [Permission.USER_MANAGEMENT_VIEW]: 'Ver Gestão de Usuários',
       [Permission.USER_MANAGEMENT_EDIT]: 'Editar Gestão de Usuários',
+      [Permission.USERS_BLOCK]: '',
     };
     return labels[permission] || permission;
   };
@@ -559,6 +560,7 @@ export function UserManagement() {
       [Permission.SETTINGS_EDIT]: 'Editar Configurações',
       [Permission.USER_MANAGEMENT_VIEW]: 'Ver Gestão de Usuários',
       [Permission.USER_MANAGEMENT_EDIT]: 'Editar Gestão de Usuários',
+      [Permission.USERS_BLOCK]: '',
     };
     return labels[permission] || permission;
   };
