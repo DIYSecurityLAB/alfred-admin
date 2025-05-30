@@ -1,8 +1,9 @@
+import { useCallback, useState } from 'react';
+
 import { ListAllUser, ListedUser } from '@/domain/entities/User';
 import { UseCases } from '@/domain/usecases/UseCases';
 import { ROUTES } from '@/view/routes/Routes';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export interface UserFilter {

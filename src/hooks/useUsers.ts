@@ -93,7 +93,7 @@ export function useUsers() {
   const handlePageChange = (newPage: number) => setPage(newPage);
 
   const handleFilterChange = (newFilters: Partial<any>) => {
-    setFilters((prev) => ({ ...prev, ...newFilters }));
+    setFilters((prev: any) => ({ ...prev, ...newFilters }));
     setPage(1);
   };
 

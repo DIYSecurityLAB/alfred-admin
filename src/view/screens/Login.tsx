@@ -1,8 +1,9 @@
+import { useEffect, useState } from 'react';
+
 import { auth } from '@/configs/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { isSignInWithEmailLink } from 'firebase/auth';
 import { Eye, EyeOff } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export function Login() {
