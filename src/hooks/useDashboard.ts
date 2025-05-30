@@ -1,7 +1,7 @@
+import { DashboardStats } from '@/data/types';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { dashboardRepository } from '../data/repositories/old/dashboard.repository';
-import type { DashboardStats } from '../data/types';
 
 export function useDashboard() {
   const [dateRange, setDateRange] = useState<{
