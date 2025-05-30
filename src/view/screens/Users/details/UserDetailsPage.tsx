@@ -16,7 +16,7 @@ import {
   File,
   User,
 } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 const getLevelName = (level: number): string => {
@@ -41,6 +41,13 @@ const getLevelName = (level: number): string => {
 export function UserDetailsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedStatus = searchParams.get('status') || 'all';
+
+  // Vendo se chamar useState magicamente resolve os problemas..
+  const state = useState();
+  if (state.length > 1) {
+    console.log('');
+  }
+
   const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSearchParams({ status: event.target.value });
   };
