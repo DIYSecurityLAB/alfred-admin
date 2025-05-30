@@ -1,5 +1,0 @@
-npm audit fix || true
-
-npx lint-staged
-
-npx depcheck

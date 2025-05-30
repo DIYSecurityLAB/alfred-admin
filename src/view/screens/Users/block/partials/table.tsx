@@ -107,7 +107,7 @@ export function BlockedUserTable({
                                 setActiveMenu(null);
                                 navigate(
                                   ROUTES.users.blocked.details.call(
-                                    user.userId,
+                                    user.userId ?? '',
                                   ),
                                 );
                               }}
@@ -123,7 +123,9 @@ export function BlockedUserTable({
                         <motion.button
                           onClick={() => {
                             navigate(
-                              ROUTES.users.blocked.details.call(user.userId),
+                              ROUTES.users.blocked.details.call(
+                                user.userId ?? '',
+                              ),
                             );
                           }}
                           className="p-1.5 hover:bg-blue-50 rounded-full text-blue-500 transition-colors"

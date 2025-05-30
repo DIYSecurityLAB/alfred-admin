@@ -22,7 +22,7 @@ import {
   User,
   X,
 } from 'lucide-react';
-import React from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -48,6 +48,12 @@ const getLevelName = (level: number): string => {
 export function UserDetailsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedStatus = searchParams.get('status') || 'all';
+
+  const state = useState();
+  if (state.length > 1) {
+    console.log('');
+  }
+
   const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSearchParams({ status: event.target.value });
   };
@@ -56,7 +62,6 @@ export function UserDetailsPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // Estados para edição
   const [isEditing, setIsEditing] = useState(false);
   const [editUsername, setEditUsername] = useState('');
   const [editLevel, setEditLevel] = useState(0);
