@@ -196,7 +196,7 @@ export function Coupons() {
             key="create-modal"
             onClose={() => setIsCreateModalOpen(false)}
             onSubmit={async (data) => {
-              await createCoupon(data);
+              await createCoupon({ ...data, usedCount: 0 });
             }}
           />
         )}
