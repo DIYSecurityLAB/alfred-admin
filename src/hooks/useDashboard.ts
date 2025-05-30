@@ -1,7 +1,13 @@
-import { DashboardStats } from '@/data/types';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { dashboardRepository } from '../data/repositories/old/dashboard.repository';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type DashboardStats = {
+  // TODO: Não sei o que é para ter aqui
+  // Adicionar depois, criei em branco
+  // pois o código tentava importar um DashboardStats que nem existia..
+};
 
 export function useDashboard() {
   const [dateRange, setDateRange] = useState<{
