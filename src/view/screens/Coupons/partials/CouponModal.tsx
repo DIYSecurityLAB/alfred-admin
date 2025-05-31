@@ -1,28 +1,18 @@
 import { Coupon } from '@/data/types/couponTypes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
-import { Calendar, CreditCard, Save, Tag, Users, X } from 'lucide-react';
+import { Calendar, Save, Tag, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+// Schema simplificado que aceita strings de data HTML
 const couponSchema = z.object({
   code: z.string().min(3, 'Código deve ter no mínimo 3 caracteres'),
   discountType: z.enum(['percentage', 'fixed']),
   discountValue: z.number().min(0, 'Desconto deve ser maior que 0'),
-  minPurchaseValue: z
-    .number()
-    .min(0, 'Valor mínimo deve ser maior ou igual a 0'),
-  maxDiscountValue: z
-    .number()
-    .min(0, 'Valor máximo de desconto deve ser maior ou igual a 0'),
-  usageLimit: z.number().min(1, 'Limite de uso deve ser maior que 0'),
   isActive: z.boolean(),
-  validFrom: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: 'Data de início inválida',
-  }),
-  validUntil: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: 'Data de validade inválida',
-  }),
+  validFrom: z.string().min(1, 'Data de início é obrigatória'),
+  validUntil: z.string().optional(),
 });
 
 type CouponFormData = z.infer<typeof couponSchema>;
@@ -31,10 +21,44 @@ interface CouponModalProps {
   coupon?: Coupon;
   onClose: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (data: CouponFormData) => Promise<any>;
+  onSubmit: (data: any) => Promise<any>;
 }
 
 export function CouponModal({ coupon, onClose, onSubmit }: CouponModalProps) {
+  // Função para converter data ISO para formato HTML (YYYY-MM-DD)
+  const formatDateForInput = (isoDate: string | undefined): string => {
+    if (!isoDate) return '';
+    try {
+      const date = new Date(isoDate);
+      if (isNaN(date.getTime())) return '';
+      return date.toISOString().split('T')[0];
+    } catch {
+      return '';
+    }
+  };
+
+  // Função para converter data HTML para ISO 8601
+  const formatDateForAPI = (htmlDate: string, isEndDate = false): string => {
+    if (!htmlDate || htmlDate.trim() === '') return '';
+
+    try {
+      const date = new Date(htmlDate);
+      if (isNaN(date.getTime())) return '';
+
+      if (isEndDate) {
+        // Para data final, usa 23:59:59
+        date.setHours(23, 59, 59, 999);
+      } else {
+        // Para data inicial, usa 00:00:00
+        date.setHours(0, 0, 0, 0);
+      }
+
+      return date.toISOString();
+    } catch {
+      return '';
+    }
+  };
+
   const {
     register,
     handleSubmit,
@@ -44,27 +68,48 @@ export function CouponModal({ coupon, onClose, onSubmit }: CouponModalProps) {
     resolver: zodResolver(couponSchema),
     defaultValues: coupon
       ? {
-          ...coupon,
-          validFrom: new Date(coupon.validFrom).toISOString().split('T')[0],
-          validUntil: coupon.validUntil
-            ? new Date(coupon.validUntil).toISOString().split('T')[0]
-            : '',
+          code: coupon.code,
+          discountType: coupon.discountType,
+          discountValue: coupon.discountValue,
+          isActive: coupon.isActive,
+          validFrom: formatDateForInput(coupon.validFrom),
+          validUntil: formatDateForInput(coupon.validUntil ?? undefined),
         }
       : {
+          code: '',
           discountType: 'percentage',
           discountValue: 10,
-          minPurchaseValue: 0,
-          maxDiscountValue: 0,
-          usageLimit: 100,
           isActive: true,
           validFrom: new Date().toISOString().split('T')[0],
-          validUntil: new Date(new Date().setMonth(new Date().getMonth() + 3))
-            .toISOString()
-            .split('T')[0],
+          validUntil: '',
         },
   });
 
   const discountType = watch('discountType');
+
+  // Função que transforma os dados antes de enviar
+  const handleFormSubmit = async (data: CouponFormData) => {
+    const transformedData = {
+      code: data.code,
+      discountType: data.discountType,
+      discountValue: data.discountValue,
+      isActive: data.isActive,
+      validFrom: formatDateForAPI(data.validFrom, false),
+      validUntil: data.validUntil
+        ? formatDateForAPI(data.validUntil, true)
+        : undefined,
+    };
+
+    // Remove campos undefined para não enviar dados desnecessários
+    const cleanedData = Object.fromEntries(
+      Object.entries(transformedData).filter(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ([_, value]) => value !== undefined,
+      ),
+    );
+
+    return onSubmit(cleanedData);
+  };
 
   const containerVariants = {
     hidden: { opacity: 0, scale: 0.9 },
@@ -115,7 +160,7 @@ export function CouponModal({ coupon, onClose, onSubmit }: CouponModalProps) {
           </motion.button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
           <motion.div className="space-y-4" variants={itemVariants}>
             <motion.div variants={itemVariants}>
               <label className="block text-sm font-medium mb-1 text-gray-700">
@@ -170,50 +215,6 @@ export function CouponModal({ coupon, onClose, onSubmit }: CouponModalProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <motion.div variants={itemVariants} className="flex flex-col">
                 <label className="block text-sm font-medium mb-1 text-gray-700">
-                  Valor Mínimo da Compra (R$)
-                </label>
-                <div className="relative">
-                  <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-500" />
-                  <input
-                    type="number"
-                    step="0.01"
-                    {...register('minPurchaseValue', { valueAsNumber: true })}
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-300/20 transition-colors"
-                  />
-                </div>
-                {errors.minPurchaseValue && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.minPurchaseValue.message}
-                  </p>
-                )}
-              </motion.div>
-
-              {discountType === 'percentage' && (
-                <motion.div variants={itemVariants} className="flex flex-col">
-                  <label className="block text-sm font-medium mb-1 text-gray-700">
-                    Valor Máximo de Desconto (R$)
-                  </label>
-                  <div className="relative">
-                    <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-500" />
-                    <input
-                      type="number"
-                      step="0.01"
-                      {...register('maxDiscountValue', { valueAsNumber: true })}
-                      className="w-full pl-10 pr-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-300/20 transition-colors"
-                    />
-                  </div>
-                  {errors.maxDiscountValue && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.maxDiscountValue.message}
-                    </p>
-                  )}
-                </motion.div>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <motion.div variants={itemVariants} className="flex flex-col">
-                <label className="block text-sm font-medium mb-1 text-gray-700">
                   Válido a partir de
                 </label>
                 <div className="relative">
@@ -233,7 +234,7 @@ export function CouponModal({ coupon, onClose, onSubmit }: CouponModalProps) {
 
               <motion.div variants={itemVariants} className="flex flex-col">
                 <label className="block text-sm font-medium mb-1 text-gray-700">
-                  Válido até
+                  Válido até (opcional)
                 </label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-500" />
@@ -252,25 +253,6 @@ export function CouponModal({ coupon, onClose, onSubmit }: CouponModalProps) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <motion.div variants={itemVariants} className="flex flex-col">
-                <label className="block text-sm font-medium mb-1 text-gray-700">
-                  Limite de Uso
-                </label>
-                <div className="relative">
-                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-500" />
-                  <input
-                    type="number"
-                    {...register('usageLimit', { valueAsNumber: true })}
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-300/20 transition-colors"
-                  />
-                </div>
-                {errors.usageLimit && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.usageLimit.message}
-                  </p>
-                )}
-              </motion.div>
-
               <motion.div
                 variants={itemVariants}
                 className="flex items-center space-x-2 mt-8 bg-gray-50 p-4 rounded-lg border border-gray-200 hover:border-blue-100 hover:bg-blue-50 transition-all duration-300"
