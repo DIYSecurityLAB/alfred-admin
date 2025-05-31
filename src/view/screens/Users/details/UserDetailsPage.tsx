@@ -22,7 +22,7 @@ import {
   User,
   X,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -68,7 +68,7 @@ export function UserDetailsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  const fetchUserDetails = React.useCallback(async () => {
+  const fetchUserDetails = useCallback(async () => {
     if (!id) throw new Error('ID não fornecido');
 
     const { result } = await UseCases.user.list.execute({

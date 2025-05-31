@@ -3,8 +3,6 @@ export interface Coupon {
   code: string;
   discountType: 'percentage' | 'fixed';
   discountValue: number;
-  minPurchaseValue?: number;
-  maxDiscountValue?: number;
   usageLimit?: number;
   usedCount: number;
   isActive: boolean;
