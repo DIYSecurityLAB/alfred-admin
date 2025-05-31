@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getCsrfToken } from '@/utils/Csrf';
 import axios, {
   AxiosError,
   AxiosInstance,
@@ -148,16 +147,6 @@ export class RemoteDataSource {
       },
       withCredentials: true,
     });
-
-    this.api.interceptors.request.use(
-      (config) => {
-        config.headers['X-CSRF-Token'] = getCsrfToken();
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      },
-    );
   }
 
   public setBaseURL(baseURL: string): void {
